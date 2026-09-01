@@ -1,62 +1,136 @@
- <link rel="stylesheet" href="styles.css">
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portafolio - Integración</title>
+    <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
 
     <header>
-        <h1>🖥️  Integración Aplicaciones Computacionales</h1>
+        <h1>🖥️ Integración Aplicaciones Computacionales</h1>
         <p>Portafolio Académico - Ana Paola Loredo Moreno</p>
     </header>
 
     <nav>
         <ul>
-            <li><a href="#" onclick="mostrarSeccion('inicio')">Inicio</a></li>
-            <li><a href="#" onclick="mostrarSeccion('reportes')">Ejercicios Guiados</a></li>
-            <li><a href="#" onclick="mostrarSeccion('tareas')">Tareas En Casa</a></li>
+            <li><a href="#" class="nav-link activa" data-seccion="inicio">Inicio</a></li>
+            <li><a href="#" class="nav-link" data-seccion="reportes">Ejercicios Guiados</a></li>
+            <li><a href="#" class="nav-link" data-seccion="tareas">Tareas En Casa</a></li>
         </ul>
     </nav>
 
     <main>
         <section id="inicio" class="seccion activa">
-            <h2>Bienvenido</h2>
-            <p>Este sitio web recopila toda la documentación técnica, ejercicios y reportes desarrollados durante el curso de <strong>Integración</strong> en 2026.</p>
-            <div class="info-curso">
-                <p><strong>Estudiante:</strong> Ana Paola Loredo Moreno</p>
-                <p><strong>Ciclo:</strong> Septimo Semestre</p>
+            <div class="bienvenida">
+                <h2 style="margin-top:0;border:none;padding:0;">Bienvenida</h2>
+                <p>Este sitio web recopila toda la documentación técnica, ejercicios y reportes desarrollados durante el curso de <strong>Integración de Aplicaciones Computacionales</strong> en 2026.</p>
+                <div class="info-curso">
+                    <p><strong>Estudiante:</strong> Ana Paola Loredo Moreno</p>
+                    <p><strong>Ciclo:</strong> Séptimo semestre</p>
+                </div>
             </div>
         </section>
 
         <section id="reportes" class="seccion">
-            <h2>Ejercicios guiados</h2>
-            <ul class="lista-enlaces">
-                <li><a href="ejercicios/ejercicio1.html">📁 Ejercicio Guiado 1</a></li>
-                <li><a href="ejercicio02/index.html">📁 Ejercicio Guiado 2: Librería en línea (Node.js + PostgreSQL)</a></li>
-
-                <hr>
-
-            </ul>
+            <div class="grupo-titulo">
+                <h2>Ejercicios guiados</h2>
+            </div>
+            <p class="grupo-descripcion">Ejercicios completos desarrollados en clase, con reporte técnico y evidencias.</p>
+            <div class="tarjetas-grid">
+                <a class="tarjeta-item" href="primer-ejercicio/primerejercicio.html">
+                    <span class="tarjeta-icono">📁</span>
+                    <h3>Ejercicio Guiado 1</h3>
+                    <p>Cloud Models Classifier en Java: de reglas/Regex a un pipeline básico de NLP, con GUI y CLI.</p>
+                    <span class="tarjeta-ir">Ver reporte →</span>
+                </a>
+                <a class="tarjeta-item destacada" href="ejercicio02/index.html">
+                    <span class="tarjeta-icono">📚</span>
+                    <h3>Ejercicio Guiado 2</h3>
+                    <p>Librería en línea monolítica (Node.js + Express + PostgreSQL), desplegada bajo <code>/library</code> con NGINX.</p>
+                    <span class="tarjeta-ir">Ver reporte →</span>
+                </a>
+            </div>
         </section>
 
         <section id="tareas" class="seccion">
-            <h2>Tareas </h2>
-            <ul class="lista-enlaces">
-                <li><a href="tareas/tarea1/primeratarea.html">📝 Tarea 1: Implementación Python Clasificador Modelos Cloud</a></li>
-                <li><a href="tareas/tarea2/segundatarea.html">📝 Tarea 2: Mapa Conceptual Modelos Cloud</a></li>
-                <li><a href="tareas/tarea3/terceratarea.html">📝 Tarea 3: Miniensayo</a></li>
-                <li><a href="tareas/tarea4/cuartatarea.html">📝 Tarea 4: Arquitectura Cloud con Prompt Engineering y agentes de IA</a></li>
-                <li><a href="tarea2a/normalizacion4fn.html">📝 Tarea 2a: Reporte de normalización 4FN</a></li>
-                <li><a href="tarea2b/matriz_pruebas.html">📝 Tarea 2b: Matriz de pruebas e integridad</a></li>
-                <li><a href="tarea2c/evaluacion_arquitectonica.html">📝 Tarea 2c: Evaluación arquitectónica (monolito vs. microservicios)</a></li>
-                <li><a href="tarea2d/revision_seguridad.html">📝 Tarea 2d: Revisión de seguridad</a></li>
-
-
-            </ul>
+            <div class="grupo-titulo">
+                <h2>Tareas en casa</h2>
+            </div>
+            <p class="grupo-descripcion">Entregables individuales asociados a los ejercicios guiados.</p>
+            <div class="tarjetas-grid">
+                <a class="tarjeta-item" href="tarea1/primeratarea.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 1</h3>
+                    <p>Implementación en Python del clasificador de modelos Cloud.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea2/segundatarea.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 2</h3>
+                    <p>Mapa conceptual de modelos Cloud (IaaS/PaaS/SaaS/FaaS).</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea3/terceratarea.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 3</h3>
+                    <p>Miniensayo: Cloud-Native vs. Cloud-Enabled, caso Instagram.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea4/cuartatarea.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 4</h3>
+                    <p>Arquitectura Cloud con Prompt Engineering y agentes de IA.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea2a/normalizacion4fn.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 2a</h3>
+                    <p>Normalización 1FN→4FN de la base de datos de la librería, con diagrama ER.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea2b/matriz_pruebas.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 2b</h3>
+                    <p>Matriz de pruebas e integridad: 29 casos ejecutados y verificados contra la app real.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea2c/evaluacion_arquitectonica.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 2c</h3>
+                    <p>Evaluación arquitectónica: monolito vs. desacoplado vs. microservicios.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+                <a class="tarjeta-item" href="tarea2d/revision_seguridad.html">
+                    <span class="tarjeta-icono">📝</span>
+                    <h3>Tarea 2d</h3>
+                    <p>Revisión de seguridad: 16 amenazas evaluadas, mitigación y riesgo residual.</p>
+                    <span class="tarjeta-ir">Ver tarea →</span>
+                </a>
+            </div>
         </section>
     </main>
 
     <footer>
-        <p>© 2026 - Ana Paola Loredo Moreno | Sistemas Operativos</p>
+        <p>© 2026 - Ana Paola Loredo Moreno | Integración de Aplicaciones Computacionales</p>
     </footer>
 
-    <script src="js/script.js"></script>
+    <script>
+        function mostrarSeccion(nombre) {
+            document.querySelectorAll('.seccion').forEach(function (sec) {
+                sec.classList.toggle('activa', sec.id === nombre);
+            });
+            document.querySelectorAll('.nav-link').forEach(function (link) {
+                link.classList.toggle('activa', link.dataset.seccion === nombre);
+            });
+        }
+        document.querySelectorAll('.nav-link').forEach(function (link) {
+            link.addEventListener('click', function (e) {
+                e.preventDefault();
+                mostrarSeccion(link.dataset.seccion);
+            });
+        });
+    </script>
 </body>
 </html>

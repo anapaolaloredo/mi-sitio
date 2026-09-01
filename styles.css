@@ -4,7 +4,11 @@
     --bg-color: #f4f7f6;
     --text-color: #2c3e50;
     --accent-color: #2980b9;
+    --accent-soft: #eaf4fb;
+    --ok-color: #27ae60;
 }
+
+* { box-sizing: border-box; }
 
 /* ===== Estilo general del sitio ===== */
 body {
@@ -18,18 +22,29 @@ body {
 /* ===== Header ===== */
 header {
     background: white;
-    padding: 25px;
+    padding: 30px 25px;
     text-align: center;
     border-bottom: 4px solid var(--udem-color);
 }
 
 header h1 {
     margin: 0;
+    border: none;
+    padding: 0;
+    font-size: 1.6rem;
+}
+
+header p {
+    margin: 6px 0 0;
+    color: #66788d;
 }
 
 /* ===== Navegación ===== */
 nav {
     background: var(--text-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 nav ul {
@@ -37,6 +52,8 @@ nav ul {
     margin: 0;
     padding: 0;
     display: flex;
+    max-width: 1100px;
+    margin: 0 auto;
 }
 
 nav li {
@@ -48,19 +65,36 @@ nav a {
     padding: 15px 25px;
     color: white;
     text-decoration: none;
-    transition: 0.3s;
+    transition: 0.2s;
+    border-bottom: 3px solid transparent;
+    font-weight: 500;
 }
 
 nav a:hover {
-    background: var(--accent-color);
+    background: rgba(255,255,255,0.08);
+}
+
+nav a.activa {
+    border-bottom-color: var(--udem-color);
+    background: rgba(255,255,255,0.08);
 }
 
 /* ===== Contenido principal ===== */
 main {
-    padding: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 35px 25px 60px;
 }
 
-/* ===== Tarjetas tipo reporte ===== */
+.seccion { display: none; }
+.seccion.activa { display: block; animation: aparecer 0.25s ease; }
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Tarjetas tipo reporte (paginas internas) ===== */
 .report-card {
     max-width: 900px;
     margin: 30px auto;
@@ -84,7 +118,27 @@ h2 {
     margin-top: 40px;
 }
 
-/* ===== Listas ===== */
+/* ===== Bienvenida / info del curso ===== */
+.bienvenida {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 35px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    margin-bottom: 10px;
+}
+
+.info-curso {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+    padding-top: 18px;
+    border-top: 1px solid #eee;
+}
+
+.info-curso p { margin: 0; }
+
+/* ===== Listas (compatibilidad con paginas internas) ===== */
 .lista-enlaces {
     padding-left: 20px;
 }
@@ -93,7 +147,84 @@ h2 {
     margin-bottom: 10px;
 }
 
-/* ===== Cuadros informativos ===== */
+/* ===== Grid de tarjetas: Ejercicios guiados / Tareas ===== */
+.grupo-titulo {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 34px 0 4px;
+}
+
+.grupo-titulo h2 {
+    margin: 0;
+    border: none;
+    padding: 0;
+}
+
+.grupo-descripcion {
+    color: #66788d;
+    margin: 0 0 18px;
+    font-size: 0.95rem;
+}
+
+.tarjetas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 18px;
+}
+
+.tarjeta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: white;
+    border-radius: 10px;
+    padding: 22px;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    border-top: 4px solid var(--accent-color);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+.tarjeta-item .tarjeta-icono {
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.tarjeta-item h3 {
+    margin: 4px 0 0;
+    font-size: 1.05rem;
+    color: var(--text-color);
+}
+
+.tarjeta-item p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #66788d;
+    flex: 1;
+}
+
+.tarjeta-item .tarjeta-ir {
+    margin-top: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent-color);
+}
+
+.tarjeta-item.destacada {
+    border-top-color: var(--udem-color);
+    background: var(--accent-soft);
+}
+
+/* ===== Cuadros informativos (paginas internas) ===== */
 .fundamentos-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
