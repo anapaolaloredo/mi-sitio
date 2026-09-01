@@ -1,0 +1,11 @@
+Colocar aquí ejercicio02.tar.gz: el proyecto IntegracionProyecto completo, comprimido,
+EXCLUYENDO antes de comprimir:
+  - .env (cualquier ubicación)
+  - node_modules/
+  - llaves privadas / tokens / credenciales
+
+Publicar también un .env.example (nombres de variables, sin valores reales) dentro del tar.gz.
+
+Comando sugerido desde la raíz del repo:
+  tar --exclude='node_modules' --exclude='.env' --exclude='.git' \
+      -czf ejercicio02.tar.gz IntegracionProyecto/

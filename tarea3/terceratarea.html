@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 2 - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        .objetivos-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .objetivos-list li {
+            margin-bottom: 12px;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .objetivos-list li::before {
+            content: "🎯";
+            position: absolute;
+            left: 0;
+        }
+
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+        }
+
+        /* Estilo de Terminal para Comandos */
+        .terminal {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .command { color: #569cd6; font-weight: bold; }
+        .description { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+
+        <br><br><br>
+
+        <h1>Tarea 3: </h1>
+        <h3>Miniensayo: Cloud-Native vs. Cloud-Enabled</h3>
+        <br><br>
+
+        <p><strong>Materia:</strong></p>
+        <p>Integración</p>
+
+        <br>
+
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+
+        <br>
+
+        <p><strong>Alumno y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+
+        <br><br><br><br>
+
+        <p><em>
+            Doy mi palabra de que he realizado esta actividad con integridad académica.
+        </em></p>
+
+        <br><br>
+
+        <p>
+            San Pedro Garza García, N.L, México a 17 de agosto del 2026
+        </p>
+
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+
+        <h1>Índice</h1>
+
+        <ol style="line-height:2;">
+            <li><a href="#introduccion">Introducción</a></li>
+            <li><a href="#objetivos">Objetivos</a></li>
+            <li><a href="#comandos">Mini ensayo</a></li>
+        </ol>
+
+    </div>
+
+    <div class="report-card">
+        <h1>Tarea 3: Miniensayo: Cloud-Native vs. Cloud-Enabled </h1>
+
+        <section id="introduccion">
+            <h2>Introducción</h2>
+            <p>Cloud-Native y Cloud-Enabled son términos importantes para comprender el funcionamiento de muchas aplicaciones actuales. De acuerdo con Microsoft (2025), Cloud-Native se refiere a una aplicación diseñada para operar y aprovechar las características de un entorno de nube, contemplando desde su diseño aspectos como la escalabilidad, automatización, contenedores y servicios distribuidos. Por otro lado, Cloud-Enabled se refiere a una aplicación que fue inicialmente diseñada para operar con servidores tradicionales, pero posteriormente fue adaptada o migrada para funcionar en un entorno de nube.</p>
+        </section>
+        <section id="objetivos">
+            <h2>Objetivos</h2>
+            <ul class="objetivos-list">
+                <li>Comprender las diferencias entre aplicaciones Cloud-Native y Cloud-Enabled.</li>
+                <li>Identificar las características clave de cada enfoque.</li>
+                <li>Analizar un caso de estudio real para ilustrar los conceptos.</li>
+            </ul>
+        </section>
+
+        
+
+      
+
+      <h2>Introducción</h2> 
+      <p>Cloud-Native y Cloud-Enabled son términos importantes para comprender el funcionamiento de muchas aplicaciones actuales. De acuerdo con Microsoft (2025), Cloud-Native se refiere a una aplicación diseñada para operar y aprovechar las características de un entorno de nube, contemplando desde su diseño aspectos como la escalabilidad, automatización, contenedores y servicios distribuidos. Por otro lado, Cloud-Enabled se refiere a una aplicación que fue inicialmente diseñada para operar con servidores tradicionales, pero posteriormente fue adaptada o migrada para funcionar en un entorno de nube.
+
+Para comprender mejor ambos conceptos mediante un ejemplo de la vida real, se analizará si Instagram es una aplicación Cloud-Native, Cloud-Enabled o una combinación de ambas a partir de sus componentes tecnológicos. Instagram es una red social gratuita utilizada mundialmente, creada en 2010 y adquirida por Meta en 2012. Debido a que depende de grandes cantidades de imágenes, videos, usuarios y solicitudes simultáneas, resulta relevante analizar la infraestructura que permite mantener su funcionamiento a gran escala.</p>
+
+<h2>Componentes Técnologicos</h2>
+<h4>Arquitectura</h4>
+<p>Instagram utiliza una arquitectura de software distribuida basada en múltiples servicios. Meta describe una infraestructura compuesta por numerosos servicios que funcionan de manera distribuida y que permiten que diferentes componentes sean administrados de forma independiente (Meta Engineering, 2025a). Este tipo de arquitectura facilita que diferentes partes de una aplicación puedan desarrollarse, desplegarse y escalarse sin necesidad de modificar todo el sistema al mismo tiempo.</p>
+
+<h4>Contenedores y Orquestación</h4>
+<p>Meta utiliza un sistema interno de administración de clusters llamado Twine, diseñado para gestionar aplicaciones distribuidas mediante contenedores. Twine administra el ciclo de vida de los contenedores, permite desplegarlos en diferentes servidores y puede reaccionar ante fallos de infraestructura (Meta Engineering, 2019). Esto permite administrar grandes cantidades de cargas de trabajo de manera automatizada y constituye una característica asociada con las arquitecturas Cloud-Native.</p>
+
+<h4>APIs</h4>
+<p>Las APIs son otro componente importante de una arquitectura distribuida, ya que permiten la comunicación entre diferentes servicios. Meta documenta el uso de APIs dentro de su infraestructura para que diferentes sistemas puedan interactuar entre sí y controlar operaciones relacionadas con sus servicios y aplicaciones (Meta Engineering, 2020). En una plataforma del tamaño de Instagram, este tipo de comunicación permite separar responsabilidades entre diferentes componentes del sistema.
+</p>
+
+<h4>Escalabilidad</h4>
+
+<p>La escalabilidad es fundamental para Instagram debido a la cantidad variable de usuarios y solicitudes que recibe. Meta ha desarrollado infraestructura capaz de distribuir recursos entre diferentes máquinas y servicios, permitiendo aumentar la capacidad disponible cuando la demanda lo requiere (Meta Engineering, 2020). Además, el sistema de recomendaciones de Instagram ha sido diseñado para escalar a más de 1,000 modelos de aprendizaje automático, incorporando mecanismos de monitoreo y automatización para mantener su funcionamiento a gran escala (Meta, 2025).</p>
+
+<h4> Alta disponibilidad </h4>
+<p>Instagram necesita mantenerse disponible incluso cuando algunos componentes de su infraestructura presentan fallos. Meta utiliza sistemas que permiten detectar problemas en servidores y redistribuir las cargas de trabajo hacia otros recursos disponibles (Meta Engineering, 2019). Asimismo, Meta ha documentado pruebas de pérdida de energía y otros escenarios de fallo para verificar la capacidad de su infraestructura de continuar operando ante diferentes situaciones (Meta Engineering, 2026). Estas características contribuyen a la alta disponibilidad y tolerancia a fallos de sus servicios.</p>
+
+<h4>Bases de datos</h4>
+<p>Instagram utiliza bases de datos distribuidas para gestionar la gran cantidad de datos generados por sus usuarios. Meta ha desarrollado soluciones personalizadas para el almacenamiento y recuperación de datos, permitiendo que diferentes servicios accedan a la información de manera eficiente (Meta Engineering, 2020).</p>
+
+<h4>DevOps, CI/CD y observabilidad</h4>
+<p>Meta también utiliza procesos automatizados de CI/CD para validar cambios antes de llevarlos a producción. Estos procesos permiten detectar problemas y dependencias que podrían afectar la infraestructura antes de que los cambios sean desplegados (Meta Engineering, 2026).
+
+Por otra parte, Instagram utiliza mecanismos de observabilidad para supervisar sus sistemas. En el sistema de recomendaciones de Instagram, Meta documenta el uso de métricas, dashboards, alertas y monitoreo automatizado para controlar el funcionamiento de sus modelos a gran escala (Meta Engineering, 2025).</p>
+
+<h2>Análisis: Cloud-Native o Cloud-Enabled</h2>
+<p>A partir de estas características, se puede argumentar que Instagram es principalmente una aplicación Cloud-Native. Aunque Meta posee y administra servidores físicos, esto no contradice la clasificación. Cloud-Native no significa necesariamente que una empresa deba rentar servidores a un proveedor externo, sino que la aplicación aprovecha características como distribución, automatización, escalabilidad, resiliencia y disponibilidad.
+
+La utilización de contenedores, orquestación, servicios distribuidos, escalabilidad, observabilidad, CI/CD, alta disponibilidad y tolerancia a fallos demuestra que Instagram aprovecha principios fundamentales de las arquitecturas Cloud-Native.</p>
+
+<h2>Conclusión</h2>
+<p>En conclusión, considero que Instagram puede clasificarse principalmente como una aplicación Cloud-Native. La existencia de servidores físicos propios no contradice esta clasificación, ya que una arquitectura Cloud-Native puede ejecutarse sobre infraestructura física administrada directamente por una organización. Lo importante es la manera en que dicha infraestructura es utilizada. En el caso de Instagram, Meta combina servidores físicos con sistemas distribuidos, contenedores, orquestación, automatización, escalabilidad y mecanismos de tolerancia a fallos. Por lo tanto, Instagram representa un ejemplo de cómo los principios Cloud-Native pueden aplicarse incluso cuando una empresa mantiene control directo sobre gran parte de su infraestructura.</p>
+
+
+        <section id="comandos">
+            <h2>Bibliografia</h2>
+            <div class="terminal">
+             Meta Engineering. (2019). Twine: Efficient, reliable cluster management. Meta.
+            Meta Engineering — Twine
+
+            Meta Engineering. (2020). Building a ubiquitous shared infrastructure using Twine. Meta.
+            Meta Engineering — Twine 2
+
+            Meta Engineering. (2025a). Meta's Infrastructure Evolution and the Advent of AI. Meta.
+            Meta Engineering — Infrastructure Evolution
+
+            Meta Engineering. (2025b). Journey to 1000 models: Scaling Instagram's recommendation system. Meta.
+            Meta Engineering — Instagram Recommendation System
+
+            Meta Engineering. (2026). Lights Out, Systems On: Validating Instant Power Loss Readiness. Meta.
+            Meta Engineering — Power Loss Readiness
+            </div>
+        </section>
+
+        
+    <a href="../../index.html" class="back-link">← Regresar al menú de tareas</a>
+
+
+    <script src="../js/include.js"></script>
+
+</body>
+</html>

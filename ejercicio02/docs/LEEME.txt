@@ -1,0 +1,10 @@
+Todos los .md y .xlsx del análisis de requisitos, decisiones de ingeniería, seguridad, pruebas,
+normalización 4FN, comandos GCP y uso de IA ya están en esta carpeta.
+
+Sigue pendiente (archivos de imagen, aún no generados como .png):
+- ARCHITECTURE_MONOLITHIC.png (el diagrama equivalente ya está embebido con Mermaid en
+  index.html, sección 3; falta exportarlo como imagen estática si se requiere el archivo literal)
+- DB_DESIGN_ER_4FN.png (idem, diagrama ER embebido en index.html sección 4, y también en
+  ../../tarea2a/normalizacion4fn.html)
+
+Los .png pueden ir en ../img/ si se prefiere separarlos de los .md.

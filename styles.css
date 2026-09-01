@@ -1,0 +1,128 @@
+/* ===== Variables de diseño global ===== */
+:root {
+    --udem-color: #ffcc00;
+    --bg-color: #f4f7f6;
+    --text-color: #2c3e50;
+    --accent-color: #2980b9;
+}
+
+/* ===== Estilo general del sitio ===== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* ===== Header ===== */
+header {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-bottom: 4px solid var(--udem-color);
+}
+
+header h1 {
+    margin: 0;
+}
+
+/* ===== Navegación ===== */
+nav {
+    background: var(--text-color);
+}
+
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav li {
+    margin: 0;
+}
+
+nav a {
+    display: block;
+    padding: 15px 25px;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+nav a:hover {
+    background: var(--accent-color);
+}
+
+/* ===== Contenido principal ===== */
+main {
+    padding: 30px;
+}
+
+/* ===== Tarjetas tipo reporte ===== */
+.report-card {
+    max-width: 900px;
+    margin: 30px auto;
+    background: white;
+    padding: 50px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* ===== Títulos ===== */
+h1 {
+    color: var(--text-color);
+    border-left: 5px solid var(--udem-color);
+    padding-left: 15px;
+}
+
+h2 {
+    color: var(--accent-color);
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 40px;
+}
+
+/* ===== Listas ===== */
+.lista-enlaces {
+    padding-left: 20px;
+}
+
+.lista-enlaces li {
+    margin-bottom: 10px;
+}
+
+/* ===== Cuadros informativos ===== */
+.fundamentos-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.card-small {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    border-top: 3px solid var(--accent-color);
+}
+
+/* ===== Terminal ===== */
+.terminal {
+    background-color: #1e1e1e;
+    color: #dcdcdc;
+    padding: 20px;
+    border-radius: 6px;
+    font-family: 'Consolas', monospace;
+}
+
+.command { color: #569cd6; font-weight: bold; }
+.comment { color: #6a9955; }
+
+/* ===== Footer ===== */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-top: 1px solid #ddd;
+}

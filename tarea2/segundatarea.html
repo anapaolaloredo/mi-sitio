@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 2 - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .report-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 { color: var(--text-color); margin-top: 25px; }
+        .objetivos-list { list-style: none; padding: 0; }
+        .objetivos-list li { margin-bottom: 12px; padding-left: 30px; position: relative; }
+        .objetivos-list li::before { content: "🎯"; position: absolute; left: 0; }
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+        }
+        .terminal {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        .command { color: #569cd6; font-weight: bold; }
+        .description { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        pre {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 18px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .prompt-box {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+        .respuesta-box {
+            background: #f8f9fa;
+            border-left: 4px solid #27ae60;
+            padding: 15px 20px;
+            margin: 15px 0 25px 0;
+            border-radius: 4px;
+        }
+        .diagram-box {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .ok { color: #27ae60; font-weight: bold; }
+        .evidencia-img {
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Tarea 2 — Mapa Conceptual</h1>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 17 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#objetivos">Objetivos</a></li>
+            <li><a href="#descripcion">Descripción del ejercicio</a></li>
+            <li><a href="#screenshots">Mapa Conceptual</a></li>
+            <li><a href="#conclusiones">Conclusiones</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+
+        <!-- DESCRIPCIÓN -->
+         <section id="objetivos">
+            <h2>Objetivos</h2>
+            <ul class="objetivos-list">
+                <li>Comprender los diferentes modelos de servicio en la nube (IaaS, PaaS, SaaS y FaaS).</li>
+                <li>Identificar las características clave de cada modelo de servicio.</li>
+                <li>Representar visualmente las diferencias y similitudes entre los modelos mediante un mapa conceptual.</li>
+                <li>Facilitar la toma de decisiones informadas sobre cuál modelo es más adecuado para diferentes necesidades empresariales.</li>
+            </ul>
+        </section>
+        <section id="descripcion">
+            <h2>Descripción del ejercicio</h2>
+            <p>
+Crear un mapa conceptual
+comparativo. Para cada modelo de servicio (IaaS, PaaS, SaaS y FaaS), se identifican las características clave y se representan visualmente en el mapa conceptual. Esto incluye aspectos como la definición, ejemplos de proveedores y casos de uso típicos.
+        </section>
+
+        <!-- ARQUITECTURA -->
+   
+
+      
+
+
+        <!-- SCREENSHOTS -->
+        <section id="screenshots">
+            <h2>Resultado de ejercicio</h2>
+
+            <h3>Mapa Conceptual</h3>
+            <img src="mapa.png" alt="mapa comparativo" class="evidencia-img">
+
+        </section>
+
+      
+
+     
+
+   
+
+        <!-- CONCLUSIONES -->
+        <section id="conclusiones">
+            <h2>Conclusiones</h2>
+            <p>
+                En esta tarea, se logró crear un mapa conceptual que compara los modelos de servicio en la nube (IaaS, PaaS, SaaS y FaaS). Se identificaron las características clave de cada modelo, incluyendo definiciones, ejemplos de proveedores y casos de uso típicos. Este ejercicio permitió comprender mejor las diferencias y similitudes entre los modelos de servicio en la nube, facilitando la toma de decisiones informadas sobre cuál modelo es más adecuado para diferentes necesidades empresariales.
+            </p>
+        </section>
+
+     
+
+
+        <a href="../../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>

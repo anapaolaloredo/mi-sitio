@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 2a - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        if (window.mermaid) mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+      });
+    </script>
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-card {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 { color: var(--text-color); margin-top: 25px; }
+        h4 { color: var(--text-color); margin-top: 18px; margin-bottom: 6px; }
+
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+        }
+
+        .terminal {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+
+        .command { color: #569cd6; font-weight: bold; }
+        .description { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+
+        table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        .badge-alerta { background: #c0392b; }
+
+        .diagram-box {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .nota {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px 18px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Tarea 2a</h1>
+        <h3>Reporte de normalización 4FN — Librería en línea (Ejercicio Guiado 02)</h3>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 31 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#introduccion">Introducción</a></li>
+            <li><a href="#dependencias">Dependencias identificadas</a></li>
+            <li><a href="#unf">Punto de partida: sin normalizar (UNF)</a></li>
+            <li><a href="#fn1">Paso 1 — Primera Forma Normal (1FN)</a></li>
+            <li><a href="#fn2">Paso 2 — Segunda Forma Normal (2FN)</a></li>
+            <li><a href="#fn3">Paso 3 — Tercera Forma Normal / BCNF</a></li>
+            <li><a href="#fn4">Paso 4 — Cuarta Forma Normal (4FN)</a></li>
+            <li><a href="#especial">Caso especial: libro_concepto</a></li>
+            <li><a href="#resultado">Diseño de datos: resultado final y diagrama ER</a></li>
+            <li><a href="#descargas">Plantilla Excel y conclusiones</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Tarea 2a: Reporte de normalización 4FN</h1>
+
+        <section id="introduccion">
+            <h2>Introducción</h2>
+            <p>
+                Esta tarea documenta la evolución <strong>1FN → 2FN → 3FN/BCNF → 4FN</strong> que lleva
+                al esquema final implementado en <code>data/library_schema.sql</code> del
+                <a href="../ejercicio02/index.html">Ejercicio Guiado 02</a> (aplicación monolítica de
+                gestión de una librería en línea). No se presenta únicamente el modelo final: en cada
+                paso se muestra la violación concreta —con datos reales de la base de datos del
+                proyecto, no inventados— y la descomposición que la resuelve.
+            </p>
+            <div class="nota">
+                <strong>Ejemplo usado en todo el documento:</strong> el libro <em>Cien años de
+                soledad</em> (ISBN <code>9780307474728</code>), que en la base de datos de prueba tiene
+                3 autores (García Márquez, Allende, Borges), 3 géneros (Realismo mágico, Ciencia
+                ficción, Fantasía), 1 imagen y 1 concepto definido — el caso real más "cargado" del
+                seed, y por eso el que mejor expone las anomalías de un diseño sin normalizar.
+            </div>
+        </section>
+
+        <section id="dependencias">
+            <h2>Dependencias identificadas</h2>
+            <p>Documentadas también como comentario en <code>data/library_schema.sql</code>:</p>
+            <div class="terminal">
+<span class="comment">-- Dependencias funcionales (FD):</span>
+isbn -&gt; titulo, anio_publicacion, precio, stock, id_formato
+id_autor -&gt; nombre_autor
+id_genero -&gt; nombre_genero
+id_formato -&gt; nombre_formato
+id_concepto -&gt; nombre_concepto
+(id_libro, id_concepto) -&gt; definicion
+
+<span class="comment">-- Dependencias multivaluadas (MVD), independientes entre si sobre libro:</span>
+isbn -&gt;&gt; id_autor    <span class="description">(varios autores, independiente del genero)</span>
+isbn -&gt;&gt; id_genero   <span class="description">(varios generos, independiente del autor)</span>
+isbn -&gt;&gt; id_imagen   <span class="description">(varias imagenes, independiente de autor/genero)</span>
+            </div>
+        </section>
+
+        <section id="unf">
+            <h2>Punto de partida: estructura sin normalizar (UNF)</h2>
+            <p>
+                Antes de modelar la base de datos, la información de un libro podría llevarse en una
+                sola hoja de cálculo, con una fila por libro y columnas que agrupan varios valores:
+            </p>
+            <table>
+                <tr><th>isbn</th><th>titulo</th><th>autores (repetitivo)</th><th>generos (repetitivo)</th><th>imagenes (repetitivo)</th><th>conceptos (repetitivo)</th></tr>
+                <tr>
+                    <td>9780307474728</td><td>Cien años de soledad</td>
+                    <td>García Márquez, Allende, Borges</td>
+                    <td>Realismo mágico, Ciencia ficción, Fantasía</td>
+                    <td>(url, orden=0, portada)</td>
+                    <td>(Realismo mágico: "Definicion para el libro 1")</td>
+                </tr>
+            </table>
+            <p><span class="badge badge-alerta">Violación de 1FN</span> cuatro columnas contienen
+            grupos repetitivos/listas dentro de una sola celda, en vez de valores atómicos.</p>
+        </section>
+
+        <section id="fn1">
+            <h2>Paso 1 — Primera Forma Normal (1FN)</h2>
+            <p><strong>Regla:</strong> todo atributo debe contener un único valor atómico.</p>
+            <p><strong>Corrección:</strong> aplanar el grupo repetitivo repitiendo el resto de las
+            columnas por cada combinación. Con 3 autores × 3 géneros para este libro (imagen y
+            concepto se repiten igual), la tabla plana en 1FN necesita <strong>9 filas</strong> para
+            un solo libro:</p>
+            <table>
+                <tr><th>isbn</th><th>titulo</th><th>precio</th><th>autor</th><th>genero</th></tr>
+                <tr><td>9780307474728</td><td>Cien años de soledad</td><td>299.99</td><td>García Márquez</td><td>Realismo mágico</td></tr>
+                <tr><td>9780307474728</td><td>Cien años de soledad</td><td>299.99</td><td>García Márquez</td><td>Ciencia ficción</td></tr>
+                <tr><td>9780307474728</td><td>Cien años de soledad</td><td>299.99</td><td>García Márquez</td><td>Fantasía</td></tr>
+                <tr><td>9780307474728</td><td>Cien años de soledad</td><td>299.99</td><td>Allende</td><td>Realismo mágico</td></tr>
+                <tr><td colspan="5" style="text-align:center;color:#888;">… (9 filas en total: 3 autores × 3 géneros)</td></tr>
+            </table>
+            <p><span class="badge badge-alerta">Anomalía</span> el precio se repite 9 veces para el
+            mismo libro: cambiarlo exige actualizar 9 filas (actualización); borrar por error la
+            única fila con "Borges" podría borrar el libro completo si el <code>DELETE</code> está
+            mal filtrado (eliminación); y no se puede registrar un libro sin al menos un autor y un
+            género porque no hay dónde ponerlo sin esas columnas (inserción).</p>
+        </section>
+
+        <section id="fn2">
+            <h2>Paso 2 — Segunda Forma Normal (2FN)</h2>
+            <p><strong>Regla:</strong> todo atributo no clave debe depender de <strong>toda</strong>
+            la clave candidata, no sólo de una parte.</p>
+            <p><span class="badge badge-alerta">Violación</span> con clave candidata
+            <code>(isbn, autor, genero)</code>, los atributos <code>titulo</code>, <code>precio</code>,
+            <code>stock</code> dependen únicamente de <code>isbn</code> — dependencia parcial.</p>
+            <p><strong>Corrección:</strong> separar lo que depende sólo de <code>isbn</code>:</p>
+            <div class="fundamentos-grid">
+                <div class="card-small">
+                    <span class="badge">LIBROS</span>
+                    <p><code>isbn (PK), titulo, anio, precio, stock, formato</code></p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">LIBRO_AUTOR_GENERO</span>
+                    <p><code>isbn, autor, genero, url_imagen, concepto, definicion</code> — todavía mezcla 4 hechos independientes (se resuelve en 3FN y 4FN)</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="fn3">
+            <h2>Paso 3 — Tercera Forma Normal / BCNF</h2>
+            <p><strong>Regla (BCNF):</strong> para toda FD no trivial <code>X → Y</code>, <code>X</code>
+            debe ser clave candidata de su relación.</p>
+            <p><span class="badge badge-alerta">Violación</span> <code>formato</code>, <code>autor</code>,
+            <code>genero</code> y <code>concepto</code> son entidades con identidad propia guardadas
+            como texto libre repetido, no atributos del libro — permite inconsistencias
+            ("Tapa Dura" vs "tapa dura" vs "Tapadura" para el mismo formato).</p>
+            <p><strong>Corrección:</strong> extraer cada catálogo con clave subrogada:</p>
+            <table>
+                <tr><th>Tabla</th><th>Atributos</th></tr>
+                <tr><td>FORMATOS</td><td>id_formato (PK), nombre_formato</td></tr>
+                <tr><td>AUTORES</td><td>id_autor (PK), nombre_autor</td></tr>
+                <tr><td>GENEROS</td><td>id_genero (PK), nombre_genero</td></tr>
+                <tr><td>CONCEPTOS</td><td>id_concepto (PK), nombre_concepto</td></tr>
+                <tr><td>LIBROS</td><td>id_libro (PK), isbn, titulo, anio_publicacion, precio, stock, id_formato (FK)</td></tr>
+            </table>
+            <p>En cada tabla, la única FD no trivial es <code>id_X → nombre_X</code> y el determinante
+            es la clave — ya cumplen BCNF.</p>
+        </section>
+
+        <section id="fn4">
+            <h2>Paso 4 — Cuarta Forma Normal (4FN)</h2>
+            <p><strong>Regla:</strong> no debe existir una MVD no trivial <code>X →&gt; Y</code> a
+            menos que <code>X</code> sea superclave. Varias MVDs independientes sobre el mismo
+            determinante deben separarse, cada una en su propia relación.</p>
+            <p><span class="badge badge-alerta">Violación — "trampa de conexión"</span> si se
+            mantuvieran autores, géneros e imágenes en una sola tabla puente
+            <code>LIBRO_DETALLE(id_libro, id_autor, id_genero, id_imagen)</code>, para <em>Cien años
+            de soledad</em> (3 autores, 3 géneros, 1 imagen) esa tabla necesitaría
+            <strong>9 filas</strong> (3×3×1) sólo para representar autores y géneros que
+            <strong>no tienen ninguna relación entre sí</strong>.</p>
+            <table>
+                <tr><th>id_libro</th><th>id_autor</th><th>id_genero</th></tr>
+                <tr><td>1</td><td>1</td><td>1</td></tr>
+                <tr><td>1</td><td>1</td><td>2</td></tr>
+                <tr><td>1</td><td>1</td><td>3</td></tr>
+                <tr><td colspan="3" style="text-align:center;color:#888;">… 9 filas para 3 autores × 3 géneros que no se relacionan entre sí</td></tr>
+            </table>
+            <p><strong>Corrección (4FN):</strong> cada MVD independiente en su propia relación
+            binaria, sin cruzarlas:</p>
+            <div class="fundamentos-grid">
+                <div class="card-small">
+                    <span class="badge">LIBRO_AUTOR</span>
+                    <p><code>id_libro (FK), id_autor (FK)</code> — PK compuesta. 3 filas, no 9.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">LIBRO_GENERO</span>
+                    <p><code>id_libro (FK), id_genero (FK)</code> — PK compuesta. 3 filas, no 9.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">IMAGENES_LIBRO</span>
+                    <p><code>id_imagen (PK), id_libro (FK), url_imagen, orden, es_portada</code></p>
+                </div>
+            </div>
+            <p>Verificado con datos reales del proyecto (ver <code>docs/TEST_PLAN.md</code> del
+            Ejercicio Guiado 02, TC-10): se asociaron autores y géneros adicionales al libro y cada
+            conjunto se listó por separado, sin ningún cruce entre sí.</p>
+        </section>
+
+        <section id="especial">
+            <h2>Caso especial: <code>libro_concepto</code> — por qué NO es una MVD pura</h2>
+            <p>
+                A primera vista, <code>isbn →&gt; id_concepto</code> parece una cuarta MVD
+                independiente, tratable igual que autor/género/imagen. <strong>No lo es</strong>:
+            </p>
+            <ul>
+                <li>Si fuera MVD pura, la definición de "Realismo mágico" sería la misma sin importar el libro.</li>
+                <li>Pero el mismo concepto puede tener una definición <strong>distinta según el libro</strong> —
+                verificado con datos reales (TC-11 del <code>TEST_PLAN.md</code>): se definió el mismo
+                concepto en 2 libros con textos diferentes y ambos coexisten sin conflicto.</li>
+                <li>Eso implica una dependencia funcional real <code>(id_libro, id_concepto) → definicion</code>,
+                no una MVD. <code>libro_concepto</code> es una <strong>entidad asociativa</strong> con
+                atributo propio, no una tabla puente de sólo llaves.</li>
+            </ul>
+            <table>
+                <tr><th>Tabla</th><th>Atributos</th></tr>
+                <tr><td>LIBRO_CONCEPTO</td><td>id_libro (FK), id_concepto (FK), definicion — PK compuesta, con atributo propio</td></tr>
+            </table>
+            <p>Ya está en BCNF por sí misma (la única FD no trivial es
+            <code>(id_libro, id_concepto) → definicion</code> y el determinante es la clave
+            completa); no hace falta ninguna descomposición adicional por 4FN aquí.</p>
+        </section>
+
+        <section id="resultado">
+            <h2>Diseño de datos: resultado final y diagrama ER</h2>
+            <p>Esquema completo, equivalente a <code>data/library_schema.sql</code>:</p>
+            <table>
+                <tr><th>Tabla</th><th>Atributos</th></tr>
+                <tr><td>USUARIOS</td><td>id_usuario (PK), nombre_usuario, correo, contrasena_hash, rol, fecha_registro</td></tr>
+                <tr><td>FORMATOS</td><td>id_formato (PK), nombre_formato</td></tr>
+                <tr><td>GENEROS</td><td>id_genero (PK), nombre_genero</td></tr>
+                <tr><td>AUTORES</td><td>id_autor (PK), nombre_autor</td></tr>
+                <tr><td>CONCEPTOS</td><td>id_concepto (PK), nombre_concepto</td></tr>
+                <tr><td>LIBROS</td><td>id_libro (PK), isbn, titulo, anio_publicacion, precio, stock, id_formato (FK), fecha_creacion, fecha_actualizacion</td></tr>
+                <tr><td>LIBRO_AUTOR</td><td>id_libro (FK), id_autor (FK) — PK compuesta</td></tr>
+                <tr><td>LIBRO_GENERO</td><td>id_libro (FK), id_genero (FK) — PK compuesta</td></tr>
+                <tr><td>LIBRO_CONCEPTO</td><td>id_libro (FK), id_concepto (FK), definicion — PK compuesta, con atributo propio</td></tr>
+                <tr><td>IMAGENES_LIBRO</td><td>id_imagen (PK), id_libro (FK), url_imagen, orden, es_portada</td></tr>
+            </table>
+
+            <h3>Síntesis visual — diagrama ER</h3>
+            <div class="diagram-box">
+                <pre class="mermaid">
+erDiagram
+    FORMATOS ||--o{ LIBROS : clasifica
+    LIBROS ||--o{ LIBRO_AUTOR : tiene
+    AUTORES ||--o{ LIBRO_AUTOR : escribe
+    LIBROS ||--o{ LIBRO_GENERO : tiene
+    GENEROS ||--o{ LIBRO_GENERO : clasifica
+    LIBROS ||--o{ LIBRO_CONCEPTO : define
+    CONCEPTOS ||--o{ LIBRO_CONCEPTO : "se define en"
+    LIBROS ||--o{ IMAGENES_LIBRO : tiene
+
+    LIBROS {
+        int id_libro PK
+        string isbn
+        string titulo
+        smallint anio_publicacion
+        numeric precio
+        int stock
+        int id_formato FK
+    }
+    FORMATOS {
+        int id_formato PK
+        string nombre_formato
+    }
+    AUTORES {
+        int id_autor PK
+        string nombre_autor
+    }
+    GENEROS {
+        int id_genero PK
+        string nombre_genero
+    }
+    CONCEPTOS {
+        int id_concepto PK
+        string nombre_concepto
+    }
+    LIBRO_AUTOR {
+        int id_libro FK
+        int id_autor FK
+    }
+    LIBRO_GENERO {
+        int id_libro FK
+        int id_genero FK
+    }
+    LIBRO_CONCEPTO {
+        int id_libro FK
+        int id_concepto FK
+        text definicion
+    }
+    IMAGENES_LIBRO {
+        int id_imagen PK
+        int id_libro FK
+        string url_imagen
+        smallint orden
+        boolean es_portada
+    }
+                </pre>
+            </div>
+            <table>
+                <tr><th>Forma normal</th><th>Violación encontrada</th><th>Anomalía que resuelve</th></tr>
+                <tr><td>1FN</td><td>Columnas con listas dentro de una celda</td><td>Ya se puede filtrar por autor/género exacto</td></tr>
+                <tr><td>2FN</td><td>Título/precio/stock dependían sólo de <code>isbn</code>, no de la clave completa</td><td>Cambiar el precio ya no exige actualizar N filas repetidas</td></tr>
+                <tr><td>3FN/BCNF</td><td>Catálogos guardados como texto libre repetido</td><td>Renombrar un catálogo es un solo <code>UPDATE</code></td></tr>
+                <tr><td>4FN</td><td>Combinar autor+género+imagen en una tabla produce una trampa de conexión</td><td>Cada MVD independiente vive en su propia tabla</td></tr>
+            </table>
+        </section>
+
+        <section id="descargas">
+            <h2>Plantilla Excel y conclusiones</h2>
+            <p>
+                Plantilla en Excel con el mismo proceso organizado por hojas (Portada, UNF, 1FN, 2FN,
+                3FN_BCNF, 4FN, Resultado_Final):
+                <a href="../ejercicio02/docs/NORMALIZATION_4FN.xlsx">NORMALIZATION_4FN.xlsx</a>.
+                Documento completo en formato Markdown, con el mismo desarrollo paso a paso:
+                <a href="../ejercicio02/docs/NORMALIZATION_4FN.md">NORMALIZATION_4FN.md</a>.
+            </p>
+            <p>
+                El ejercicio de normalizar hasta 4FN, en vez de detenerse en 3FN como suele hacerse en
+                la práctica, expuso un tipo de anomalía que las formas normales más comunes no
+                capturan: la "trampa de conexión" que aparece al combinar dos o más dependencias
+                multivaluadas independientes en una sola tabla. En este caso concreto, un libro con
+                varios autores y varios géneros a la vez es exactamente el escenario donde esa trampa
+                se manifiesta, y verlo con datos reales del proyecto (9 filas artificiales para
+                representar 3 autores y 3 géneros que no tienen relación entre sí) hizo mucho más
+                clara la justificación de separar <code>libro_autor</code> y <code>libro_genero</code>
+                en tablas independientes. El caso de <code>libro_concepto</code> también fue relevante
+                para distinguir una MVD real de una relación N:M con atributo propio, que es un error
+                de diseño fácil de cometer si no se analiza con cuidado.
+            </p>
+        </section>
+
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 2c - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 { color: var(--text-color); margin-top: 20px; }
+
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+        }
+
+        .card-small.ventaja { border-top-color: #27ae60; }
+        .card-small.desventaja { border-top-color: #c0392b; }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+
+        .nota {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px 18px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Tarea 2c</h1>
+        <h3>Evaluación arquitectónica: monolito vs. desacoplado vs. microservicios</h3>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 31 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#definicion">¿Qué es una arquitectura monolítica?</a></li>
+            <li><a href="#ventajas">Ventajas y desventajas</a></li>
+            <li><a href="#proyecto">Aplicación al proyecto: la librería en línea</a></li>
+            <li><a href="#justificacion">Por qué el monolito es adecuado aquí</a></li>
+            <li><a href="#comparacion">¿Por qué no microservicios o desacoplados?</a></li>
+            <li><a href="#conclusion">Conclusión</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Tarea 2c: Evaluación arquitectónica</h1>
+
+        <section id="definicion">
+            <h2>¿Qué es una arquitectura monolítica?</h2>
+            <p>
+                Una aplicación monolítica consiste en una arquitectura en la que un único bloque de
+                código despliega todas sus actividades sobre una misma base de datos. Su uso es
+                recomendado cuando se trata de aplicaciones pequeñas, productos iniciales, equipos
+                pequeños, un dominio del problema claro, y cuando la velocidad y la simplicidad son
+                prioridad sobre la escalabilidad a gran escala.
+            </p>
+        </section>
+
+        <section id="ventajas">
+            <h2>Ventajas y desventajas</h2>
+            <div class="fundamentos-grid">
+                <div class="card-small ventaja">
+                    <span class="badge" style="background:#27ae60;">Ventajas</span>
+                    <ul style="margin-bottom:0;">
+                        <li>Simple de desarrollar</li>
+                        <li>Despliegue sencillo</li>
+                        <li>Menor infraestructura</li>
+                        <li>Depuración fácil</li>
+                        <li>Transacciones simples con la base de datos</li>
+                    </ul>
+                </div>
+                <div class="card-small desventaja">
+                    <span class="badge" style="background:#c0392b;">Desventajas</span>
+                    <ul style="margin-bottom:0;">
+                        <li>Escalabilidad limitada</li>
+                        <li>Despliegues más lentos a medida que crece</li>
+                        <li>Mayor riesgo de fallo: falla una cosa y falla todo</li>
+                        <li>Tecnologías más acopladas</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="proyecto">
+            <h2>Aplicación al proyecto: la librería en línea</h2>
+            <p>
+                Para poner en práctica el desarrollo de una arquitectura monolítica, se realizó un
+                sitio web monolito para la gestión de una librería. Se utilizó un proyecto Node.js
+                con una sola base de datos relacional conectada en una misma instancia. La
+                funcionalidad implicaba los siguientes requerimientos:
+            </p>
+            <h3>Requerimientos funcionales</h3>
+            <ul>
+                <li>Registro, inicio y cierre de sesión de usuarios.</li>
+                <li>Consulta del catálogo de libros por usuarios autenticados.</li>
+                <li>Búsqueda por ISBN y título.</li>
+                <li>CRUD de libros, autores, géneros, formatos, categorías y conceptos.</li>
+                <li>Asociación de múltiples autores y géneros a un mismo libro.</li>
+                <li>Registro de conceptos y definiciones específicas por libro.</li>
+                <li>Carga, edición y eliminación de imágenes; una imagen podrá marcarse como portada.</li>
+                <li>Control de stock y precio.</li>
+                <li>Administración restringida al único usuario administrador.</li>
+            </ul>
+            <h3>Requerimientos técnicos</h3>
+            <ul>
+                <li>PostgreSQL</li>
+                <li>Node.js</li>
+                <li>Sin APIs — monolito</li>
+            </ul>
+        </section>
+
+        <section id="justificacion">
+            <h2>Por qué el monolito es adecuado aquí</h2>
+            <p>
+                Una arquitectura simple monolítica es adecuada para este ejemplo. Los datos giran en
+                torno al registro de libros, lo cual se puede ir desglosando en sus siguientes tablas:
+                autores, géneros, formatos, conceptos, imágenes, etc.
+            </p>
+            <p>
+                El sistema tiene un alcance limitado, un equipo pequeño, una sola aplicación, y no
+                necesita que sus funcionalidades escalen de manera independiente. Los datos giran en
+                torno a los libros, por lo que tiene sentido usar una arquitectura que integra
+                fuertemente todos sus componentes.
+            </p>
+            <div class="nota">
+                <strong>El caso de la tabla Usuarios:</strong> el único dato que podría representar un
+                problema al integrarlo sería la tabla de usuarios. Al ser un componente que no está
+                ligado a los libros como tal, podría funcionar en desconexión. Sin embargo, al tener
+                recursos limitados (una sola instancia) y tiempo limitado (desarrollo de una semana),
+                no representa un problema unirlo a la base de datos como una tabla más. Lo único es
+                tener cuidado de no integrar funciones innecesariamente juntas y ser cautelosos con
+                los bugs, para que un fallo simple en usuarios no tumbe toda la aplicación.
+            </div>
+        </section>
+
+        <section id="comparacion">
+            <h2>¿Por qué no usar microservicios/desacoplados?</h2>
+            <p>
+                <strong>Desacoplados:</strong> arquitectura donde los componentes de una aplicación
+                están separados y tienen poca dependencia entre sí, permitiendo modificar o mantener
+                una parte sin afectar directamente a las demás.
+            </p>
+            <p>
+                <strong>Microservicios:</strong> arquitectura que divide una aplicación en pequeños
+                servicios independientes, donde cada servicio se encarga de una función específica y
+                puede desarrollarse, desplegarse y escalar de manera independiente.
+            </p>
+            <table>
+                <tr><th>Arquitectura</th><th>Idea central</th></tr>
+                <tr><td>Monolito</td><td>Todo está dentro de la misma estructura.</td></tr>
+                <tr><td>Desacoplado</td><td>Cada parte está más separada y puede modificarse con menos impacto en las demás.</td></tr>
+                <tr><td>Microservicio</td><td>Cada componente tiene una función específica y puede crecer independientemente.</td></tr>
+            </table>
+            <p>
+                Una aplicación de microservicios o desacoplada permite mayor escalabilidad,
+                independencia de componentes, y resulta en sistemas mucho más sofisticados y a prueba
+                de errores.
+            </p>
+            <p>
+                Para este proyecto, el monolito resulta más conveniente que una arquitectura de
+                microservicios porque, aunque una arquitectura desacoplada o basada en microservicios
+                permitiría una mayor independencia y escalabilidad de los componentes, introduciría
+                una complejidad operativa que no resulta necesaria para este sistema.
+            </p>
+        </section>
+
+        <section id="conclusion">
+            <h2>Conclusión</h2>
+            <p>
+                El monolito server-side es la decisión arquitectónica correcta para este proyecto:
+                el alcance limitado, el equipo pequeño, el tiempo de desarrollo acotado y el hecho de
+                que la mayoría de los datos giran en torno a una sola entidad central (el libro) hacen
+                que la simplicidad de desarrollo, despliegue y depuración pesen más que la
+                escalabilidad independiente que ofrecería una arquitectura desacoplada o de
+                microservicios. El riesgo real que introduce el monolito —que un fallo en cualquier
+                parte, incluida la gestión de usuarios, pueda afectar a todo el sistema— se mitiga con
+                disciplina en el código, no con más infraestructura.
+            </p>
+        </section>
+
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>

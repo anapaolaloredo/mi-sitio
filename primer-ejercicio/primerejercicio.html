@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio Guiado - Cloud Models Classifier</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .report-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 { color: var(--text-color); margin-top: 25px; }
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+        }
+        pre {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 18px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .command { color: #569cd6; font-weight: bold; }
+        .description { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        .prompt-box {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+        .diagram-box {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .ok { color: #27ae60; font-weight: bold; }
+        .evidencia-img {
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Ejercicio Guiado — Cloud Models Classifier (Java)</h1>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 18 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#parte1">Parte 1. Desarrollo inicial en Java</a></li>
+            <li><a href="#parte2">Parte 2. Ejecutar y analizar el prototipo</a></li>
+            <li><a href="#parte3">Parte 3. Mejorar la arquitectura</a></li>
+            <li><a href="#parte4">Parte 4. Casos de prueba</a></li>
+            <li><a href="#parte5">Parte 5. Evolucionar de Regex hacia NLP</a></li>
+            <li><a href="#parte6">Parte 6. Interfaz de línea de comandos</a></li>
+            <li><a href="#errores">Errores encontrados</a></li>
+            <li><a href="#conclusiones">Conclusiones</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Ejercicio Guiado: Cloud Models Classifier</h1>
+        <p>
+            Aplicación de escritorio en Java que clasifica descripciones de
+            servicios Cloud en IaaS, PaaS, SaaS o FaaS, desarrollada con apoyo
+            de IA generativa siguiendo el ejercicio guiado.
+        </p>
+
+        <!-- PARTE 1 -->
+        <section id="parte1">
+            <h2>Parte 1. Desarrollo inicial en Java</h2>
+            <p>
+                Se creó el proyecto <code>cloud_models_classifier</code> en
+                Visual Studio Code, con la estructura estándar
+                <code>src/com/cloudclassifier/</code>. Se utilizó IA
+                generativa con el prompt indicado en la guía para generar el
+                primer prototipo: una aplicación Swing con captura de
+                nombre/apellido, campo de texto libre y clasificación por
+                reglas/Regex.
+            </p>
+            <div class="prompt-box">
+                Prompt utilizado: "Crea una aplicación de escritorio en Java
+                con interfaz gráfica (GUI)... analiza el texto y determina si
+                corresponde a IaaS, PaaS, SaaS o FaaS usando reglas sencillas,
+                palabras clave y Regex..."
+            </div>
+            <p>Estructura inicial del proyecto:</p>
+            <img src="estructurainicial.png" alt="Estructura inicial del proyecto Java" class="evidencia-img">
+            <p>
+                El código generado se analizó antes de aceptarse: se
+                identificaron los 4 métodos de análisis por categoría
+                (<code>analizarIaaS</code>, <code>analizarPaaS</code>,
+                <code>analizarSaaS</code>, <code>analizarFaaS</code>), el uso
+                de expresiones regulares con límites de palabra
+                (<code>\b</code>) para evitar coincidencias parciales, y la
+                clase <code>MainFrame</code> encargada de la GUI.
+            </p>
+        </section>
+
+        <!-- PARTE 2 -->
+        <section id="parte2">
+            <h2>Parte 2. Ejecutar y analizar el prototipo</h2>
+            <p>Se compiló y ejecutó la aplicación, verificando que:</p>
+            <ul>
+                <li>La GUI se muestra correctamente.</li>
+                <li>Es posible introducir nombre y apellido.</li>
+                <li>El usuario puede escribir una descripción libre.</li>
+                <li>El programa analiza el contenido y clasifica correctamente
+                entre IaaS, PaaS, SaaS y FaaS.</li>
+            </ul>
+            <p>Ejecución inicial de la GUI:</p>
+            <img src="ejecucionguiinicial.png" alt="Ejecución inicial de la GUI" class="evidencia-img">
+        </section>
+
+        <!-- PARTE 3 -->
+        <section id="parte3">
+            <h2>Parte 3. Mejorar la arquitectura de la aplicación</h2>
+            <p>Se refactorizó el código generado por la IA incorporando:</p>
+            <div class="fundamentos-grid">
+                <div class="card-small">
+                    <span class="badge">Separación</span>
+                    <p>GUI (<code>MainFrame.java</code>) separada por completo
+                    de la lógica (<code>ClassifierService.java</code>). La GUI
+                    no contiene reglas de clasificación.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">Métodos independientes</span>
+                    <p>Un método por categoría: <code>analizarIaaS</code>,
+                    <code>analizarPaaS</code>, <code>analizarSaaS</code>,
+                    <code>analizarFaaS</code>.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">Validación</span>
+                    <p>Se valida que nombre, apellido y descripción no estén
+                    vacíos antes de clasificar, mostrando diálogos de
+                    advertencia en la GUI.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">Manejo de errores</span>
+                    <p>Excepciones controladas al clasificar; en la versión
+                    CLI se capturan y se reportan por <code>stderr</code> con
+                    código de salida distinto de cero.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- PARTE 4 -->
+        <section id="parte4">
+            <h2>Parte 4. Casos de prueba</h2>
+            <p>Formato: Entrada → Clasificación esperada → Clasificación obtenida → ¿Fue correcta?</p>
+            <table>
+                <tr>
+                    <th>Entrada</th>
+                    <th>Esperado</th>
+                    <th>Obtenido</th>
+                    <th>¿Correcta?</th>
+                </tr>
+                <tr>
+                    <td>"Necesito máquinas virtuales, almacenamiento y redes configurables para instalar mi propio sistema operativo."</td>
+                    <td>IaaS</td>
+                    <td>IaaS</td>
+                    <td class="ok">Sí</td>
+                </tr>
+                <tr>
+                    <td>"Quiero desplegar mi aplicación web sin administrar directamente servidores ni sistemas operativos."</td>
+                    <td>PaaS</td>
+                    <td>PaaS</td>
+                    <td class="ok">Sí</td>
+                </tr>
+                <tr>
+                    <td>"Los empleados utilizan una aplicación de correo electrónico directamente desde el navegador y pagan una suscripción mensual."</td>
+                    <td>SaaS</td>
+                    <td>SaaS</td>
+                    <td class="ok">Sí</td>
+                </tr>
+                <tr>
+                    <td>"Necesito ejecutar una función automáticamente cada vez que un usuario suba una imagen al almacenamiento Cloud."</td>
+                    <td>FaaS</td>
+                    <td>FaaS</td>
+                    <td class="ok">Sí</td>
+                </tr>
+            </table>
+            <p>Evidencia de cada caso ejecutado en la GUI:</p>
+            <img src="casoprueba1.png" alt="Caso de prueba 1" class="evidencia-img">
+            <img src="casoprueba2.png" alt="Caso de prueba 2" class="evidencia-img">
+            <img src="casoprueba3.png" alt="Caso de prueba 3" class="evidencia-img">
+            <img src="casoprueba4.png" alt="Caso de prueba 4" class="evidencia-img">
+        </section>
+
+        <!-- PARTE 5 -->
+        <section id="parte5">
+            <h2>Parte 5. Evolucionar de Regex hacia NLP</h2>
+            <p>
+                Se incorporó procesamiento básico de lenguaje natural (NLP) al
+                <code>ClassifierService</code>, siguiendo el flujo:
+                texto del usuario → preprocesamiento → tokenización/normalización
+                → extracción de características → reglas/scoring → categoría.
+            </p>
+            <ul>
+                <li><strong>Conversión a minúsculas</strong> y <strong>limpieza
+                de texto</strong> (eliminación de puntuación/símbolos).</li>
+                <li><strong>Tokenización:</strong> separación del texto en
+                palabras individuales.</li>
+                <li><strong>Eliminación de stopwords:</strong> se descartan
+                palabras sin valor semántico ("el", "la", "de", "para", etc.)
+                usando un conjunto (<code>Set&lt;String&gt;</code>) de
+                stopwords en español.</li>
+                <li><strong>Normalización:</strong> eliminación de tildes con
+                <code>java.text.Normalizer</code>, para que "función" y
+                "funcion" se traten como equivalentes.</li>
+                <li><strong>Identificación de palabras/frases clave:</strong>
+                coincidencia por secuencia de tokens (no por subcadena),
+                soportando frases de varias palabras como "máquina virtual" y
+                evitando falsos positivos como "funcional" activando FaaS.</li>
+                <li><strong>Asignación de puntuaciones (scores):</strong> cada
+                categoría acumula un puntaje según sus coincidencias; gana la
+                de mayor puntaje.</li>
+            </ul>
+            <p>
+                No se utilizó un LLM para responder la categoría: el objetivo
+                de esta parte fue comprender cómo el preprocesamiento de
+                lenguaje natural mejora un clasificador basado en reglas,
+                manteniendo el enfoque de reglas + scoring.
+            </p>
+        </section>
+
+        <!-- PARTE 6 -->
+        <section id="parte6">
+            <h2>Parte 6. Interfaz de línea de comandos</h2>
+            <p>
+                Se creó <code>CloudClassifierCli.java</code>, que reutiliza la
+                misma lógica que la GUI a través de
+                <code>ClassifierService.clasificar()</code>. La arquitectura
+                final: GUI y CLI son ambas interfaces de usuario que llaman al
+                mismo componente central de clasificación (NLP + reglas/scoring),
+                el cual produce el resultado (IaaS/PaaS/SaaS/FaaS).
+            </p>
+            <pre>$ java -cp out com.cloudclassifier.Main "maquinas virtuales almacenamiento redes"
+<span class="comment">Modelo identificado: IaaS</span></pre>
+            <p>Evidencia de la ejecución del CLI:</p>
+            <img src="casopruebapaso7.png" alt="Ejecución del CLI" class="evidencia-img">
+        </section>
+
+        <!-- ERRORES -->
+        <section id="errores">
+            <h2>Errores encontrados</h2>
+            <ul>
+                <li>El código generado inicialmente por la IA colocaba toda
+                la lógica de clasificación dentro de la clase de la GUI; se
+                separó en <code>ClassifierService</code> siguiendo la
+                arquitectura pedida en la Parte 3.</li>
+                <li>El matching por subcadena del prototipo inicial generaba
+                falsos positivos (ej. "funcional" activaba FaaS); se corrigió
+                comparando por tokens completos en la Parte 5.</li>
+                <li>Frases clave de más de una palabra (ej. "máquina virtual")
+                no se detectaban correctamente con Regex simple; se resolvió
+                con búsqueda de subsecuencia de tokens.</li>
+            </ul>
+        </section>
+
+        <!-- CONCLUSIONES -->
+        <section id="conclusiones">
+            <h2>Conclusiones</h2>
+            <p>
+                El ejercicio permitió comprobar cómo un clasificador basado
+                únicamente en reglas y Regex puede mejorarse de forma
+                significativa incorporando un pipeline de NLP básico, sin
+                necesidad de un modelo de lenguaje. Además, mantener la lógica
+                de clasificación separada de la interfaz (GUI y CLI) permitió
+                reutilizar el mismo componente en ambas interfaces sin
+                duplicar código, cumpliendo con los principios de arquitectura
+                solicitados en la guía.
+            </p>
+        </section>
+
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>

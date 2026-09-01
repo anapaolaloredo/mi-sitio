@@ -1,0 +1,3 @@
+Diagramas pendientes referenciados desde index.html:
+  - ARCHITECTURE_MONOLITHIC.png (diagrama de macro-arquitectura del monolito)
+  - DB_DESIGN_ER_4FN.png (diagrama ER final en 4FN)

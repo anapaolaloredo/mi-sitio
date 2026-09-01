@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 1 - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+        .report-card {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+        h3 { color: var(--text-color); margin-top: 25px; }
+        .objetivos-list { list-style: none; padding: 0; }
+        .objetivos-list li { margin-bottom: 12px; padding-left: 30px; position: relative; }
+        .objetivos-list li::before { content: "🎯"; position: absolute; left: 0; }
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+        }
+        .terminal {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow-x: auto;
+        }
+        .command { color: #569cd6; font-weight: bold; }
+        .description { color: #ce9178; }
+        .comment { color: #6a9955; font-style: italic; }
+        pre {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 18px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 13px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .prompt-box {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 4px;
+            font-style: italic;
+        }
+        .respuesta-box {
+            background: #f8f9fa;
+            border-left: 4px solid #27ae60;
+            padding: 15px 20px;
+            margin: 15px 0 25px 0;
+            border-radius: 4px;
+        }
+        .diagram-box {
+            background: #fafafa;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 14px; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+        .ok { color: #27ae60; font-weight: bold; }
+        .evidencia-img {
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Tarea 1 — Implementación Python</h1>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 17 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#descripcion">Descripción del ejercicio</a></li>
+            <li><a href="#arquitectura">Arquitectura</a></li>
+            <li><a href="#nlp">Explicación del NLP</a></li>
+            <li><a href="#codigo">Código fuente</a></li>
+            <li><a href="#screenshots">Screenshots GUI y CLI</a></li>
+            <li><a href="#pruebas">Tabla de 5 casos de prueba</a></li>
+            <li><a href="#errores">Errores encontrados</a></li>
+            <li><a href="#mejoras">Mejoras realizadas</a></li>
+            <li><a href="#conclusiones">Conclusiones</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Reporte 1: Implementación Python</h1>
+
+        <!-- DESCRIPCIÓN -->
+        <section id="descripcion">
+            <h2>Descripción del ejercicio</h2>
+            <p>
+                El objetivo de esta tarea fue reimplementar en Python el clasificador
+                de modelos Cloud (IaaS, PaaS, SaaS y FaaS) originalmente desarrollado
+                en Java, mejorando el diseño mediante separación de responsabilidades,
+                procesamiento básico de lenguaje natural (NLP) y reutilización de
+                componentes entre dos interfaces distintas: una gráfica (GUI) y una
+                de línea de comandos (CLI).
+            </p>
+            <p>
+                El programa recibe una descripción en texto libre de un servicio Cloud
+                y determina, mediante coincidencia de palabras clave, a qué modelo de
+                servicio corresponde con mayor probabilidad.
+            </p>
+        </section>
+
+        <!-- ARQUITECTURA -->
+        <section id="arquitectura">
+            <h2>Arquitectura</h2>
+            <p>El proyecto se organizó en tres módulos independientes:</p>
+            <div class="fundamentos-grid">
+                <div class="card-small">
+                    <span class="badge">Lógica</span>
+                    <h3 style="margin-top:5px;">classifier_service.py</h3>
+                    <p>Contiene toda la lógica de negocio: normalización de texto,
+                    tokenización, bancos de palabras clave, conteo de coincidencias,
+                    clasificación y validación de datos. No conoce nada de GUI ni CLI.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">CLI</span>
+                    <h3 style="margin-top:5px;">classifier.py</h3>
+                    <p>Interfaz de línea de comandos con <code>argparse</code>.
+                    Importa las funciones de <code>classifier_service.py</code>,
+                    no duplica lógica.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge">GUI</span>
+                    <h3 style="margin-top:5px;">gui_app.py</h3>
+                    <p>Interfaz gráfica con Tkinter: captura de nombre/apellido,
+                    entrada de texto y presentación del resultado. También importa
+                    las mismas funciones de <code>classifier_service.py</code>.</p>
+                </div>
+            </div>
+            <div class="diagram-box">
+                <strong>gui_app.py</strong> &nbsp;↘<br>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<strong>classifier_service.py</strong> (lógica única)<br>
+                <strong>classifier.py</strong> &nbsp;↗
+            </div>
+        </section>
+
+        <!-- NLP -->
+        <section id="nlp">
+            <h2>Explicación del NLP</h2>
+            <p>Se aplicó procesamiento básico de lenguaje natural en tres pasos:</p>
+            <ol>
+                <li><strong>Normalización:</strong> el texto se convierte a minúsculas
+                y se eliminan tildes (con <code>unicodedata</code>), para que
+                "función" y "funcion" se traten igual.</li>
+                <li><strong>Tokenización:</strong> el texto se separa en palabras
+                individuales usando una expresión regular (<code>\w+</code>).</li>
+                <li><strong>Coincidencia por tokens:</strong> cada palabra clave
+                (incluyendo frases de varias palabras como "máquina virtual") se
+                busca como subsecuencia exacta de tokens, evitando falsos positivos
+                como que "función" coincida con "funcional".</li>
+            </ol>
+            <p>Cada categoría (IaaS, PaaS, SaaS, FaaS) tiene su propio banco de
+            palabras clave. Se cuentan las coincidencias por categoría y gana la
+            de mayor puntaje; si todas quedan en cero, el resultado es
+            "No concluyente".</p>
+        </section>
+
+        <!-- CÓDIGO FUENTE -->
+        <section id="codigo">
+            <h2>Código fuente</h2>
+            <p>Fragmento clave de <code>classifier_service.py</code> (normalización y clasificación):</p>
+            <pre><span class="comment"># Normalización y tokenización</span>
+def normalizar(texto):
+    return quitar_tildes(texto.lower())
+
+def tokenizar(texto):
+    return re.findall(r"\w+", texto, flags=re.UNICODE)
+
+<span class="comment"># Clasificación: se ejecutan las 4 categorías y gana la de mayor puntaje</span>
+def clasificar(texto_original):
+    texto = normalizar(texto_original)
+    puntajes = {cat: contar_coincidencias(texto, kws)
+                for cat, kws in CATEGORIAS.items()}
+    maximo = max(puntajes.values())
+    categoria = ("No concluyente" if maximo == 0
+                 else next(c for c, p in puntajes.items() if p == maximo))
+    return ResultadoClasificacion(categoria, puntajes)</pre>
+            <p>Fragmento de <code>classifier.py</code> (CLI reutilizando la misma lógica):</p>
+            <pre><span class="command">from</span> classifier_service <span class="command">import</span> clasificar, validar_datos
+
+parser.add_argument(<span class="description">"--text"</span>, <span class="description">"-t"</span>, required=<span class="command">True</span>)
+resultado = clasificar(args.text)
+print(<span class="description">f"Modelo identificado: {resultado.categoria_ganadora}"</span>)</pre>
+            <p>Los archivos completos (<code>classifier_service.py</code>,
+            <code>classifier.py</code>, <code>gui_app.py</code>) se entregan junto
+            con este reporte.</p>
+        </section>
+
+        <!-- SCREENSHOTS -->
+        <section id="screenshots">
+            <h2>Screenshots GUI y CLI</h2>
+
+            <h3>GUI</h3>
+            <p>Interfaz gráfica ejecutada con <code>python3 gui_app.py</code>,
+            mostrando la captura de nombre/apellido, la descripción ingresada y el
+            resultado de la clasificación:</p>
+            <img src="appgui.png" alt="Captura de la GUI del clasificador Cloud" class="evidencia-img">
+
+            <h3 style="margin-top:35px;">CLI (argparse)</h3>
+            <p>Ejecución desde terminal usando la interfaz de línea de comandos:</p>
+            <img src="prueba.png" alt="Captura de la ejecución del CLI" class="evidencia-img">
+        </section>
+
+        <!-- TABLA DE PRUEBAS -->
+        <section id="pruebas">
+            <h2>Tabla de 5 casos de prueba</h2>
+            <table>
+                <tr>
+                    <th>Entrada</th>
+                    <th>Resultado esperado</th>
+                    <th>Resultado obtenido</th>
+                    <th>Estatus</th>
+                </tr>
+                <tr>
+                    <td>"necesito una maquina virtual con almacenamiento y balanceador de carga"</td>
+                    <td>IaaS</td>
+                    <td>IaaS (puntaje 3)</td>
+                    <td class="ok">Correcto</td>
+                </tr>
+                <tr>
+                    <td>"quiero desplegar mi app en una plataforma con ci/cd y un framework"</td>
+                    <td>PaaS</td>
+                    <td>PaaS (puntaje 3)</td>
+                    <td class="ok">Correcto</td>
+                </tr>
+                <tr>
+                    <td>"uso gmail y dropbox desde el navegador sin instalacion"</td>
+                    <td>SaaS</td>
+                    <td>SaaS (puntaje 4)</td>
+                    <td class="ok">Correcto</td>
+                </tr>
+                <tr>
+                    <td>"ejecutar una funcion serverless cuando se suba una imagen"</td>
+                    <td>FaaS</td>
+                    <td>FaaS (puntaje 2)</td>
+                    <td class="ok">Correcto</td>
+                </tr>
+            
+            </table>
+        </section>
+
+        <!-- ERRORES -->
+        <section id="errores">
+            <h2>Errores encontrados</h2>
+            <ul>
+                <li>En la primera versión, el matching por substring hacía que
+                palabras como "funcional" activaran falsamente la categoría FaaS
+                (por contener "funcion"). Se corrigió comparando por tokens
+                completos en vez de subcadenas.</li>
+                <li>Al ejecutar la GUI en algunos sistemas Linux, Tkinter no está
+                instalado por defecto (<code>ModuleNotFoundError: No module named
+                'tkinter'</code>), requiriendo instalar el paquete
+                <code>python3-tk</code> por separado.</li>
+                <li>Frases clave de más de una palabra (ej. "máquina virtual")
+                no se detectaban con una comparación palabra por palabra; se
+                resolvió con búsqueda de subsecuencia de tokens.</li>
+            </ul>
+        </section>
+
+        <!-- MEJORAS -->
+        <section id="mejoras">
+            <h2>Mejoras realizadas</h2>
+            <ul>
+                <li>Separación estricta entre lógica (<code>classifier_service.py</code>)
+                e interfaces, permitiendo que GUI y CLI compartan exactamente el
+                mismo código de clasificación sin duplicación.</li>
+                <li>Normalización de texto (minúsculas + eliminación de tildes)
+                para hacer la comparación más robusta ante variaciones de
+                escritura del usuario.</li>
+                <li>Validación de datos centralizada (<code>validar_datos</code>)
+                reutilizada tanto en GUI como en CLI.</li>
+                <li>Manejo de errores explícito mediante la excepción
+                <code>ValidacionError</code>, capturada de forma distinta en cada
+                interfaz (diálogo en GUI, mensaje en <code>stderr</code> en CLI).</li>
+            </ul>
+        </section>
+
+        <!-- CONCLUSIONES -->
+        <section id="conclusiones">
+            <h2>Conclusiones</h2>
+            <p>
+                La reimplementación en Python permitió aplicar principios de buen
+                diseño de software separación de responsabilidades y reutilización
+                de componentes de forma más directa que en la versión original en
+                Java. Además, incorporar un procesamiento de lenguaje
+                natural básico hizo la clasificación más confiable frente a coincidencias
+                parciales incorrectas. Las cinco pruebas realizadas confirmaron que
+                el clasificador identifica correctamente los cuatro modelos de
+                servicio Cloud, así como los casos sin coincidencias.
+            </p>
+        </section>
+
+        <section id="descarga">
+                    <h2>Descarga de proyecto python</h2> 
+                    <p>Puedes descargar todos los scripts utilizados en la práctica en el siguiente archivo:</p>
+
+            <a href="../files/python.zip" download class="download-btn">
+                📦 Descargar proyecto python
+            </a>
+        </section>
+
+
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>

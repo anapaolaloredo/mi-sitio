@@ -1,0 +1,12 @@
+Los 4 scripts reales del proyecto ya están aquí:
+  library_schema.sql    (tablas, PK/FK/CHECK/UNIQUE, funciones PL/pgSQL)
+  library_triggers.sql  (trg_una_portada_por_libro, trg_libros_fecha_actualizacion,
+                         trg_usuarios_auditoria_rol)
+  library_views.sql     (vista_catalogo_libros, vista_administradores,
+                         vista_libros_stock_bajo)
+  library_data.sql      (datos de prueba — 3-7 filas por tabla, no las 30 pedidas por el ejercicio)
+
+Orden de carga: schema -> triggers -> views -> data (así se probó en TEST_PLAN.md).
+
+Sigue pendiente: renombrarlos al esquema db/00_create_database.sql ... db/06_views.sql que pide
+el PDF (hoy están con sus nombres originales de data/ en el repo).

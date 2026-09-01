@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 2d - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+            --ok-color: #27ae60;
+            --warn-color: #b8860b;
+            --gap-color: #c0392b;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-card {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 { color: var(--text-color); margin-top: 20px; }
+
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        @media (max-width: 800px) { .fundamentos-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+            text-align: center;
+        }
+        .card-small .numero { font-size: 28px; font-weight: bold; color: var(--accent-color); }
+
+        table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        code { background: #f1f3f4; padding: 1px 5px; border-radius: 3px; font-size: 0.92em; }
+
+        .ok { color: var(--ok-color); font-weight: bold; }
+        .warn { color: var(--warn-color); font-weight: bold; }
+        .gap { color: var(--gap-color); font-weight: bold; }
+
+        .badge {
+            display: inline-block;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 12px;
+        }
+        .badge-ok { background: var(--ok-color); }
+        .badge-warn { background: var(--warn-color); }
+        .badge-gap { background: var(--gap-color); }
+
+        .nota {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px 18px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Tarea 2d</h1>
+        <h3>Revisión de seguridad — Librería en línea (Ejercicio Guiado 02)</h3>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 31 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#introduccion">Introducción y metodología</a></li>
+            <li><a href="#minimos">Controles mínimos requeridos (1–10)</a></li>
+            <li><a href="#adicionales">Riesgos adicionales identificados (11–16)</a></li>
+            <li><a href="#resumen">Resumen de estado</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Tarea 2d: Revisión de seguridad</h1>
+        <p>
+            Revisión final de seguridad del <a href="../ejercicio02/index.html">Ejercicio Guiado 02</a>,
+            alineada con <a href="../ejercicio02/docs/SECURITY_REVIEW.md">docs/SECURITY_REVIEW.md</a>.
+            El ejercicio pide seleccionar al menos 8 amenazas o errores posibles; aquí se documentan
+            <strong>16</strong>: 10 controles mínimos explícitamente pedidos por el ejercicio, más 6
+            riesgos adicionales que identifiqué por cuenta propia al revisar el código y la
+            infraestructura. Para cada uno: la amenaza, cómo se mitigó (o no), y el riesgo residual
+            que queda.
+        </p>
+
+        <div class="fundamentos-grid">
+            <div class="card-small"><div class="numero">16</div>amenazas revisadas</div>
+            <div class="card-small"><div class="numero">9</div>mitigadas y verificadas</div>
+            <div class="card-small"><div class="numero">2</div>pendientes de confirmar</div>
+            <div class="card-small"><div class="numero">5</div>riesgos residuales aceptados</div>
+        </div>
+
+        <section id="introduccion">
+            <h2>Introducción y metodología</h2>
+            <p>
+                Cada control se verificó por inspección directa del código fuente (no por inferencia):
+                middlewares de autenticación/autorización, controladores, esquema de PostgreSQL, y una
+                auditoría línea por línea de las 4 rutas de la aplicación (documentada en
+                <code>ENGINEERING_DECISIONS.md</code>, decisión D-09) para confirmar que ninguna
+                función administrativa quedó sin el middleware <code>requerirAdmin</code>.
+            </p>
+        </section>
+
+        <section id="minimos">
+            <h2>Controles mínimos requeridos por el ejercicio</h2>
+            <table>
+                <tr><th>#</th><th>Amenaza</th><th>Mitigación aplicada</th><th>Estado</th></tr>
+                <tr><td>1</td><td>Contraseñas comprometidas si se filtra la base de datos</td><td>Hash con <code>bcrypt</code> (10 rondas); nunca se guarda texto plano</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>1b</td><td>Contraseñas triviales/débiles</td><td>Política básica: longitud mínima de 6 caracteres y confirmación en el registro</td><td><span class="badge badge-warn">Débil</span> — sin requisito de mayúsculas/números/símbolos</td></tr>
+                <tr><td>2</td><td>Exposición de credenciales en el código fuente</td><td>Secretos sólo en <code>.env</code> (vía <code>dotenv</code>); no versionado</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>3</td><td>SQL Injection</td><td>Todo acceso vía funciones PL/pgSQL con parámetros posicionales (<code>$1, $2...</code>); cero concatenación de strings</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>4</td><td>Datos inválidos o maliciosos en formularios</td><td>Validación server-side en cada controlador + restricciones <code>CHECK</code> en PostgreSQL</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>5</td><td>Escalación de privilegios (acceso admin desde cuenta no-admin)</td><td>Middleware <code>requerirAdmin</code> en todas las rutas de escritura; auditoría línea por línea sin huecos</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>6</td><td>Secuestro/fijación de sesión, sesión persistente tras logout</td><td><code>express-session</code> + <code>connect-pg-simple</code> (sesión en servidor); <code>destroy()</code> en logout</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>7</td><td>Subida de archivos peligrosos</td><td><code>multer</code> con whitelist de extensión+MIME, límite de 5&nbsp;MB, nombre generado por el sistema</td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>8</td><td>Fuga de información interna (stack traces, SQL) al usuario final</td><td>Vista de error genérica; en producción no se expone <code>err.message</code></td><td><span class="badge badge-ok">Mitigado</span></td></tr>
+                <tr><td>9</td><td>Uso de un superusuario de PostgreSQL para correr la app</td><td>La app se conecta como <code>library_user</code>, no <code>postgres</code></td><td><span class="badge badge-warn">Pendiente</span> — confirmar con <code>\du</code> que no es superusuario en el servidor real</td></tr>
+                <tr><td>10</td><td>Publicación accidental de secretos en <code>ubiquitous.udem.edu</code></td><td>Checklist manual: excluir <code>.env</code>, <code>node_modules</code>, llaves; publicar <code>.env.example</code></td><td><span class="badge badge-warn">Pendiente</span> — de ejecutar al armar el <code>.tar.gz</code></td></tr>
+            </table>
+        </section>
+
+        <section id="adicionales">
+            <h2>Riesgos adicionales identificados</h2>
+            <p>No pedidos explícitamente por el ejercicio, pero relevantes tras revisar el código:</p>
+            <table>
+                <tr><th>#</th><th>Amenaza</th><th>Estado actual</th><th>Riesgo residual</th></tr>
+                <tr><td>11</td><td>CSRF en formularios <code>POST</code>/<code>PUT</code>/<code>DELETE</code></td><td><span class="badge badge-gap">Sin mitigar</span></td><td>Sin token CSRF; cookie sin <code>sameSite</code> explícito. No protege contra un formulario auto-enviado desde otro sitio con sesión activa.</td></tr>
+                <tr><td>12</td><td>Fuerza bruta sobre login</td><td><span class="badge badge-gap">Sin mitigar</span></td><td>Sin límite de intentos (no hay <code>express-rate-limit</code>).</td></tr>
+                <tr><td>13</td><td>Cabeceras de seguridad HTTP (CSP, X-Frame-Options, etc.)</td><td><span class="badge badge-gap">Sin mitigar</span></td><td>No está instalado <code>helmet</code>; expuesto a clickjacking.</td></tr>
+                <tr><td>14</td><td>Puerto 3000 de Node expuesto a <code>0.0.0.0/0</code> en el firewall de GCP</td><td><span class="badge badge-warn">Parcial</span></td><td>Node sólo escucha en <code>127.0.0.1</code> (no alcanzable), pero la regla debería eliminarse una vez confirmado el reverse proxy.</td></tr>
+                <tr><td>15</td><td>Enumeración de usuarios vía mensajes de error de login</td><td><span class="badge badge-ok">Mitigado</span></td><td>Ninguno — mismo mensaje "Credenciales inválidas" para correo inexistente o contraseña incorrecta.</td></tr>
+                <tr><td>16</td><td>Falta de trazabilidad sobre quién obtiene/pierde el rol de Administrador</td><td><span class="badge badge-ok">Corregido 31/08/2026</span></td><td>Ninguno — trigger <code>trg_usuarios_auditoria_rol</code> registra cada cambio con fecha; verificado con datos reales.</td></tr>
+            </table>
+        </section>
+
+        <section id="resumen">
+            <h2>Resumen de estado</h2>
+            <ul>
+                <li><strong>Mitigados y verificados (9):</strong> hash de contraseñas, secretos en <code>.env</code>, SQL parametrizado, validación server-side, autorización por rol, manejo de sesiones, validación de archivos, mensajes de error controlados, no distinguir usuario inexistente vs. contraseña incorrecta, bitácora de cambios de rol.</li>
+                <li><strong>Presente pero débil (1):</strong> política de contraseñas (sólo longitud mínima).</li>
+                <li><strong>Pendientes de confirmar con evidencia real (2):</strong> privilegios exactos de <code>library_user</code> en el servidor de GCP, checklist de publicación sin secretos.</li>
+                <li><strong>Riesgos residuales aceptados para el alcance del ejercicio (4):</strong> sin protección CSRF explícita, sin límite de intentos de login, sin cabeceras de seguridad HTTP, regla de firewall del puerto 3000 más permisiva de lo necesario.</li>
+            </ul>
+            <div class="nota">
+                Documento completo, con evidencia de prueba línea por línea para cada control:
+                <a href="../ejercicio02/docs/SECURITY_REVIEW.md">docs/SECURITY_REVIEW.md</a>.
+            </div>
+        </section>
+
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>
