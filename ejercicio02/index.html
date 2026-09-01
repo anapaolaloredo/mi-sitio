@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicio Guiado 02 — Librería en línea (Node.js + PostgreSQL)</title>
+    <link rel="stylesheet" href="../styles.css">
     <link rel="stylesheet" href="css/estilos.css">
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <script>
@@ -13,6 +14,7 @@
     </script>
 </head>
 <body>
+    <div id="menu-global" data-base="../"></div>
 
     <!-- PORTADA -->
     <div class="report-card" id="sec1-portada" style="text-align:center;">
@@ -26,8 +28,6 @@
             <tr><th>Profesor</th><td>Dr. Raúl Morales Salcedo</td></tr>
             <tr><th>Alumna</th><td>Ana Paola Loredo Moreno</td></tr>
             <tr><th>Matrícula</th><td>613772</td></tr>
-            <tr><th>Grupo y hora</th><td><em>pendiente de completar</em></td></tr>
-            <tr><th>Semestre</th><td><em>pendiente de completar</em></td></tr>
             <tr><th>Fecha</th><td>31 de agosto de 2026</td></tr>
         </table>
         <br>
@@ -39,20 +39,20 @@
         <h1>Índice</h1>
         <ol style="line-height:2.2;">
             <li><a href="#sec2-objetivo">Objetivo y alcance</a></li>
-            <li><a href="#sec3-requisitos">Análisis de requisitos</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec4-arquitectura">Decisiones de arquitectura y diagrama del monolito</a> <span class="indice-estado parcial"></span></li>
-            <li><a href="#sec5-basededatos">Diseño de la base de datos, diagrama ER y 4FN</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec6-gcp">Infraestructura GCP y PostgreSQL</a> <span class="indice-estado parcial"></span></li>
-            <li><a href="#sec7-modulos">Estructura de módulos de Node.js</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec8-funcionalidades">Funcionalidades implementadas</a> <span class="indice-estado parcial"></span></li>
-            <li><a href="#sec9-seguridad">Seguridad y roles</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec10-pruebas">Plan y resultados de pruebas</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec11-despliegue">Despliegue con Apache/NGINX</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec12-evidencias">Galería de evidencias</a> <span class="indice-estado parcial"></span></li>
-            <li><a href="#sec13-decisiones">Decisiones de ingeniería y problemas resueltos</a> <span class="indice-estado listo"></span></li>
-            <li><a href="#sec14-ia">Uso documentado de Inteligencia Artificial</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec3-requisitos">Análisis de requisitos</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec4-arquitectura">Decisiones de arquitectura y diagrama del monolito</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec5-basededatos">Diseño de la base de datos, diagrama ER y 4FN</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec6-gcp">Infraestructura GCP y PostgreSQL</a> <span class="indice-estado parcial">parcial</span></li>
+            <li><a href="#sec7-modulos">Estructura de módulos de Node.js</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec8-funcionalidades">Funcionalidades implementadas</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec9-seguridad">Seguridad y roles</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec10-pruebas">Plan y resultados de pruebas</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec11-despliegue">Despliegue con Apache/NGINX</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec12-evidencias">Galería de evidencias</a> <span class="indice-estado parcial">parcial</span></li>
+            <li><a href="#sec13-decisiones">Decisiones de ingeniería y problemas resueltos</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec14-ia">Uso documentado de Inteligencia Artificial</a> <span class="indice-estado listo">listo</span></li>
             <li><a href="#sec15-conclusiones">Conclusiones y mejoras futuras</a></li>
-            <li><a href="#sec16-descargas">Descargas</a> <span class="indice-estado"></span></li>
+            <li><a href="#sec16-descargas">Descargas</a> <span class="indice-estado listo">listo</span></li>
         </ol>
     </div>
 
@@ -190,9 +190,11 @@
                 código, no separación en servicios independientes.
             </p>
             <div class="diagram-box">
-                <p><strong>📌 Espacio reservado</strong> — insertar aquí <code>img/ARCHITECTURE_MONOLITHIC.png</code>
-                (diagrama que muestre: presentación, rutas/controladores, servicios/lógica de negocio,
-                middleware, acceso a datos, vistas, estáticos, PostgreSQL y almacenamiento de imágenes).</p>
+                <img src="img/ARCHITECTURE_MONOLITHIC.png" alt="Diagrama de macro-arquitectura del monolito" style="max-width:100%;border-radius:6px;">
+                <p class="evidencia-caption">Generado a partir de la estructura real del proyecto (no es un
+                boceto aparte): muestra presentación, rutas/controladores, middleware, acceso a datos,
+                vistas, estáticos, PostgreSQL y almacenamiento de imágenes. Archivo también disponible en
+                <a href="docs/ARCHITECTURE_MONOLITHIC.png">docs/ARCHITECTURE_MONOLITHIC.png</a>.</p>
             </div>
             <h3>Patrón de presentación y organización del código (MVC server-side)</h3>
             <table>
@@ -313,7 +315,7 @@ erDiagram
         boolean es_portada
     }
                 </pre>
-                <p class="evidencia-caption">Diagrama generado a partir de <code>data/library_schema.sql</code> real (no es un boceto aparte que se pueda desincronizar del código). <code>USUARIOS</code> no tiene FK hacia el resto del modelo — es intencional, la sesión/autenticación es independiente del catálogo de libros.</p>
+                <p class="evidencia-caption">Diagrama generado a partir de <code>data/library_schema.sql</code> real (no es un boceto aparte que se pueda desincronizar del código). <code>USUARIOS</code> no tiene FK hacia el resto del modelo — es intencional, la sesión/autenticación es independiente del catálogo de libros. También disponible como imagen estática: <a href="docs/DB_DESIGN_ER_4FN.png">docs/DB_DESIGN_ER_4FN.png</a>.</p>
             </div>
 
             <h3>Normalización demostrable 1FN → 2FN → 3FN/BCNF → 4FN</h3>
@@ -350,17 +352,22 @@ erDiagram
             </table>
             <p>Detalle de diseño (necesidad → alternativas → decisión → riesgo → evidencia) en D-13,
             D-14 y D-15 de <a href="docs/ENGINEERING_DECISIONS.md">docs/ENGINEERING_DECISIONS.md</a>;
-            los 6 casos de prueba en <a href="docs/TEST_PLAN.md">docs/TEST_PLAN.md</a> (TC-22 a TC-27),
-            todos ejecutados contra una base de datos recreada desde cero con
-            <code>library_schema.sql</code> → <code>library_triggers.sql</code> →
-            <code>library_views.sql</code> → <code>library_data.sql</code>, en ese orden.</p>
+            los casos de prueba en <a href="docs/TEST_PLAN.md">docs/TEST_PLAN.md</a> (TC-22 a TC-30),
+            todos ejecutados contra una base de datos recreada desde cero con la secuencia real
+            <code>db/00_create_database.sql</code> → <code>db/01_schema.sql</code> →
+            <code>db/04_stored_procedures.sql</code> → <code>db/05_triggers.sql</code> →
+            <code>db/06_views.sql</code> → <code>db/02_seed_30_per_table.sql</code>.</p>
+            <p class="ok"><strong>Ya resuelto (2026-09-01):</strong> los 7 scripts están reorganizados
+            en <a href="sql/">sql/</a> con los nombres <code>00</code> a <code>06</code> que pide el
+            ejercicio, y el seed se amplió a 30 filas por tabla (formatos se quedó en 8 por decisión
+            documentada, D-18) — conteos reales verificados:
+            <code>usuarios=30, autores=30, generos=30, conceptos=30, libros=30, formatos=8</code>.</p>
             <div class="pendiente">
-                <div class="pendiente-titulo">📌 Sigue pendiente</div>
-                <p>Renombrar/reorganizar estos 4 archivos al esquema <code>db/00_create_database.sql</code>
-                … <code>db/06_views.sql</code> que pide el ejercicio (hoy están en <code>data/</code> con
-                nombres propios, ya en el orden correcto de carga); ampliar el seed a 30 filas por tabla;
-                y capturas de <code>psql</code> ejecutadas contra el servidor real de GCP (lo de arriba se
-                verificó contra una base de datos local de prueba).</p>
+                <div class="pendiente-titulo">📌 Único punto que sigue pendiente aquí</div>
+                <p>Capturas de <code>psql</code> ejecutadas <strong>contra el servidor real de GCP</strong>
+                (todo lo anterior se verificó contra una base de datos local de prueba, no contra
+                <code>maquina-integracion</code>) — requiere acceso directo al servidor, ver
+                <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>.</p>
             </div>
         </section>
 
@@ -523,12 +530,17 @@ npm start</pre>
                 genéricos. Verificado en <code>docs/TEST_PLAN.md</code> (TC-28) y documentado como la
                 mejora pequeña y verificable de la Tarea 2e en <code>docs/AI_PROMPT_HISTORY.md</code>.</p>
             </div>
-            <div class="pendiente">
-                <div class="pendiente-titulo">⚠️ Brechas que siguen abiertas</div>
-                <ul style="margin-bottom:0;">
-                    <li><strong>Catálogo de "categorías"</strong> mencionado en el enunciado: el modelo actual sólo tiene <code>formatos</code>, <code>generos</code>, <code>autores</code> y <code>conceptos</code> como catálogos independientes; confirmar si "categoría" debía ser una tabla adicional o si se cubre con <code>generos</code>/<code>formatos</code>.</li>
-                    <li><strong>Texto alternativo de imagen</strong>: <code>imagenes_libro</code> no tiene columna para <code>alt</code>; sólo se guarda <code>url_imagen</code>, <code>orden</code> y <code>es_portada</code>.</li>
-                </ul>
+            <div class="card-small" style="border-top-color:var(--ok-color);margin:16px 0;">
+                <span class="badge badge-ok">Resuelto (2026-09-01)</span>
+                <p style="margin-bottom:0;"><strong>Catálogo de "categorías":</strong> decisión
+                documentada (D-16, <code>docs/ENGINEERING_DECISIONS.md</code>) — no se agrega una
+                tabla adicional; "categoría" se trata como sinónimo de <code>generos</code>, que ya
+                cubre esa clasificación temática del libro.</p>
+                <p style="margin-bottom:0;"><strong>Texto alternativo de imagen:</strong> implementado
+                — columna <code>texto_alternativo</code> en <code>imagenes_libro</code>, campo en el
+                formulario de subida, y usado como <code>alt</code> tanto en el detalle del libro como
+                en la miniatura del catálogo (<code>vista_catalogo_libros.portada_alt</code>). Detalle
+                en D-17 y verificado en <code>docs/TEST_PLAN.md</code> (TC-30).</p>
             </div>
         </section>
 
@@ -921,9 +933,7 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
             </p>
             <p><strong>Mejoras futuras identificadas durante este trabajo:</strong></p>
             <ul>
-                <li>Completar la documentación formal pendiente (4FN, diagramas, verificación de privilegios en PostgreSQL).</li>
-                <li>Ampliar el seed a 30 filas por tabla.</li>
-                <li>Definir si "categoría" debe ser un catálogo independiente adicional.</li>
+                <li>Repetir la carga de <code>db/00...06</code> y la verificación de privilegios (<code>\du library_user</code>) directamente contra el servidor real de GCP, no sólo contra la base de datos local de prueba usada aquí.</li>
                 <li>Automatizar las pruebas en <code>test/</code> (actualmente vacías/mínimas) para no depender de una ejecución manual como la de la sección 9.</li>
                 <li>Cerrar los riesgos residuales de seguridad documentados (CSRF, rate-limiting, cabeceras HTTP).</li>
                 <li><strong>Idea de UX de la estudiante (pendiente para una iteración futura, no
@@ -938,16 +948,10 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
         <section id="sec16-descargas">
             <h2>15. Descargas</h2>
             <ul>
-                <li><a href="docs/">docs/</a> — REQUIREMENTS.md/.xlsx, ENGINEERING_DECISIONS.md, SECURITY_REVIEW.md, TEST_PLAN.md, GCP_COMMANDS.md, NORMALIZATION_4FN.md/.xlsx, AI_PROMPT_HISTORY.md, AI_CHANGELOG.md, PROMPT_MAESTRO_IA.md. ✅ Completo.</li>
-                <li><a href="sql/">sql/</a> — <a href="sql/library_schema.sql">library_schema.sql</a>, <a href="sql/library_triggers.sql">library_triggers.sql</a>, <a href="sql/library_views.sql">library_views.sql</a>, <a href="sql/library_data.sql">library_data.sql</a> (los mismos 4 scripts reales del repo, en orden de carga). ✅ Listos, aunque sin el renombrado <code>00...06</code> ni el seed de 30 filas por tabla.</li>
+                <li><a href="docs/">docs/</a> — REQUIREMENTS.md/.xlsx, ENGINEERING_DECISIONS.md, SECURITY_REVIEW.md, TEST_PLAN.md, GCP_COMMANDS.md, NORMALIZATION_4FN.md/.xlsx, AI_PROMPT_HISTORY.md, AI_CHANGELOG.md, PROMPT_MAESTRO_IA.md, ARCHITECTURE_MONOLITHIC.png, DB_DESIGN_ER_4FN.png. ✅ Completo.</li>
+                <li><a href="sql/">sql/</a> — <a href="sql/00_create_database.sql">00_create_database.sql</a>, <a href="sql/01_schema.sql">01_schema.sql</a>, <a href="sql/02_seed_30_per_table.sql">02_seed_30_per_table.sql</a>, <a href="sql/03_all_queries_before_stored_procedures.sql">03_all_queries_before_stored_procedures.sql</a>, <a href="sql/04_stored_procedures.sql">04_stored_procedures.sql</a>, <a href="sql/05_triggers.sql">05_triggers.sql</a>, <a href="sql/06_views.sql">06_views.sql</a>. ✅ Completo, con los nombres exactos que pide el ejercicio, verificados cargando uno por uno contra una base de datos nueva.</li>
+                <li><a href="descargas/ejercicio02.tar.gz">descargas/ejercicio02.tar.gz</a> — proyecto completo (668&nbsp;KB), verificado sin <code>.env</code> real ni <code>node_modules</code> (sólo <code>.env.example</code> con nombres de variable, sin valores). ✅ Completo.</li>
             </ul>
-            <div class="pendiente">
-                <div class="pendiente-titulo">📌 Pendiente de generar</div>
-                <ul style="margin-bottom:0;">
-                    <li><a href="descargas/ejercicio02.tar.gz">descargas/ejercicio02.tar.gz</a> — proyecto completo sin <code>.env</code>, <code>node_modules</code> ni secretos, más <code>.env.example</code>.</li>
-                    <li><code>docs/DB_DESIGN_ER_4FN.png</code> y <code>docs/ARCHITECTURE_MONOLITHIC.png</code> como imágenes estáticas (hoy sólo embebidos con Mermaid en el reporte).</li>
-                </ul>
-            </div>
         </section>
 
         <p class="footer-meta">
@@ -957,5 +961,6 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
         <a href="../index.html" class="back-link">← Regresar al menú principal</a>
     </div>
 
+    <script src="../js/include.js"></script>
 </body>
 </html>

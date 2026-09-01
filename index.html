@@ -8,18 +8,7 @@
 </head>
 <body>
 
-    <header>
-        <h1>🖥️ Integración Aplicaciones Computacionales</h1>
-        <p>Portafolio Académico - Ana Paola Loredo Moreno</p>
-    </header>
-
-    <nav>
-        <ul>
-            <li><a href="#" class="nav-link activa" data-seccion="inicio">Inicio</a></li>
-            <li><a href="#" class="nav-link" data-seccion="reportes">Ejercicios Guiados</a></li>
-            <li><a href="#" class="nav-link" data-seccion="tareas">Tareas En Casa</a></li>
-        </ul>
-    </nav>
+    <div id="menu-global" data-base=""></div>
 
     <main>
         <section id="inicio" class="seccion activa">
@@ -116,21 +105,6 @@
         <p>© 2026 - Ana Paola Loredo Moreno | Integración de Aplicaciones Computacionales</p>
     </footer>
 
-    <script>
-        function mostrarSeccion(nombre) {
-            document.querySelectorAll('.seccion').forEach(function (sec) {
-                sec.classList.toggle('activa', sec.id === nombre);
-            });
-            document.querySelectorAll('.nav-link').forEach(function (link) {
-                link.classList.toggle('activa', link.dataset.seccion === nombre);
-            });
-        }
-        document.querySelectorAll('.nav-link').forEach(function (link) {
-            link.addEventListener('click', function (e) {
-                e.preventDefault();
-                mostrarSeccion(link.dataset.seccion);
-            });
-        });
-    </script>
+    <script src="js/include.js"></script>
 </body>
 </html>

@@ -293,3 +293,66 @@ Cada decisión sigue el esquema pedido por el ejercicio:
 - **Evidencia de validación:** `docs/TEST_PLAN.md`, TC-24 — se degradó al admin existente y se
   ascendió a otro usuario; ambos cambios quedaron en `usuarios_auditoria_rol` con rol anterior,
   rol nuevo y fecha real.
+
+## D-16. "Categoría" no se modela como catálogo independiente
+
+- **Necesidad:** el enunciado del ejercicio menciona "CRUD de libros, autores, géneros, formatos,
+  categorías y conceptos", pero el modelo de datos sólo tiene `formatos`, `generos`, `autores` y
+  `conceptos` — no existe una tabla `categorias` separada.
+- **Alternativas consideradas:** (a) agregar una quinta tabla `categorias` independiente, sin que
+  quede claro en qué se diferenciaría de `generos` para una librería; (b) tratar "categoría" como
+  sinónimo de "género" en este dominio (es la lectura más natural: "categoría de un libro" y
+  "género de un libro" describen la misma clasificación temática).
+- **Decisión tomada:** (b). No se agrega una tabla `categorias` adicional.
+- **Justificación técnica:** agregar una tabla que sea funcionalmente idéntica a `generos` (mismo
+  CRUD, misma forma, sin una regla de negocio que las distinga) sería redundancia de esquema sin
+  beneficio real — la propia normalización 4FN (`docs/NORMALIZATION_4FN.md`) ya identifica
+  `generos` como el catálogo que resuelve esa dependencia multivaluada del libro.
+- **Riesgo/limitación:** si en una iteración futura "categoría" debiera representar algo distinto
+  de "género" (por ejemplo, una clasificación por edad de lector o por área temática amplia
+  —Ficción/No ficción— independiente del género literario), sí haría falta una tabla nueva; hoy
+  no hay ese requisito explícito más allá del enunciado general.
+- **Evidencia de validación:** `data/library_schema.sql`/`db/01_schema.sql` — catálogos existentes
+  (`formatos`, `generos`, `autores`, `conceptos`) cubren el 100% del CRUD de catálogos usado por la
+  aplicación real (`routes/index.js`, 4 registros de `crearCatalogoRoutes`).
+
+## D-17. Texto alternativo de imágenes (accesibilidad)
+
+- **Necesidad:** el ejercicio pide "administrar texto alternativo" para las imágenes de un libro;
+  el esquema original sólo guardaba `url_imagen`, `orden` y `es_portada`.
+- **Alternativas consideradas:** (a) dejarlo fuera de alcance, usando siempre un `alt` genérico
+  generado en la vista ("Imagen de <título>"); (b) agregar una columna `texto_alternativo` y
+  permitir que el administrador la capture al subir la imagen.
+- **Decisión tomada:** (b).
+- **Justificación técnica:** un `alt` genérico por libro no describe el *contenido* de cada imagen
+  individual (portada vs. contraportada vs. ilustración interior); permitir texto por imagen es lo
+  que realmente sirve a un lector de pantalla. Se mantiene compatibilidad hacia atrás:
+  `fn_agregar_imagen` agrega `p_alt` como último parámetro con `DEFAULT ''`, así que las llamadas
+  existentes (el seed original, con 4 argumentos) siguen funcionando sin cambios.
+- **Riesgo/limitación:** el texto alternativo es opcional (columna `NOT NULL DEFAULT ''`, no
+  obligatoria en el formulario); si el administrador no lo llena, la vista cae de vuelta al `alt`
+  genérico — no hay validación que obligue a describir la imagen.
+- **Evidencia de validación:** `docs/TEST_PLAN.md`, TC-30 — se subió una imagen con texto
+  alternativo real y se confirmó que aparece tal cual en el HTML (`<img alt="...">`), tanto en el
+  detalle del libro como en la miniatura del catálogo (`vista_catalogo_libros.portada_alt`).
+
+## D-18. Seed ampliado a 30 filas por tabla, excepto `formatos`
+
+- **Necesidad:** el ejercicio pide un seed de al menos 30 filas por tabla
+  (`db/02_seed_30_per_table.sql`); el seed original tenía 3-7 filas por tabla.
+- **Alternativas consideradas:** (a) forzar exactamente 30 filas en absolutamente todas las
+  tablas, incluyendo `formatos`; (b) ampliar a 30 las tablas donde existen realmente esa cantidad
+  de valores distintos con sentido de dominio (`usuarios`, `autores`, `generos`, `conceptos`,
+  `libros`), y dejar `formatos` con un número realista y documentar por qué.
+- **Decisión tomada:** (b). `formatos` se amplió de 3 a 8 (Tapa dura, Tapa blanda, Digital ePub,
+  Audiolibro, Pasta dura de colección, Bolsillo, Digital PDF, Cómic/Novela gráfica); las demás
+  tablas llegaron a 30.
+- **Justificación técnica:** no existen 30 formatos de libro distintos en el mundo real; llenar la
+  tabla hasta 30 con nombres como "Formato 9", "Formato 10"... habría sido información de relleno
+  sin significado de dominio, lo opuesto a lo que un seed de prueba debe demostrar.
+- **Riesgo/limitación:** si un revisor cuenta filas literalmente sin leer la justificación, podría
+  marcar `formatos` como incompleto — por eso la decisión queda documentada tanto aquí como en el
+  encabezado del propio `db/02_seed_30_per_table.sql`.
+- **Evidencia de validación:** conteo real ejecutado contra una base de datos recién cargada con
+  `db/00...06` en orden: `usuarios=30, autores=30, generos=30, conceptos=30, libros=30,
+  formatos=8, libro_autor=30, libro_genero=51, imagenes_libro=30`.

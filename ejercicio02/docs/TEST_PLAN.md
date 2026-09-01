@@ -66,6 +66,7 @@ código real del repositorio, no a resultados esperados sin correr.
 | TC-27 | Vista `vista_catalogo_libros` (ahora usada por `LibroModel.listarConDetalle`) | `GET /library/libros` y `GET /library/libros?q=aleph` contra la app real | El catálogo y la búsqueda siguen funcionando igual que antes de mover el JOIN a la vista | `200` en ambos; catálogo completo (7 libros) sin `q`, 1 resultado con `q=aleph` | ✅ Pasó |
 | TC-28 | `mensajeError` visible en `usuarios/listar.ejs` y catálogos genéricos (Tarea 2e, `docs/AI_PROMPT_HISTORY.md`) | Admin intenta auto-eliminarse (`POST /library/usuarios/2?_method=DELETE`) y eliminar un formato en uso (`POST /library/formatos/1?_method=DELETE`) | El mensaje de error queda visible en la página de listado, y no se repite en una carga posterior | `GET /library/usuarios` mostró "No puedes eliminar tu propia cuenta..."; `GET /library/formatos` mostró "No se pudo eliminar: probablemente esta en uso..."; una segunda carga de ambas páginas ya no mostró el mensaje | ✅ Pasó |
 | TC-29 | Bug reportado por la estudiante: columna ID vacía en `GET /library/autores` | Cargar el listado de autores con sesión de administrador | La columna ID muestra el id real de cada autor, y "Editar"/"Eliminar" apuntan a ese id | Antes del fix: columna ID vacía, links a `/autores/undefined/editar` (causa: `id_${vista.slice(0,-1)}` calculaba `id_autore` en vez de `id_autor`, plural irregular). Después del fix (`idCampo='id_autor'` explícito en `routes/index.js`): columna ID muestra `5, 1, 4, 3...` reales, links `/library/autores/5/editar` correctos | ✅ Pasó (corregido) |
+| TC-30 | Texto alternativo de imágenes (D-17) | Admin sube una imagen con `texto_alternativo="Ilustracion de prueba TC-30"` vía `POST /library/libros/1/imagenes` (multipart) | El texto se guarda y aparece como `alt` del `<img>` en el detalle del libro | Fila creada en `imagenes_libro` con `texto_alternativo='Ilustracion de prueba TC-30'`; `GET /library/libros/1` renderiza `<img alt="Ilustracion de prueba TC-30">` | ✅ Pasó |
 
 ## Despliegue bajo reverse proxy
 
@@ -111,10 +112,14 @@ vacía en Autores), ya corregido arriba.
 
 ## Resumen
 
-- **29 de 29 casos ejecutados; 29 de 29 pasan** (21 originales, corregidos TC-12b y TC-21, TC-22 a
-  TC-27 al implementar los triggers y vistas, TC-28 al corregir el `mensajeError` sin mostrar, y
-  TC-29 al corregir el bug de columna ID vacía en Autores, encontrado por la estudiante probando
-  la app manualmente).
+- **30 de 30 casos ejecutados; 30 de 30 pasan** (21 originales, corregidos TC-12b y TC-21, TC-22 a
+  TC-27 al implementar los triggers y vistas, TC-28 al corregir el `mensajeError` sin mostrar,
+  TC-29 al corregir el bug de columna ID vacía en Autores encontrado por la estudiante, y TC-30 al
+  implementar el texto alternativo de imágenes).
+- El seed se re-ejecutó completo con las 30 filas por tabla (`db/02_seed_30_per_table.sql`) contra
+  una base de datos recreada desde cero con la secuencia `db/00→01→04→05→06→02`, confirmando
+  conteos reales: `usuarios=30, autores=30, generos=30, conceptos=30, libros=30, formatos=8,
+  libro_autor=30, libro_genero=51, imagenes_libro=30`.
 - Los tres hallazgos corregidos (TC-12b, TC-21, TC-29) se volvieron a ejecutar contra la misma
   base de datos y la misma app real para confirmar el fix — ninguno se dio por bueno sin
   reprobarlo.

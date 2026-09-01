@@ -233,21 +233,24 @@ gcloud compute instances stop maquina-integracion
 gcloud compute instances start maquina-integracion
 ```
 
-## Pendiente de documentar aquí
+## Resuelto el 2026-09-01
 
-- Confirmación de que `library_user` es un rol de aplicación con privilegios mínimos (no
-  superusuario) — ver `docs/SECURITY_REVIEW.md`.
-- Renombrar/reorganizar `data/library_*.sql` al esquema de nombres `db/00_create_database.sql` a
-  `db/06_views.sql` que pide el ejercicio (hoy existen `library_schema.sql`, `library_triggers.sql`,
-  `library_views.sql` y `library_data.sql` como archivos separados, ya en el orden correcto de
-  carga y verificados uno por uno — ver `docs/TEST_PLAN.md` TC-22 a TC-27 — pero sin ese
-  renombrado ni un `00_create_database.sql`/`03_all_queries_before_stored_procedures.sql`
-  independientes todavía).
-- Confirmar en `maquina-integracion` (no sólo en la BD local de prueba) que `library_triggers.sql`
-  y `library_views.sql` ya están cargados — la app en producción depende de
-  `vista_catalogo_libros` para el catálogo (`LibroModel.listarConDetalle`); si esa vista no existe
-  ahí, `/library/libros` falla con `500` aunque en local funcione.
+- ✅ Scripts reorganizados al esquema `db/00_create_database.sql` … `db/06_views.sql` que pide el
+  ejercicio (antes eran `data/library_*.sql` sueltos). Verificados uno por uno cargando en orden
+  (`00→01→04→05→06→02`) contra una base de datos recién creada — ver `docs/TEST_PLAN.md`.
+- ✅ Seed ampliado a 30 filas por tabla (`db/02_seed_30_per_table.sql`); `formatos` se quedó en 8
+  por decisión documentada (`docs/ENGINEERING_DECISIONS.md`, D-18).
+
+## Lo único que sigue pendiente (requiere acceso directo al servidor real de GCP)
+
+Esto **no se puede resolver desde aquí** — necesita que alguien con acceso a `maquina-integracion`
+lo ejecute y confirme:
+
+- Confirmar que `library_triggers.sql` y `library_views.sql` (o sus equivalentes `db/05`/`db/06`)
+  ya están cargados en el servidor real, no sólo en la BD local de prueba — la app en producción
+  depende de `vista_catalogo_libros` para el catálogo (`LibroModel.listarConDetalle`); si esa vista
+  no existe ahí, `/library/libros` falla con `500` aunque en local funcione perfecto.
 - Verificar con `\du library_user` en el servidor real (no sólo local) que el rol no es
   superusuario — ver `docs/SECURITY_REVIEW.md`, control #9.
-- Evidencia por `psql` (capturas de pantalla, no sólo texto) de funciones, triggers, vistas y
-  conteos ejecutados directamente en `maquina-integracion`.
+- Capturas de pantalla reales (no texto) de `psql` mostrando funciones, triggers, vistas y conteos
+  ejecutados directamente en `maquina-integracion`, para el punto 10 del ejercicio.

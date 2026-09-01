@@ -1,5 +1,5 @@
 -- =====================================================================
--- VISTAS: Libreria en linea
+-- 06. VISTAS — Libreria en linea
 -- =====================================================================
 -- Requisito: haber cargado antes library_schema.sql.
 --
@@ -25,7 +25,9 @@ SELECT
     COALESCE(STRING_AGG(DISTINCT a.nombre_autor, ', '), '') AS autores,
     COALESCE(STRING_AGG(DISTINCT g.nombre_genero, ', '), '') AS generos,
     (SELECT il.url_imagen FROM imagenes_libro il
-       WHERE il.id_libro = l.id_libro AND il.es_portada = true LIMIT 1) AS portada
+       WHERE il.id_libro = l.id_libro AND il.es_portada = true LIMIT 1) AS portada,
+    (SELECT il.texto_alternativo FROM imagenes_libro il
+       WHERE il.id_libro = l.id_libro AND il.es_portada = true LIMIT 1) AS portada_alt
 FROM libros l
 JOIN formatos f ON f.id_formato = l.id_formato
 LEFT JOIN libro_autor la ON la.id_libro = l.id_libro

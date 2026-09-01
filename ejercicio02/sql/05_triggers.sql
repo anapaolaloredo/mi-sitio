@@ -1,5 +1,5 @@
 -- =====================================================================
--- TRIGGERS: Libreria en linea
+-- 05. TRIGGERS — Libreria en linea
 -- =====================================================================
 -- Requisito: haber cargado antes library_schema.sql (incluye la columna
 -- libros.fecha_actualizacion y la tabla usuarios_auditoria_rol que estos
