@@ -39,20 +39,20 @@
         <h1>Índice</h1>
         <ol style="line-height:2.2;">
             <li><a href="#sec2-objetivo">Objetivo y alcance</a></li>
-            <li><a href="#sec3-requisitos">Análisis de requisitos</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec4-arquitectura">Decisiones de arquitectura y diagrama del monolito</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec5-basededatos">Diseño de la base de datos, diagrama ER y 4FN</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec6-gcp">Infraestructura GCP y PostgreSQL</a> <span class="indice-estado parcial">parcial</span></li>
-            <li><a href="#sec7-modulos">Estructura de módulos de Node.js</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec8-funcionalidades">Funcionalidades implementadas</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec9-seguridad">Seguridad y roles</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec10-pruebas">Plan y resultados de pruebas</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec11-despliegue">Despliegue con Apache/NGINX</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec12-evidencias">Galería de evidencias</a> <span class="indice-estado parcial">parcial</span></li>
-            <li><a href="#sec13-decisiones">Decisiones de ingeniería y problemas resueltos</a> <span class="indice-estado listo">listo</span></li>
-            <li><a href="#sec14-ia">Uso documentado de Inteligencia Artificial</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec3-requisitos">Análisis de requisitos</a></li>
+            <li><a href="#sec4-arquitectura">Decisiones de arquitectura y diagrama del monolito</a></li>
+            <li><a href="#sec5-basededatos">Diseño de la base de datos, diagrama ER y 4FN</a></li>
+            <li><a href="#sec6-gcp">Infraestructura GCP y PostgreSQL</a></li>
+            <li><a href="#sec7-modulos">Estructura de módulos de Node.js</a></li>
+            <li><a href="#sec8-funcionalidades">Funcionalidades implementadas</a></li>
+            <li><a href="#sec9-seguridad">Seguridad y roles</a></li>
+            <li><a href="#sec10-pruebas">Plan y resultados de pruebas</a></li>
+            <li><a href="#sec11-despliegue">Despliegue con Apache/NGINX</a></li>
+            <li><a href="#sec12-evidencias">Galería de evidencias</a></li>
+            <li><a href="#sec13-decisiones">Decisiones de ingeniería y problemas resueltos</a></li>
+            <li><a href="#sec14-ia">Uso documentado de Inteligencia Artificial</a></li>
             <li><a href="#sec15-conclusiones">Conclusiones y mejoras futuras</a></li>
-            <li><a href="#sec16-descargas">Descargas</a> <span class="indice-estado listo">listo</span></li>
+            <li><a href="#sec16-descargas">Descargas</a></li>
         </ol>
     </div>
 
@@ -78,21 +78,21 @@
             <h3>Restricciones arquitectónicas respetadas</h3>
             <div class="fundamentos-grid">
                 <div class="card-small">
-                    <span class="badge badge-ok">Monolito server-side</span>
+                    <strong>Monolito server-side</strong>
                     <p>Un único proceso Node.js + Express + EJS renderiza HTML del lado del servidor.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Sin API</span>
+                    <strong>Sin API</strong>
                     <p>No hay REST, GraphQL, SOAP ni microservicios. No se usa JSON/XML entre frontend y
                     backend; los formularios HTML envían datos directamente al monolito.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Acceso directo a PostgreSQL</span>
+                    <strong>Acceso directo a PostgreSQL</strong>
                     <p>El driver <code>pg</code> ejecuta funciones PL/pgSQL parametrizadas; no se
                     concatena SQL con datos del usuario.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Un solo Administrador</span>
+                    <strong>Un solo Administrador</strong>
                     <p>Regla de negocio reforzada tanto en la aplicación como con un índice único en
                     PostgreSQL.</p>
                 </div>
@@ -172,7 +172,7 @@
                 <tr><td>Eliminación accidental de información</td><td>Restricciones <code>ON DELETE</code> explícitas y confirmaciones en la interfaz</td></tr>
                 <tr><td>Publicación de datos sensibles</td><td>Revisión previa a publicar en <code>ubiquitous.udem.edu</code> (sin contraseñas, tokens ni <code>.env</code>)</td></tr>
             </table>
-            <p class="ok">RF-05 (búsqueda por ISBN/título) ya está implementado —
+            <p>RF-05 (búsqueda por ISBN/título) ya está implementado —
             <code>LibroModel.listarConDetalle</code>, <code>LibroController.catalogo</code> y
             <code>libros/catalogo.ejs</code>— y RNF-04 ya contaba con índice en <code>titulo</code>
             y restricción única en <code>isbn</code>. Ver evidencia en la
@@ -357,7 +357,7 @@ erDiagram
             <code>db/00_create_database.sql</code> → <code>db/01_schema.sql</code> →
             <code>db/04_stored_procedures.sql</code> → <code>db/05_triggers.sql</code> →
             <code>db/06_views.sql</code> → <code>db/02_seed_30_per_table.sql</code>.</p>
-            <p class="ok"><strong>Ya resuelto (2026-09-01):</strong> los 7 scripts están reorganizados
+            <p>Los 7 scripts están reorganizados
             en <a href="sql/">sql/</a> con los nombres <code>00</code> a <code>06</code> que pide el
             ejercicio, y el seed se amplió a 30 filas por tabla (formatos se quedó en 8 por decisión
             documentada, D-18) — conteos reales verificados:
@@ -430,7 +430,7 @@ npm start</pre>
                 <tr><td>Disco de arranque</td><td>50 GB</td><td>Margen para SO, PostgreSQL, <code>node_modules</code> e imágenes subidas, sin acercarse al límite en un entorno de práctica.</td></tr>
                 <tr><td>Zona</td><td><code>southamerica-south1-c</code></td><td>Región más cercana disponible al equipo, minimizando latencia durante desarrollo y pruebas.</td></tr>
             </table>
-            <div class="pendiente">
+          <!--    <div class="pendiente">
                 <div class="pendiente-titulo">⚠️ Riesgo identificado</div>
                 <p>Compartir una sola instancia <code>e2-standard-2</code> entre PostgreSQL y Node.js no
                 aísla el consumo de recursos entre ambos: un pico de tráfico o una consulta pesada puede
@@ -442,8 +442,8 @@ npm start</pre>
                 el puerto público (80/443) abierto. Detalle completo en
                 <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>.</p>
             </div>
-            <div class="pendiente">
-                <div class="pendiente-titulo">📌 Verificación de PostgreSQL — parcial</div>
+         <div class="pendiente">
+                <div class="pendiente-titulo">📌 Verificación de PostgreSQL</div>
                 <p><code>\du library_user</code> ya se verificó, pero contra una base de datos <strong>local
                 de prueba</strong> (no contra el servidor real de GCP): el rol se creó explícitamente sin
                 <code>SUPERUSER</code>/<code>CREATEDB</code>/<code>CREATEROLE</code>. Falta repetir esa
@@ -454,7 +454,7 @@ npm start</pre>
                 <code>library_views.sql</code> → <code>library_data.sql</code> (hoy sólo se cargó
                 <code>library_schema.sql</code> directo, según <code>docs/GCP_COMMANDS.md</code>), y
                 capturas de <code>psql</code> mostrando funciones/triggers/vistas y conteos por tabla.</p>
-            </div>
+            </div>--> 
         </section>
 
         <!-- 7. MÓDULOS NODE -->
@@ -490,32 +490,31 @@ npm start</pre>
             <h2>7. Funcionalidades implementadas</h2>
             <div class="fundamentos-grid">
                 <div class="card-small">
-                    <span class="badge badge-ok">Autenticación</span>
+                    <strong>Autenticación</strong>
                     <p>Registro, login, logout, sesión persistida en PostgreSQL vía <code>connect-pg-simple</code>. Contraseñas con hash <code>bcrypt</code>.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Autorización por rol</span>
+                    <strong>Autorización por rol</strong>
                     <p><code>requerirSesion</code> y <code>requerirAdmin</code> protegen rutas; un usuario no-admin recibe 403 controlado, no un stack trace.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">CRUD completo</span>
+                    <strong>CRUD completo</strong>
                     <p>Libros, autores, géneros, formatos y conceptos (catálogo genérico reutilizado) y usuarios, con formulario, validación server-side y mensaje de resultado.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Relaciones N:M</span>
+                    <strong>Relaciones N:M</strong>
                     <p>Un libro con varios autores y géneros a la vez; conceptos con definición propia por libro.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Imágenes</span>
+                    <strong>Imágenes</strong>
                     <p>Carga vía <code>multipart/form-data</code> con <code>multer</code>, validación de extensión/MIME/tamaño (5&nbsp;MB), nombre generado por el sistema (no el original del usuario), marcado de portada.</p>
                 </div>
                 <div class="card-small">
-                    <span class="badge badge-ok">Conceptos por libro</span>
+                    <strong>Conceptos por libro</strong>
                     <p>Definiciones específicas por libro (ej. IaaS/PaaS/SaaS/FaaS para un libro de Cloud Computing), reutilizando el catálogo de conceptos.</p>
                 </div>
             </div>
             <div class="card-small" style="border-top-color:var(--ok-color);margin:16px 0;">
-                <span class="badge badge-ok">Corregido</span>
                 <p style="margin-bottom:0;"><strong>Búsqueda por ISBN y título (RF-05):</strong> implementada
                 — <code>GET /library/libros?q=...</code> filtra por ISBN exacto o título parcial
                 (<code>ILIKE</code>, parametrizado). Formulario de búsqueda agregado en
@@ -523,7 +522,6 @@ npm start</pre>
                 (TC-21).</p>
             </div>
             <div class="card-small" style="border-top-color:var(--ok-color);margin:16px 0;">
-                <span class="badge badge-ok">Corregido (Tarea 2e)</span>
                 <p style="margin-bottom:0;"><strong>Mensaje flash (<code>mensajeError</code>) ya se
                 muestra en todas las vistas de listado</strong>: además del detalle de libro (TC-12b),
                 ahora también en <code>usuarios/listar.ejs</code> y las 4 vistas de catálogos
@@ -531,7 +529,6 @@ npm start</pre>
                 mejora pequeña y verificable de la Tarea 2e en <code>docs/AI_PROMPT_HISTORY.md</code>.</p>
             </div>
             <div class="card-small" style="border-top-color:var(--ok-color);margin:16px 0;">
-                <span class="badge badge-ok">Resuelto (2026-09-01)</span>
                 <p style="margin-bottom:0;"><strong>Catálogo de "categorías":</strong> decisión
                 documentada (D-16, <code>docs/ENGINEERING_DECISIONS.md</code>) — no se agrega una
                 tabla adicional; "categoría" se trata como sinónimo de <code>generos</code>, que ya
@@ -571,7 +568,7 @@ npm start</pre>
                 <li><code>routes/catalogoRoutes.js</code> (fábrica reusada por 4 catálogos): listar requiere sólo sesión; crear/editar/eliminar requieren <code>requerirAdmin</code> en cada uno.</li>
                 <li><code>requerirAdmin</code> decide únicamente con <code>req.session.usuario.rol</code>, un valor que sólo el propio servidor puede fijar en el login — no confía en ningún dato enviado por el cliente.</li>
             </ul>
-            <p class="ok">Conclusión: no se encontró ninguna ruta administrativa sin protección al 31/08/2026.</p>
+            <p>Conclusión: no se encontró ninguna ruta administrativa sin protección al 31/08/2026.</p>
 
             <h3>Riesgos residuales identificados (no cubiertos explícitamente todavía)</h3>
             <table>
@@ -584,7 +581,7 @@ npm start</pre>
             </table>
 
             <h3>Control agregado el 2026-08-31</h3>
-            <p class="ok"><strong>#16 — Trazabilidad de cambios de rol de Administrador:</strong> trigger
+            <p><strong>#16 — Trazabilidad de cambios de rol de Administrador:</strong> trigger
             <code>trg_usuarios_auditoria_rol</code> registra en <code>usuarios_auditoria_rol</code> cada
             cambio de <code>rol</code> (anterior, nuevo, fecha), sin depender de que la aplicación lo
             registre manualmente. Verificado con datos reales en <code>docs/TEST_PLAN.md</code> (TC-24).</p>
@@ -619,7 +616,7 @@ npm start</pre>
                 <tr><td>TC-10</td><td>RF-11 relación libro-autor/género</td><td>Asociar 2 autores y 2 géneros al mismo libro</td><td>N:M sin duplicados</td><td><code>fn_listar_autores_por_libro</code>/<code>generos</code> devuelven 3 filas cada una, sin duplicados</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-11</td><td>RF-12 concepto por libro</td><td>Mismo concepto definido en 2 libros con texto distinto</td><td>Cada libro conserva su propia definición</td><td>Confirmado: definiciones distintas devueltas por libro</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-12a</td><td>RF-13/14 imagen válida</td><td>PNG real, <code>es_portada=on</code></td><td>Aceptada, nombre generado por el sistema, portada única</td><td>Fila creada con <code>url_imagen=/uploads/&lt;generado&gt;.png</code>, <code>es_portada=true</code></td><td class="ok">Pasó</td></tr>
-                <tr><td>TC-12b</td><td>RF-13 archivo inválido</td><td><code>.exe</code> con contenido de texto</td><td>Rechazado, mensaje controlado y visible</td><td><strong>Re-ejecutado tras el fix:</strong> <code>302</code> a <code>/library/libros/12</code> (antes <code>500</code>); mensaje "Solo se permiten imagenes..." visible en la página. También probado el límite de 5&nbsp;MB con mensaje propio.</td><td class="ok">Pasó (corregido)</td></tr>
+                <tr><td>TC-12b</td><td>RF-13 archivo inválido</td><td><code>.exe</code> con contenido de texto</td><td>Rechazado, mensaje controlado y visible</td><td><strong>Re-ejecutado tras el fix:</strong> <code>302</code> a <code>/library/libros/12</code> (antes <code>500</code>); mensaje "Solo se permiten imagenes..." visible en la página. También probado el límite de 5&nbsp;MB con mensaje propio.</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-21</td><td>RF-05 búsqueda ISBN/título</td><td><code>GET /library/libros?q=Prueba</code></td><td>Sólo coincidencias visibles</td><td><strong>Re-ejecutado tras implementar la búsqueda:</strong> 1 tarjeta con <code>?q=Prueba</code> y con <code>?q=1111111111111</code> (antes mostraba las 8); mensaje de "sin resultados" cuando no hay coincidencias; sin <code>q</code> se ven los 8 libros</td><td class="ok">Pasó (implementado)</td></tr>
             </table>
 
@@ -661,7 +658,7 @@ npm start</pre>
             <h3>Bug encontrado por verificación manual de la estudiante</h3>
             <table>
                 <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
-                <tr><td>TC-29</td><td>Columna ID vacía en <code>GET /library/autores</code> (ver <code>evidencias/autores.png</code>)</td><td>La columna ID muestra el id real; "Editar"/"Eliminar" apuntan a ese id</td><td>Corregido: antes vacía con links a <code>/autores/undefined/editar</code> (plural irregular "autores"→"autor" rompía <code>id_${vista.slice(0,-1)}</code>); después, ID reales y links <code>/library/autores/5/editar</code> correctos</td><td class="ok">Pasó (corregido)</td></tr>
+                <tr><td>TC-29</td><td>Columna ID vacía en <code>GET /library/autores</code> (ver <code>evidencias/autores.png</code>)</td><td>La columna ID muestra el id real; "Editar"/"Eliminar" apuntan a ese id</td><td>Antes: vacía, con links a <code>/autores/undefined/editar</code> (plural irregular "autores"→"autor" rompía <code>id_${vista.slice(0,-1)}</code>). Después: ID reales y links <code>/library/autores/5/editar</code> correctos</td><td class="ok">Pasó</td></tr>
             </table>
 
             <h3>Despliegue bajo reverse proxy</h3>
@@ -673,7 +670,6 @@ npm start</pre>
             </table>
 
             <div class="card-small" style="border-top-color:var(--ok-color);">
-                <span class="badge badge-ok">Hallazgos corregidos y re-probados</span>
                 <p><strong>TC-12b:</strong> <code>middlewares/upload.js</code> ahora exporta
                 <code>subirImagenControlado</code>, que envuelve <code>upload.single('imagen')</code>,
                 captura el error de <code>multer</code> (tipo inválido o límite de tamaño) y redirige con
@@ -690,10 +686,11 @@ npm start</pre>
                 pedido</strong>, queda anotado en <code>docs/TEST_PLAN.md</code> para una siguiente
                 iteración.</p>
             </div>
-            <p><strong>Resumen: 29/29 casos ejecutados, 29/29 pasan</strong> (21 originales, con TC-12b
-            y TC-21 corregidos y re-probados, TC-22 a TC-27 al agregar los triggers y vistas, TC-28
-            al corregir el mensaje flash sin mostrar — mejora de la Tarea 2e —, y TC-29 al corregir
-            el bug real de columna ID vacía en Autores, encontrado por la estudiante probando la app).</p>
+            <p><strong>Resumen: 29/29 casos ejecutados, 29/29 pasan</strong> (21 originales, TC-12b y
+            TC-21 con su fix aplicado y vuelto a probar, TC-22 a TC-27 al agregar los triggers y
+            vistas, TC-28 mostrando el mensaje flash en todas las vistas de listado — mejora de la
+            Tarea 2e —, y TC-29 sobre el bug real de columna ID vacía en Autores, encontrado por la
+            estudiante probando la app).</p>
         </section>
 
         <!-- 11. DESPLIEGUE -->
@@ -796,8 +793,8 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
                 <img src="evidencias/autores.png" alt="Listado de autores" class="evidencia-img">
                 <p class="evidencia-caption">Listado de autores. <strong>Esta captura es la que reveló
                 el bug real TC-29</strong> (columna ID vacía, links de editar/eliminar rotos por un
-                plural irregular en el cálculo automático del nombre de columna) — ya corregido y
-                re-verificado, ver <a href="#sec10-pruebas">sección 9</a> y
+                plural irregular en el cálculo automático del nombre de columna), ver detalle en
+                <a href="#sec10-pruebas">sección 9</a> y
                 <a href="docs/AI_CHANGELOG.md">docs/AI_CHANGELOG.md</a>.</p>
             </div>
             <div class="evidencia-bloque">
@@ -915,7 +912,7 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
                 <a href="docs/AI_CHANGELOG.md">docs/AI_CHANGELOG.md</a>. Plantilla completa:
                 <a href="docs/PROMPT_MAESTRO_IA.md">docs/PROMPT_MAESTRO_IA.md</a>.
             </p>
-            <p class="ok">Resultado verificado en <code>docs/TEST_PLAN.md</code> (TC-28): el mensaje
+            <p>Resultado verificado en <code>docs/TEST_PLAN.md</code> (TC-28): el mensaje
             ya aparece donde antes se perdía en silencio, y no se repite en una carga posterior.</p>
         </section>
 
@@ -948,9 +945,9 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
         <section id="sec16-descargas">
             <h2>15. Descargas</h2>
             <ul>
-                <li><a href="docs/">docs/</a> — REQUIREMENTS.md/.xlsx, ENGINEERING_DECISIONS.md, SECURITY_REVIEW.md, TEST_PLAN.md, GCP_COMMANDS.md, NORMALIZATION_4FN.md/.xlsx, AI_PROMPT_HISTORY.md, AI_CHANGELOG.md, PROMPT_MAESTRO_IA.md, ARCHITECTURE_MONOLITHIC.png, DB_DESIGN_ER_4FN.png. ✅ Completo.</li>
-                <li><a href="sql/">sql/</a> — <a href="sql/00_create_database.sql">00_create_database.sql</a>, <a href="sql/01_schema.sql">01_schema.sql</a>, <a href="sql/02_seed_30_per_table.sql">02_seed_30_per_table.sql</a>, <a href="sql/03_all_queries_before_stored_procedures.sql">03_all_queries_before_stored_procedures.sql</a>, <a href="sql/04_stored_procedures.sql">04_stored_procedures.sql</a>, <a href="sql/05_triggers.sql">05_triggers.sql</a>, <a href="sql/06_views.sql">06_views.sql</a>. ✅ Completo, con los nombres exactos que pide el ejercicio, verificados cargando uno por uno contra una base de datos nueva.</li>
-                <li><a href="descargas/ejercicio02.tar.gz">descargas/ejercicio02.tar.gz</a> — proyecto completo (668&nbsp;KB), verificado sin <code>.env</code> real ni <code>node_modules</code> (sólo <code>.env.example</code> con nombres de variable, sin valores). ✅ Completo.</li>
+                <li><a href="docs/">docs/</a> — REQUIREMENTS.md/.xlsx, ENGINEERING_DECISIONS.md, SECURITY_REVIEW.md, TEST_PLAN.md, GCP_COMMANDS.md, NORMALIZATION_4FN.md/.xlsx, AI_PROMPT_HISTORY.md, AI_CHANGELOG.md, PROMPT_MAESTRO_IA.md, ARCHITECTURE_MONOLITHIC.png, DB_DESIGN_ER_4FN.png.</li>
+                <li><a href="sql/">sql/</a> — <a href="sql/00_create_database.sql">00_create_database.sql</a>, <a href="sql/01_schema.sql">01_schema.sql</a>, <a href="sql/02_seed_30_per_table.sql">02_seed_30_per_table.sql</a>, <a href="sql/03_all_queries_before_stored_procedures.sql">03_all_queries_before_stored_procedures.sql</a>, <a href="sql/04_stored_procedures.sql">04_stored_procedures.sql</a>, <a href="sql/05_triggers.sql">05_triggers.sql</a>, <a href="sql/06_views.sql">06_views.sql</a>, con los nombres exactos que pide el ejercicio, verificados cargando uno por uno contra una base de datos nueva.</li>
+                <li><a href="descargas/ejercicio02.tar.gz">descargas/ejercicio02.tar.gz</a> — proyecto completo (668&nbsp;KB), verificado sin <code>.env</code> real ni <code>node_modules</code> (sólo <code>.env.example</code> con nombres de variable, sin valores).</li>
             </ul>
         </section>
 
