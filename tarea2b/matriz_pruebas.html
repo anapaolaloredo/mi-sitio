@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarea 2b - Integración</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/reportes.css">
+    <style>
+        :root {
+            --udem-color: #ffcc00;
+            --bg-color: #f4f7f6;
+            --text-color: #2c3e50;
+            --accent-color: #2980b9;
+            --ok-color: #27ae60;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .report-card {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--text-color);
+            border-left: 5px solid var(--udem-color);
+            padding-left: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: var(--accent-color);
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 40px;
+        }
+
+        h3 { color: var(--text-color); margin-top: 20px; }
+
+        .fundamentos-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        @media (max-width: 800px) { .fundamentos-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .card-small {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            border-top: 3px solid var(--accent-color);
+            text-align: center;
+        }
+        .card-small .numero { font-size: 28px; font-weight: bold; color: var(--accent-color); }
+
+        table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 8px 10px; text-align: left; vertical-align: top; }
+        th { background: var(--accent-color); color: white; }
+        tr:nth-child(even) { background: #f8f9fa; }
+        code { background: #f1f3f4; padding: 1px 5px; border-radius: 3px; font-size: 0.92em; }
+
+        .ok { color: var(--ok-color); font-weight: bold; white-space: nowrap; }
+
+        .terminal {
+            background-color: #1e1e1e;
+            color: #dcdcdc;
+            padding: 16px 20px;
+            border-radius: 6px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+        }
+
+        .nota {
+            background: #eef6fc;
+            border-left: 4px solid var(--accent-color);
+            padding: 12px 18px;
+            margin: 16px 0;
+            border-radius: 4px;
+        }
+
+        .evidencia-img {
+            max-width: 100%;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-top: 8px;
+        }
+        .evidencia-caption { font-size: 13px; color: #666; margin-top: 6px; font-style: italic; }
+        .evidencia-bloque { margin: 20px 0; }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 50px;
+            text-decoration: none;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="menu-global"></div>
+
+    <!-- PORTADA -->
+    <div class="report-card" style="text-align:center; page-break-after: always;">
+        <br><br><br>
+        <h1>Tarea 2b</h1>
+        <h3>Matriz de pruebas e integridad — Librería en línea (Ejercicio Guiado 02)</h3>
+        <br><br>
+        <p><strong>Materia:</strong></p>
+        <p>Integración de Aplicaciones Computacionales</p>
+        <br>
+        <p><strong>Profesor:</strong></p>
+        <p>Dr. Raúl Morales Salcedo</p>
+        <p>&nbsp;</p>
+        <br>
+        <p><strong>Alumna y Matrícula:</strong></p>
+        <p>Ana Paola Loredo Moreno – 613772</p>
+        <br><br><br><br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+        <br><br>
+        <p>San Pedro Garza García, N.L, México a 31 de agosto del 2026</p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card" style="page-break-after: always;">
+        <h1>Índice</h1>
+        <ol style="line-height:2;">
+            <li><a href="#metodologia">Metodología de ejecución</a></li>
+            <li><a href="#auth">Autenticación y sesión</a></li>
+            <li><a href="#crud">Catálogo, CRUD y relaciones</a></li>
+            <li><a href="#roles">Autorización por rol</a></li>
+            <li><a href="#integridad">Integridad de PostgreSQL (pruebas negativas)</a></li>
+            <li><a href="#triggers">Triggers y vistas</a></li>
+            <li><a href="#tarea2e-manual">Tarea 2e y verificación manual</a></li>
+            <li><a href="#despliegue">Despliegue bajo reverse proxy</a></li>
+            <li><a href="#hallazgos">Hallazgos encontrados y corregidos</a></li>
+            <li><a href="#evidencias">Evidencias representativas</a></li>
+            <li><a href="#resumen">Resumen</a></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Tarea 2b: Matriz de pruebas e integridad</h1>
+        <p>
+            Esta matriz está directamente alineada con lo trabajado en el
+            <a href="../ejercicio02/index.html">Ejercicio Guiado 02</a>: son los mismos 29 casos de
+            <a href="../ejercicio02/docs/TEST_PLAN.md">docs/TEST_PLAN.md</a>, ejecutados de verdad
+            contra el código real del proyecto — ninguna fila de esta tabla es un resultado esperado
+            sin correr.
+        </p>
+
+        <div class="fundamentos-grid">
+            <div class="card-small"><div class="numero">29</div>casos ejecutados</div>
+            <div class="card-small"><div class="numero">29</div>casos que pasan</div>
+            <div class="card-small"><div class="numero">3</div>hallazgos corregidos</div>
+            <div class="card-small"><div class="numero">6</div>pruebas negativas de BD</div>
+        </div>
+
+        <section id="metodologia">
+            <h2>Metodología de ejecución</h2>
+            <p>PostgreSQL 15 local, base <code>library</code>, rol de aplicación
+            <code>library_user</code> (sin privilegios de superusuario — creado explícitamente sin
+            <code>SUPERUSER</code>/<code>CREATEDB</code>/<code>CREATEROLE</code>), esquema cargado
+            desde <code>data/library_schema.sql</code> sin modificaciones, datos de
+            <code>data/library_data.sql</code>. La aplicación corriendo con <code>npm start</code>
+            (<code>BASE_PATH=/library</code>), probada con <code>curl</code> (incluye manejo de
+            cookies de sesión) y con <code>psql</code> directo para las pruebas de integridad.
+            Fecha de ejecución: 31 de agosto de 2026.</p>
+        </section>
+
+        <section id="auth">
+            <h2>Autenticación y sesión</h2>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-05</td><td>RF-01 registro</td><td><code>POST /library/auth/registro</code> con datos válidos</td><td>Cuenta creada, rol <code>cliente</code> (ya existe admin)</td><td><code>302</code>; fila creada con <code>rol='cliente'</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-06</td><td>RF-02 login</td><td>Correo/contraseña válidos</td><td>Sesión iniciada, redirección al catálogo</td><td><code>302 → /library/libros</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-07</td><td>RF-02 login (negativo)</td><td>Contraseña incorrecta</td><td>Error genérico, sin distinguir campo</td><td><code>401</code>, "Credenciales invalidas." (mismo mensaje que correo inexistente)</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-08</td><td>RF-03 logout</td><td>Sesión activa</td><td>Sesión destruida, redirección a login</td><td><code>302 → /library/auth/login</code></td><td class="ok">Pasó</td></tr>
+            </table>
+        </section>
+
+        <section id="crud">
+            <h2>Catálogo, CRUD y relaciones</h2>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-04</td><td>RF-04 catálogo autenticado</td><td>Sesión admin, <code>GET /library/libros</code></td><td>Catálogo accesible</td><td><code>200</code>, <code>&lt;h1&gt;Catalogo de libros&lt;/h1&gt;</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-09a-d</td><td>RF-06/07 CRUD</td><td>Admin: crea autor, crea libro, edita (<code>?_method=PUT</code>), elimina (<code>?_method=DELETE</code>)</td><td>Cada operación persiste el cambio</td><td>Las 4 operaciones reflejadas correctamente en PostgreSQL</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-10</td><td>RF-11 relación libro-autor/género</td><td>Asociar 2 autores y 2 géneros al mismo libro</td><td>N:M sin duplicados</td><td><code>fn_listar_autores_por_libro</code>/<code>generos</code> devuelven 3 filas cada una, sin duplicados</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-11</td><td>RF-12 concepto por libro</td><td>Mismo concepto en 2 libros con texto distinto</td><td>Cada libro conserva su propia definición</td><td>Confirmado: definiciones distintas por libro</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-12a</td><td>RF-13/14 imagen válida</td><td>PNG real, <code>es_portada=on</code></td><td>Aceptada, nombre generado por el sistema</td><td>Fila creada con <code>url_imagen</code> generado, <code>es_portada=true</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-12b</td><td>RF-13 archivo inválido</td><td><code>.exe</code> con contenido de texto</td><td>Rechazado, mensaje visible</td><td>Corregido: <code>302</code> con mensaje (antes daba <code>500</code>) — ver <a href="#hallazgos">hallazgos</a></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-21</td><td>RF-05 búsqueda ISBN/título</td><td><code>GET /library/libros?q=Prueba</code></td><td>Sólo coincidencias visibles</td><td>Corregido: 1 tarjeta con <code>q</code>, catálogo completo sin — ver <a href="#hallazgos">hallazgos</a></td><td class="ok">Pasó</td></tr>
+            </table>
+        </section>
+
+        <section id="roles">
+            <h2>Autorización por rol</h2>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-13</td><td>RF-17 visitante</td><td>Sin sesión, <code>GET /library/libros</code></td><td>Redirección a login</td><td><code>302 → /library/auth/login</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-14a/b</td><td>RF-17 cliente en ruta admin (lectura y escritura)</td><td>Sesión de cliente, <code>GET /library/usuarios</code> y <code>POST /library/libros</code></td><td><code>403</code> controlado</td><td><code>403</code>, "Acceso denegado" en ambos casos, sin stack trace</td><td class="ok">Pasó</td></tr>
+            </table>
+        </section>
+
+        <section id="integridad">
+            <h2>Integridad de PostgreSQL — pruebas negativas (vía <code>psql</code>)</h2>
+            <p>Estas 6 pruebas capturan el error <strong>real</strong> devuelto por PostgreSQL, no un
+            resultado inferido:</p>
+            <table>
+                <tr><th>ID</th><th>Amenaza / regla</th><th>Resultado esperado</th><th>Error real de PostgreSQL</th><th>Estado</th></tr>
+                <tr><td>TC-15</td><td>Segundo Administrador</td><td>Rechazado</td><td><code>duplicate key value violates unique constraint "uq_usuarios_admin_unico"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-16</td><td>ISBN duplicado</td><td>Rechazado</td><td><code>duplicate key value violates unique constraint "libros_isbn_key"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-17a/b</td><td>Stock negativo / precio inválido</td><td>Rechazado</td><td><code>violates check constraint "libros_stock_check"</code> / <code>"libros_precio_check"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-18</td><td>FK inexistente</td><td>Rechazado</td><td><code>violates foreign key constraint "libros_id_formato_fkey"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-19</td><td>Eliminación que viola relación</td><td>Rechazado</td><td><code>violates foreign key constraint "libro_autor_id_autor_fkey" ... still referenced</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-20</td><td>Inyección SQL (consulta preparada, mismo mecanismo <code>$1</code> que usa <code>pg</code>)</td><td>Tratado como dato literal</td><td>Sin error de sintaxis; <code>conceptos</code> pasó de 5 a 6 filas (no se borró la tabla); el texto malicioso quedó guardado literal como <code>nombre_concepto</code></td><td class="ok">Pasó</td></tr>
+            </table>
+            <div class="terminal">
+<span class="description">-- Ejemplo real ejecutado (TC-20):</span>
+PREPARE p(varchar) AS SELECT fn_crear_concepto($1);
+EXECUTE p($$malicioso'); DROP TABLE conceptos; --$$);
+<span class="comment">-- resultado: nueva fila con nombre_concepto = "malicioso'); DROP TABLE conceptos; --"</span>
+<span class="comment">-- la tabla conceptos NO se vio afectada</span>
+            </div>
+        </section>
+
+        <section id="triggers">
+            <h2>Triggers y vistas</h2>
+            <table>
+                <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-22</td><td>Trigger <code>trg_una_portada_por_libro</code></td><td>Al marcar una nueva portada, la anterior se desmarca sola</td><td>Confirmado: la imagen anterior pasó a <code>es_portada=false</code> automáticamente</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-23</td><td>Trigger <code>trg_libros_fecha_actualizacion</code></td><td><code>fecha_actualizacion</code> cambia, <code>fecha_creacion</code> no</td><td>Confirmado con timestamps reales antes/después de un <code>UPDATE</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-24</td><td>Trigger <code>trg_usuarios_auditoria_rol</code></td><td>Cambios de rol quedan en bitácora</td><td>2 filas insertadas en <code>usuarios_auditoria_rol</code> con rol anterior/nuevo y fecha</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-25</td><td>Vista <code>vista_administradores</code></td><td>Sólo lista al admin vigente</td><td>Devolvió únicamente al usuario recién ascendido</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-26</td><td>Vista <code>vista_libros_stock_bajo</code></td><td>Lista libros con stock ≤ 5</td><td>Devolvió el libro puesto en <code>stock=3</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-27</td><td>Vista <code>vista_catalogo_libros</code> (ahora usada por la app)</td><td>Catálogo y búsqueda siguen igual tras mover el JOIN a la vista</td><td><code>200</code> en ambos; mismos resultados que antes del cambio</td><td class="ok">Pasó</td></tr>
+            </table>
+        </section>
+
+        <section id="tarea2e-manual">
+            <h2>Tarea 2e y verificación manual de la estudiante</h2>
+            <table>
+                <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-28</td><td><code>mensajeError</code> visible en <code>usuarios/listar.ejs</code> y catálogos genéricos (mejora de Tarea 2e)</td><td>El mensaje queda visible al listar, no se repite en una carga posterior</td><td>Auto-eliminación de admin y eliminación de formato en uso mostraron su mensaje; segunda carga ya no lo mostró</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-29</td><td>Columna ID vacía en <code>GET /library/autores</code> (bug encontrado por la estudiante)</td><td>La columna ID muestra el id real; "Editar"/"Eliminar" apuntan a ese id</td><td>Corregido: plural irregular "autores"→"autor" rompía el cálculo automático de columna; ahora ID reales y links correctos</td><td class="ok">Pasó (corregido)</td></tr>
+            </table>
+        </section>
+
+        <section id="despliegue">
+            <h2>Despliegue bajo reverse proxy</h2>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-01</td><td>RNF-06 acceso remoto</td><td><code>302 → /library/auth/login</code>; estáticos y navegación con prefijo correcto — ver evidencia abajo</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-02</td><td>RNF-06 estáticos/rutas</td><td><code>200</code> dentro del prefijo, <code>404</code> fuera</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-03</td><td>RNF-06 local sin prefijo</td><td><code>BASE_PATH=''</code> se comporta igual que antes del cambio</td><td class="ok">Pasó</td></tr>
+            </table>
+        </section>
+
+        <section id="hallazgos">
+            <h2>Hallazgos encontrados y corregidos</h2>
+            <p>
+                <strong>TC-12b (UX de manejo de errores):</strong> cuando <code>multer</code> rechazaba
+                un archivo inválido, el error llegaba directo al manejador global de Express (página
+                completa de error <code>500</code>) en vez de redirigir con un mensaje, como el resto
+                de la app. Se corrigió envolviendo la subida en <code>subirImagenControlado</code>
+                (<code>middlewares/upload.js</code>), y de paso se encontró que
+                <code>libros/detalle.ejs</code> nunca mostraba el mensaje flash — se corrigió también.
+                Re-ejecutado: ahora redirige con el mensaje visible.
+            </p>
+            <p>
+                <strong>TC-21 (RF-05 no implementado):</strong> la búsqueda por ISBN/título estaba
+                documentada como requisito pero no existía en el código. Se implementó en
+                <code>LibroModel.listarConDetalle</code> (filtro parametrizado con <code>ILIKE</code>),
+                <code>LibroController.catalogo</code> y el formulario en <code>libros/catalogo.ejs</code>.
+                Re-ejecutado: filtra correctamente por título parcial e ISBN exacto.
+            </p>
+            <p>
+                <strong>TC-29 (bug real encontrado probando la app manualmente):</strong> la columna
+                ID del listado de Autores aparecía vacía, y los links de "Editar"/"Eliminar" apuntaban
+                a <code>/autores/undefined/...</code>. Causa: <code>catalogoController.js</code> calcula
+                el nombre de columna como <code>id_${vista.slice(0,-1)}</code> (quita una letra), lo
+                cual funciona para <code>formatos→formato</code>/<code>generos→genero</code>/
+                <code>conceptos→concepto</code> pero no para <code>autores→autor</code> (plural
+                irregular del español: "autor"+"es", no "autor"+"s"). Se corrigió pasando el
+                <code>idCampo</code> explícito en <code>routes/index.js</code>. Re-ejecutado: la
+                columna ID ya muestra valores reales y los links funcionan.
+            </p>
+            <div class="nota">
+                Los tres hallazgos (TC-12b, TC-21, TC-29) se corrigieron y se volvieron a probar contra
+                la misma app y base de datos reales antes de marcarlos como resueltos — ningún fix se
+                dio por bueno sin reejecutar la prueba que lo detectó. Detalle completo en
+                <a href="../ejercicio02/docs/ENGINEERING_DECISIONS.md">ENGINEERING_DECISIONS.md</a> y
+                <a href="../ejercicio02/docs/AI_CHANGELOG.md">AI_CHANGELOG.md</a>.
+            </div>
+        </section>
+
+        <section id="evidencias">
+            <h2>Evidencias representativas</h2>
+            <p>Selección de las capturas más representativas del despliegue real y de la verificación
+            manual (no una colección de pantallazos sin explicación):</p>
+            <div class="evidencia-bloque">
+                <img src="../ejercicio02/evidencias/01-acceso-remoto-library-login.png" alt="Acceso remoto a /library/auth/login" class="evidencia-img">
+                <p class="evidencia-caption">TC-01/TC-02 — acceso externo a <code>http://136.115.124.224/library/auth/login</code>: sin sesión, redirige correctamente dentro del prefijo <code>/library</code> y el CSS/estáticos cargan bien.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="../ejercicio02/evidencias/catalogo.png" alt="Catálogo de libros como administrador" class="evidencia-img">
+                <p class="evidencia-caption">TC-04 — catálogo completo (7 libros) con sesión de administrador.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="../ejercicio02/evidencias/autores.png" alt="Listado de autores, evidencia del bug TC-29" class="evidencia-img">
+                <p class="evidencia-caption">TC-29 — la captura que reveló el bug real de columna ID vacía en Autores, ya corregido.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="../ejercicio02/evidencias/vistaclientecatalogo.png" alt="Catálogo visto por un usuario cliente" class="evidencia-img">
+                <p class="evidencia-caption">TC-13/TC-14 — mismo catálogo visto por un usuario con rol <code>cliente</code>: sin el botón "+ Nuevo libro" ni el menú "Usuarios".</p>
+            </div>
+        </section>
+
+        <section id="resumen">
+            <h2>Resumen</h2>
+            <p class="ok" style="font-size:16px;">29 de 29 casos ejecutados; 29 de 29 pasan.</p>
+            <p>21 casos originales, 3 corregidos y re-probados (TC-12b, TC-21, TC-29), 6 agregados al
+            implementar los triggers y vistas del ejercicio guiado (TC-22 a TC-27), y 1 de la mejora
+            de la Tarea 2e (TC-28). Matriz completa, con el detalle de "pasos" y "precondición" de
+            cada caso: <a href="../ejercicio02/docs/TEST_PLAN.md">docs/TEST_PLAN.md</a>.</p>
+            <p>
+                <strong>Pendiente:</strong> automatizar estos casos como pruebas repetibles (hoy
+                <code>test/</code> está vacío o no correría tal cual), y repetir esta misma ejecución
+                contra el servidor real de GCP (aquí se probó contra una instancia local de
+                PostgreSQL levantada específicamente para esta tarea).
+            </p>
+        </section>
+
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div>
+
+    <script src="../js/include.js"></script>
+</body>
+</html>
+

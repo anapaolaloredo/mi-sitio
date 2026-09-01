@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ejercicio Guiado 02 — Librería en línea (Node.js + PostgreSQL)</title>
+    <link rel="stylesheet" href="css/estilos.css">
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        if (window.mermaid) mermaid.initialize({ startOnLoad: true, theme: 'neutral' });
+      });
+    </script>
+</head>
+<body>
+
+    <!-- PORTADA -->
+    <div class="report-card" id="sec1-portada" style="text-align:center;">
+        <br><br>
+        <h1 style="border-left:none;">Ejercicio Guiado 02</h1>
+        <h2 style="border-bottom:none; margin-top:0;">Aplicación Web Monolítica para Gestión de una Librería</h2>
+        <p style="color:#666;">GCP SDK CLI · Compute Engine · CentOS Stream 10 · Node.js · Express · EJS · PostgreSQL · 4FN · CRUD · Uploads · Autenticación · Apache/NGINX</p>
+        <br>
+        <table style="max-width:500px; margin:0 auto;">
+            <tr><th style="width:40%;">Materia</th><td>Integración de Aplicaciones Computacionales</td></tr>
+            <tr><th>Profesor</th><td>Dr. Raúl Morales Salcedo</td></tr>
+            <tr><th>Alumna</th><td>Ana Paola Loredo Moreno</td></tr>
+            <tr><th>Matrícula</th><td>613772</td></tr>
+            <tr><th>Fecha</th><td>31 de agosto de 2026</td></tr>
+        </table>
+        <br>
+        <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
+    </div>
+
+    <!-- ÍNDICE -->
+    <div class="report-card">
+        <h1>Índice</h1>
+        <ol style="line-height:2.2;">
+            <li><a href="#sec2-objetivo">Objetivo y alcance</a></li>
+            <li><a href="#sec3-requisitos">Análisis de requisitos</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec4-arquitectura">Decisiones de arquitectura y diagrama del monolito</a> <span class="indice-estado parcial"></span></li>
+            <li><a href="#sec5-basededatos">Diseño de la base de datos, diagrama ER y 4FN</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec6-gcp">Infraestructura GCP y PostgreSQL</a> <span class="indice-estado parcial"></span></li>
+            <li><a href="#sec7-modulos">Estructura de módulos de Node.js</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec8-funcionalidades">Funcionalidades implementadas</a> <span class="indice-estado parcial"></span></li>
+            <li><a href="#sec9-seguridad">Seguridad y roles</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec10-pruebas">Plan y resultados de pruebas</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec11-despliegue">Despliegue con Apache/NGINX</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec12-evidencias">Galería de evidencias</a> <span class="indice-estado parcial"></span></li>
+            <li><a href="#sec13-decisiones">Decisiones de ingeniería y problemas resueltos</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec14-ia">Uso documentado de Inteligencia Artificial</a> <span class="indice-estado listo"></span></li>
+            <li><a href="#sec15-conclusiones">Conclusiones y mejoras futuras</a></li>
+            <li><a href="#sec16-descargas">Descargas</a> <span class="indice-estado"></span></li>
+        </ol>
+    </div>
+
+    <div class="report-card">
+        <h1>Ejercicio Guiado 02: Librería en línea</h1>
+        <p>
+            Aplicación web <strong>monolítica</strong> (Node.js + Express + EJS) para la gestión de una
+            librería en línea, con acceso directo a PostgreSQL, publicada detrás de un reverse proxy
+            bajo el prefijo <code>/library</code>.
+        </p>
+
+        <!-- 2. OBJETIVO Y ALCANCE -->
+        <section id="sec2-objetivo">
+            <h2>1. Objetivo y alcance</h2>
+            <p>
+                Diseñar, construir, probar, desplegar y documentar una aplicación web monolítica en Node.js
+                para la gestión de una librería en línea, utilizando PostgreSQL mediante acceso directo desde
+                la aplicación (sin ORM). El propósito no es únicamente "hacer que el sistema funcione", sino
+                tomar y justificar decisiones de ingeniería: análisis de requisitos, modelado de datos,
+                arquitectura, organización del código, seguridad, validación, documentación de riesgos y
+                publicación de evidencia reproducible.
+            </p>
+            <h3>Restricciones arquitectónicas respetadas</h3>
+            <div class="fundamentos-grid">
+                <div class="card-small">
+                    <span class="badge badge-ok">Monolito server-side</span>
+                    <p>Un único proceso Node.js + Express + EJS renderiza HTML del lado del servidor.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Sin API</span>
+                    <p>No hay REST, GraphQL, SOAP ni microservicios. No se usa JSON/XML entre frontend y
+                    backend; los formularios HTML envían datos directamente al monolito.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Acceso directo a PostgreSQL</span>
+                    <p>El driver <code>pg</code> ejecuta funciones PL/pgSQL parametrizadas; no se
+                    concatena SQL con datos del usuario.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Un solo Administrador</span>
+                    <p>Regla de negocio reforzada tanto en la aplicación como con un índice único en
+                    PostgreSQL.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. REQUISITOS -->
+        <section id="sec3-requisitos">
+            <h2>2. Análisis de requisitos</h2>
+            <p>Fuente completa: <a href="docs/REQUIREMENTS.md">docs/REQUIREMENTS.md</a> ·
+            matriz en Excel: <a href="docs/REQUIREMENTS.xlsx">docs/REQUIREMENTS.xlsx</a>.</p>
+
+            <h3>Alcance</h3>
+            <p>Aplicación web monolítica (Node.js + Express + EJS, renderizado server-side) para la
+            gestión de una librería en línea, con acceso directo a PostgreSQL mediante <code>pg</code> y
+            consultas parametrizadas. Sin APIs REST/GraphQL/SOAP ni intercambio de datos vía JSON/XML
+            entre frontend y backend.</p>
+
+            <h3>Actores</h3>
+            <table>
+                <tr><th>Actor</th><th>Puede</th><th>No puede</th></tr>
+                <tr><td>Visitante</td><td>Acceder a login y registro; páginas públicas expresamente autorizadas</td><td>Consultar catálogo, ver conceptos, acceder a CRUD</td></tr>
+                <tr><td>Usuario registrado</td><td>Consultar catálogo, buscar por ISBN/título, ver detalle de libro y conceptos</td><td>Crear/editar/eliminar libros, catálogos o usuarios; administrar imágenes</td></tr>
+                <tr><td>Administrador (máx. 1)</td><td>CRUD completo de libros, autores, géneros, formatos, conceptos, imágenes y usuarios</td><td>Existir más de un Administrador en el sistema</td></tr>
+            </table>
+
+            <h3>Requisitos funcionales</h3>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Criterio de aceptación</th></tr>
+                <tr><td>RF-01</td><td>Registro de nuevos usuarios</td><td>Un visitante crea una cuenta con usuario, correo y contraseña; la contraseña se guarda con hash</td></tr>
+                <tr><td>RF-02</td><td>Inicio de sesión</td><td>Un usuario registrado accede con credenciales válidas y obtiene una sesión activa</td></tr>
+                <tr><td>RF-03</td><td>Cierre de sesión</td><td>Al cerrar sesión, la sesión se invalida y se redirige a una página pública</td></tr>
+                <tr><td>RF-04</td><td>Consulta del catálogo por usuarios autenticados</td><td>El catálogo se muestra con los datos básicos de cada libro</td></tr>
+                <tr><td>RF-05</td><td>Búsqueda por ISBN y por título</td><td>Una búsqueda por ISBN exacto o título parcial devuelve los libros coincidentes</td></tr>
+                <tr><td>RF-06</td><td>CRUD de libros (Administrador)</td><td>Formulario, validación server-side y confirmación de resultado por operación</td></tr>
+                <tr><td>RF-07</td><td>CRUD de autores (Administrador)</td><td>Igual que RF-06, aplicado a autores</td></tr>
+                <tr><td>RF-08</td><td>CRUD de géneros/categorías (Administrador)</td><td>Igual que RF-06, aplicado a géneros</td></tr>
+                <tr><td>RF-09</td><td>CRUD de formatos (Administrador)</td><td>Igual que RF-06, aplicado a formatos</td></tr>
+                <tr><td>RF-10</td><td>CRUD de conceptos y sus definiciones (Administrador)</td><td>Un concepto puede asociarse a varios libros con definición distinta en cada uno</td></tr>
+                <tr><td>RF-11</td><td>Asociación de varios autores y géneros a un libro</td><td>Al editar un libro se agregan/quitan autores y géneros sin duplicar registros</td></tr>
+                <tr><td>RF-12</td><td>Conceptos y definiciones específicas por libro</td><td>La definición pertenece a la relación libro-concepto, no al concepto en general</td></tr>
+                <tr><td>RF-13</td><td>Carga, edición y eliminación de imágenes</td><td>Se aceptan JPG/PNG/WebP vía <code>multipart/form-data</code>; nombre de archivo generado por el sistema</td></tr>
+                <tr><td>RF-14</td><td>Marcar una imagen como portada</td><td>Como máximo una imagen por libro queda marcada como portada</td></tr>
+                <tr><td>RF-15</td><td>Control de stock y precio</td><td>No se permite stock negativo ni precio inválido (&lt; 0)</td></tr>
+                <tr><td>RF-16</td><td>Un único Administrador</td><td>Un intento de crear un segundo Administrador es rechazado por la base de datos</td></tr>
+                <tr><td>RF-17</td><td>Autorización por rol en cada ruta</td><td>Un usuario regular que intenta una ruta administrativa recibe acceso denegado controlado</td></tr>
+            </table>
+
+            <h3>Requisitos no funcionales</h3>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Criterio de aceptación</th></tr>
+                <tr><td>RNF-01</td><td>Seguridad</td><td>Contraseñas con hash, sesiones seguras, SQL parametrizado, <code>.env</code> fuera del control de versiones</td></tr>
+                <tr><td>RNF-02</td><td>Mantenibilidad</td><td>Separación de responsabilidades: rutas, controladores, modelos, vistas, middleware</td></tr>
+                <tr><td>RNF-03</td><td>Integridad de datos</td><td>Esquema normalizado hasta 4FN con PK, FK, UNIQUE y CHECK en PostgreSQL</td></tr>
+                <tr><td>RNF-04</td><td>Rendimiento básico</td><td>Índices en columnas de búsqueda frecuente (ISBN, título)</td></tr>
+                <tr><td>RNF-05</td><td>Usabilidad</td><td>Formularios con validación visible y mensajes de error/éxito claros</td></tr>
+                <tr><td>RNF-06</td><td>Disponibilidad</td><td>La aplicación responde de forma consistente detrás del reverse proxy (<code>/library</code>)</td></tr>
+                <tr><td>RNF-07</td><td>Trazabilidad de errores</td><td>Errores registrados en servidor sin exponer detalles internos ni SQL al usuario final</td></tr>
+                <tr><td>RNF-08</td><td>Facilidad de despliegue</td><td>Scripts SQL numerados y ejecutables en orden reproducible sobre una instancia nueva</td></tr>
+            </table>
+
+            <h3>Supuestos y restricciones</h3>
+            <ul>
+                <li>El primer usuario registrado se designa automáticamente como Administrador.</li>
+                <li>"Género" y "categoría" se tratan como el mismo catálogo (<code>generos</code>).</li>
+                <li>Un único servidor, sin balanceo de carga ni réplicas; imágenes en el sistema de archivos local (<code>uploads/</code>).</li>
+                <li>Sin APIs ni JSON/XML entre frontend y backend; Node sólo escucha en <code>127.0.0.1:3000</code>, expuesto vía Apache/NGINX.</li>
+            </ul>
+
+            <h3>Riesgos identificados</h3>
+            <table>
+                <tr><th>Riesgo</th><th>Mitigación prevista</th></tr>
+                <tr><td>Acceso no autorizado a rutas administrativas</td><td>Middleware de autenticación + autorización por rol</td></tr>
+                <tr><td>SQL Injection</td><td>Consultas parametrizadas con <code>pg</code>, nunca concatenación de strings</td></tr>
+                <tr><td>Subida de archivos peligrosos</td><td>Validación de extensión/MIME/tamaño; nombre de archivo generado por el sistema</td></tr>
+                <tr><td>Exposición de credenciales</td><td>Variables de entorno (<code>.env</code>), excluidas del repositorio y del <code>.tar.gz</code> de entrega</td></tr>
+                <tr><td>Eliminación accidental de información</td><td>Restricciones <code>ON DELETE</code> explícitas y confirmaciones en la interfaz</td></tr>
+                <tr><td>Publicación de datos sensibles</td><td>Revisión previa a publicar en <code>ubiquitous.udem.edu</code> (sin contraseñas, tokens ni <code>.env</code>)</td></tr>
+            </table>
+            <p class="ok">RF-05 (búsqueda por ISBN/título) ya está implementado —
+            <code>LibroModel.listarConDetalle</code>, <code>LibroController.catalogo</code> y
+            <code>libros/catalogo.ejs</code>— y RNF-04 ya contaba con índice en <code>titulo</code>
+            y restricción única en <code>isbn</code>. Ver evidencia en la
+            <a href="#sec10-pruebas">sección 9</a>.</p>
+        </section>
+
+        <!-- 4. ARQUITECTURA -->
+        <section id="sec4-arquitectura">
+            <h2>3. Decisiones de arquitectura y diagrama del monolito</h2>
+            <p>
+                Flujo de una solicitud: <strong>Navegador → Apache/NGINX (prefijo <code>/library</code>) →
+                Node.js/Express (127.0.0.1:3000) → middleware → rutas/controladores → modelos (<code>pg</code>)
+                → funciones PL/pgSQL → PostgreSQL</strong>. Toda la interfaz, la lógica de negocio y el acceso
+                a datos viven en un único proceso desplegable; la "modularidad" es organización interna del
+                código, no separación en servicios independientes.
+            </p>
+            <div class="diagram-box">
+                <p><strong>📌 Espacio reservado</strong> — insertar aquí <code>img/ARCHITECTURE_MONOLITHIC.png</code>
+                (diagrama que muestre: presentación, rutas/controladores, servicios/lógica de negocio,
+                middleware, acceso a datos, vistas, estáticos, PostgreSQL y almacenamiento de imágenes).</p>
+            </div>
+            <h3>Patrón de presentación y organización del código (MVC server-side)</h3>
+            <table>
+                <tr><th>Carpeta / archivo</th><th>Responsabilidad real en este proyecto</th></tr>
+                <tr><td><code>app.js</code></td><td>Inicializa Express, define <code>BASE_PATH</code>, monta middleware general (urlencoded, method-override, sesión), monta estáticos y rutas bajo el prefijo, arranca el servidor en <code>127.0.0.1:PORT</code>.</td></tr>
+                <tr><td><code>config/db.js</code></td><td>Pool único de conexión a PostgreSQL (<code>pg</code>).</td></tr>
+                <tr><td><code>routes/</code></td><td>Recepción de solicitudes HTTP y despacho a controladores (<code>index.js</code>, <code>auth.js</code>, <code>libros.js</code>, <code>usuarios.js</code>, <code>catalogoRoutes.js</code>).</td></tr>
+                <tr><td><code>controllers/</code></td><td>Reglas de aplicación: valida entradas, invoca modelos, arma la respuesta (render o redirect). Incluye una fábrica (<code>catalogoController.js</code>) reutilizada por formatos/géneros/autores/conceptos.</td></tr>
+                <tr><td><code>models/</code></td><td>Único punto de acceso a datos; cada función llama a una función PL/pgSQL (<code>fn_*</code>) en PostgreSQL.</td></tr>
+                <tr><td><code>middlewares/</code></td><td><code>auth.js</code> (sesión, rol, inyección de usuario y de <code>basePath</code>), <code>upload.js</code> (validación de imágenes con <code>multer</code>).</td></tr>
+                <tr><td><code>views/</code></td><td>Plantillas EJS puras; no contienen SQL ni lógica de negocio.</td></tr>
+                <tr><td><code>public/</code></td><td>CSS y archivos subidos (<code>public/uploads/</code>).</td></tr>
+            </table>
+            <h3>Reverse proxy y prefijo <code>/library</code></h3>
+            <p>
+                La app nunca se expone directamente a Internet: escucha en <code>127.0.0.1:3000</code> y
+                Apache/NGINX publica <code>/library</code> hacia ella. Para que Express reconozca el prefijo
+                reenviado tal cual por el proxy, se introdujo una constante <code>BASE_PATH</code>
+                (variable de entorno con fallback a <code>/library</code>) que:
+            </p>
+            <ul>
+                <li>Monta el router principal y <code>express.static</code> bajo <code>BASE_PATH</code> en vez de <code>"/"</code>.</li>
+                <li>Inyecta <code>res.locals.basePath</code> en un middleware temprano, disponible en toda vista EJS.</li>
+                <li>Se usa en cada <code>res.redirect()</code> de controladores y middlewares (<code>requerirSesion</code>, <code>redirigirSiAutenticado</code>, login/logout, CRUD) para que el navegador nunca salga del prefijo publicado.</li>
+                <li>Ajusta <code>cookie.path</code> de <code>express-session</code> para que la cookie sea válida bajo <code>/library</code>.</li>
+                <li>Con <code>BASE_PATH=''</code> la app se comporta igual que antes, montada en la raíz — útil para desarrollo local sin el prefijo.</li>
+            </ul>
+            <p>Detalle completo en la <a href="#sec11-despliegue">sección de despliegue</a>.</p>
+        </section>
+
+        <!-- 5. BASE DE DATOS -->
+        <section id="sec5-basededatos">
+            <h2>4. Diseño de la base de datos, diagrama ER y 4FN</h2>
+            <p>Esquema implementado en <code>data/library_schema.sql</code> (tablas + índices) con lógica de
+            acceso encapsulada en funciones PL/pgSQL (<code>fn_crear_*</code>, <code>fn_listar_*</code>,
+            <code>fn_actualizar_*</code>, <code>fn_eliminar_*</code>, <code>fn_asociar_*</code>).</p>
+            <table>
+                <tr><th>Tabla</th><th>Rol en el modelo</th></tr>
+                <tr><td><code>usuarios</code></td><td>Cuentas registradas; <code>rol</code> restringido a <code>admin</code>/<code>cliente</code> vía CHECK.</td></tr>
+                <tr><td><code>libros</code></td><td>Entidad central: ISBN, título, año, precio, stock, formato.</td></tr>
+                <tr><td><code>formatos</code>, <code>generos</code>, <code>autores</code>, <code>conceptos</code></td><td>Catálogos independientes (id, nombre).</td></tr>
+                <tr><td><code>libro_autor</code>, <code>libro_genero</code></td><td>Tablas puente N:M — resuelven las dependencias multivaluadas de autores y géneros por libro sin repetir columnas en <code>libros</code>.</td></tr>
+                <tr><td><code>libro_concepto</code></td><td>Tabla puente N:M con atributo propio (<code>definicion</code>): mismo concepto puede tener definición distinta según el libro.</td></tr>
+                <tr><td><code>imagenes_libro</code></td><td>Varias imágenes por libro; <code>es_portada</code> con índice único parcial que garantiza como máximo una portada por libro.</td></tr>
+            </table>
+            <h4>Integridad reforzada en PostgreSQL (verificado en el esquema actual)</h4>
+            <ul>
+                <li><code>CHECK (rol IN ('admin','cliente'))</code> en <code>usuarios</code>.</li>
+                <li><code>CHECK (precio &gt;= 0)</code>, <code>CHECK (stock &gt;= 0)</code> y rango de <code>anio_publicacion</code> en <code>libros</code>.</li>
+                <li><code>uq_usuarios_admin_unico</code>: índice único parcial que impide un segundo Administrador a nivel de base de datos (no sólo en la aplicación).</li>
+                <li><code>uq_imagenes_portada_unica</code>: índice único parcial (<code>WHERE es_portada = true</code>) para forzar una sola portada por libro.</li>
+                <li><code>ON DELETE CASCADE</code> en <code>imagenes_libro.id_libro</code>.</li>
+            </ul>
+            <h3>Diagrama ER</h3>
+            <div class="diagram-box" style="text-align:left;">
+                <pre class="mermaid">
+erDiagram
+    FORMATOS ||--o{ LIBROS : clasifica
+    LIBROS ||--o{ LIBRO_AUTOR : tiene
+    AUTORES ||--o{ LIBRO_AUTOR : escribe
+    LIBROS ||--o{ LIBRO_GENERO : tiene
+    GENEROS ||--o{ LIBRO_GENERO : clasifica
+    LIBROS ||--o{ LIBRO_CONCEPTO : define
+    CONCEPTOS ||--o{ LIBRO_CONCEPTO : "se define en"
+    LIBROS ||--o{ IMAGENES_LIBRO : tiene
+
+    USUARIOS {
+        int id_usuario PK
+        string nombre_usuario
+        string correo
+        string contrasena_hash
+        string rol
+        timestamp fecha_registro
+    }
+    LIBROS {
+        int id_libro PK
+        string isbn
+        string titulo
+        smallint anio_publicacion
+        numeric precio
+        int stock
+        int id_formato FK
+    }
+    FORMATOS {
+        int id_formato PK
+        string nombre_formato
+    }
+    AUTORES {
+        int id_autor PK
+        string nombre_autor
+    }
+    GENEROS {
+        int id_genero PK
+        string nombre_genero
+    }
+    CONCEPTOS {
+        int id_concepto PK
+        string nombre_concepto
+    }
+    LIBRO_AUTOR {
+        int id_libro FK
+        int id_autor FK
+    }
+    LIBRO_GENERO {
+        int id_libro FK
+        int id_genero FK
+    }
+    LIBRO_CONCEPTO {
+        int id_libro FK
+        int id_concepto FK
+        text definicion
+    }
+    IMAGENES_LIBRO {
+        int id_imagen PK
+        int id_libro FK
+        string url_imagen
+        smallint orden
+        boolean es_portada
+    }
+                </pre>
+                <p class="evidencia-caption">Diagrama generado a partir de <code>data/library_schema.sql</code> real (no es un boceto aparte que se pueda desincronizar del código). <code>USUARIOS</code> no tiene FK hacia el resto del modelo — es intencional, la sesión/autenticación es independiente del catálogo de libros.</p>
+            </div>
+
+            <h3>Normalización demostrable 1FN → 2FN → 3FN/BCNF → 4FN</h3>
+            <p>Documento completo, con el paso a paso y las anomalías concretas en cada forma normal
+            (usando como ejemplo real el libro "Cien años de soledad", que en la BD de prueba tiene 3
+            autores y 3 géneros): <a href="docs/NORMALIZATION_4FN.md">docs/NORMALIZATION_4FN.md</a> ·
+            plantilla en Excel con las mismas hojas: <a href="docs/NORMALIZATION_4FN.xlsx">docs/NORMALIZATION_4FN.xlsx</a>.</p>
+            <table>
+                <tr><th>Forma normal</th><th>Violación encontrada</th><th>Anomalía que resuelve</th></tr>
+                <tr><td>1FN</td><td>Columnas <code>autores</code>/<code>generos</code>/<code>imagenes</code>/<code>conceptos</code> con listas dentro de una celda</td><td>No se puede filtrar por autor/género exacto ni garantizar que el mismo autor se escriba siempre igual</td></tr>
+                <tr><td>2FN</td><td><code>titulo</code>/<code>precio</code>/<code>stock</code> dependen sólo de <code>isbn</code>, no de la clave completa <code>(isbn, autor, genero)</code></td><td>Cambiar el precio ya no exige actualizar N filas repetidas</td></tr>
+                <tr><td>3FN/BCNF</td><td><code>formato</code>/<code>autor</code>/<code>genero</code>/<code>concepto</code> guardados como texto libre repetido, no como entidades con clave propia</td><td>Renombrar un catálogo es un solo <code>UPDATE</code>, no uno por cada libro que lo usa</td></tr>
+                <tr><td>4FN</td><td>Combinar autor+género+imagen en una sola tabla puente produce una "trampa de conexión" (3 autores × 3 géneros = 9 filas artificiales para el ejemplo real)</td><td>Cada MVD independiente (autor, género, imagen) vive en su propia tabla; agregar un autor no obliga a duplicar géneros</td></tr>
+            </table>
+            <p><strong>Caso especial documentado:</strong> <code>libro_concepto</code> parece una cuarta
+            MVD independiente, pero no lo es — <code>(id_libro, id_concepto) -&gt; definicion</code> es
+            una dependencia funcional real (el mismo concepto tiene definición distinta según el libro,
+            verificado en <code>docs/TEST_PLAN.md</code> TC-11), así que es una entidad asociativa con
+            atributo propio, no una tabla puente de solo llaves. Detalle completo en
+            <a href="docs/NORMALIZATION_4FN.md">docs/NORMALIZATION_4FN.md</a>.</p>
+            <h3>Triggers y vistas (agregados el 2026-08-31)</h3>
+            <p>El esquema sólo tenía funciones PL/pgSQL (<code>fn_*</code>); se agregaron 3 triggers
+            (<code>data/library_triggers.sql</code>) y 3 vistas (<code>data/library_views.sql</code>),
+            cada uno resolviendo un problema concreto detectado en el propio diseño — no se agregaron
+            sólo para cumplir el checklist del ejercicio:</p>
+            <table>
+                <tr><th>Objeto</th><th>Problema real que resuelve</th><th>Evidencia</th></tr>
+                <tr><td><code>trg_una_portada_por_libro</code></td><td>La regla "una sola portada" sólo vivía como un <code>UPDATE</code> manual dentro de <code>fn_agregar_imagen</code>; cualquier otra vía de escritura se topaba con el índice único como un simple error. Ahora la tabla misma se auto-corrige.</td><td>TC-22: se insertó una segunda portada y la anterior se desmarcó sola</td></tr>
+                <tr><td><code>trg_libros_fecha_actualizacion</code></td><td><code>libros</code> sólo registraba <code>fecha_creacion</code>; no había forma de saber cuándo cambió por última vez un precio o stock (RNF-07 trazabilidad)</td><td>TC-23: <code>fecha_actualizacion</code> cambió tras un <code>UPDATE</code>, <code>fecha_creacion</code> no</td></tr>
+                <tr><td><code>trg_usuarios_auditoria_rol</code></td><td>El índice único evita un segundo Administrador, pero no había bitácora de <em>cuándo</em> y a <em>quién</em> se le asignó/quitó ese rol (control de seguridad #16)</td><td>TC-24: 2 cambios de rol reales quedaron en <code>usuarios_auditoria_rol</code></td></tr>
+                <tr><td><code>vista_catalogo_libros</code></td><td>El <code>JOIN</code>+<code>STRING_AGG</code> del catálogo vivía duplicado como texto SQL dentro de <code>libroModel.js</code>; ahora <code>LibroModel.listarConDetalle</code> sólo filtra sobre la vista (ver D-14)</td><td>TC-27: catálogo y búsqueda RF-05 siguen funcionando igual tras el cambio</td></tr>
+                <tr><td><code>vista_administradores</code></td><td>Ver rápido quién tiene hoy el rol admin, sin recorrer toda la tabla de usuarios</td><td>TC-25: verificado tras un cambio de rol</td></tr>
+                <tr><td><code>vista_libros_stock_bajo</code></td><td>Reporte de inventario (libros con 5 unidades o menos) para control de stock</td><td>TC-26: verificado con un libro puesto en stock=3</td></tr>
+            </table>
+            <p>Detalle de diseño (necesidad → alternativas → decisión → riesgo → evidencia) en D-13,
+            D-14 y D-15 de <a href="docs/ENGINEERING_DECISIONS.md">docs/ENGINEERING_DECISIONS.md</a>;
+            los 6 casos de prueba en <a href="docs/TEST_PLAN.md">docs/TEST_PLAN.md</a> (TC-22 a TC-27),
+            todos ejecutados contra una base de datos recreada desde cero con
+            <code>library_schema.sql</code> → <code>library_triggers.sql</code> →
+            <code>library_views.sql</code> → <code>library_data.sql</code>, en ese orden.</p>
+            <div class="pendiente">
+                <div class="pendiente-titulo">📌 Sigue pendiente</div>
+                <p>Renombrar/reorganizar estos 4 archivos al esquema <code>db/00_create_database.sql</code>
+                … <code>db/06_views.sql</code> que pide el ejercicio (hoy están en <code>data/</code> con
+                nombres propios, ya en el orden correcto de carga); ampliar el seed a 30 filas por tabla;
+                y capturas de <code>psql</code> ejecutadas contra el servidor real de GCP (lo de arriba se
+                verificó contra una base de datos local de prueba).</p>
+            </div>
+        </section>
+
+        <!-- 6. GCP -->
+        <section id="sec6-gcp">
+            <h2>5. Infraestructura GCP y PostgreSQL</h2>
+            <p>Fuente completa: <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>.</p>
+            <p>Dato confirmado durante el despliegue: el sistema operativo del servidor corresponde a la
+            familia <strong>Enterprise Linux 10</strong> (kernel <code>6.12.0-233.el10.x86_64</code>),
+            consistente con el requisito de CentOS Stream 10 del ejercicio.</p>
+
+            <h3>Comandos registrados</h3>
+            <pre># Acceso a la instancia
+gcloud compute ssh user@maquina-integracion
+
+# Firewall: HTTP (80) y el puerto de Node (3000, sólo para prueba directa
+# antes de poner Apache/NGINX delante)
+gcloud compute firewall-rules create allow-http --network=default \
+  --source-ranges=0.0.0.0/0 --allow tcp:80
+gcloud compute firewall-rules create web-monolito01 --network=default \
+  --direction=INGRESS --action=ALLOW --rules=tcp:3000 --source-ranges=0.0.0.0/0
+
+# PostgreSQL
+sudo dnf -y install postgresql-server
+su - postgres
+psql -c "\c library library_user"
+
+# Herramientas base y despliegue del código
+sudo mkdir udem && sudo chown $USER:$USER udem -R
+sudo dnf install git -y
+cd /etc/yum.repos.d/
+sudo dnf config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+sudo dnf install gh --repo gh-cli
+ssh-keygen -t ed25519 -C "ana.loredo@udem.edu"
+more ~/.ssh/id_ed25519.pub
+git clone git@github.com:anapaolaloredo/IntegracionProyecto.git
+cd IntegracionProyecto && git pull
+
+# Carga del esquema y arranque
+psql -U library_user -d library -f library_schema.sql
+sudo -u postgres psql -d library -f library_schema.sql
+sudo dnf install npm -y
+npm start</pre>
+            <h3>Creación de la instancia de Compute Engine</h3>
+            <pre>gcloud compute instances create maquina-integracion \
+  --machine-type=e2-standard-2 \
+  --image-family=centos-stream-10 \
+  --image-project=centos-cloud \
+  --boot-disk-size=50GB \
+  --zone=southamerica-south1-c</pre>
+            <p class="evidencia-caption" style="margin-bottom:16px;">Se creó una segunda instancia
+            (<code>maquina-03</code>) con la misma configuración para pruebas de grupo. Nota de
+            corrección aplicada: el borrador original traía banderas partidas con guiones sueltos
+            (<code>-- machine-type=... - -image-family=...</code>), artefacto de copiar/pegar desde un
+            procesador de texto; la forma válida pega la bandera completa (<code>--machine-type=valor</code>).</p>
+            <table>
+                <tr><th>Parámetro</th><th>Valor</th><th>Justificación</th></tr>
+                <tr><td>Tipo de máquina</td><td><code>e2-standard-2</code></td><td>2 vCPU / 8 GB RAM: suficiente para correr Node.js y PostgreSQL en la misma instancia con datos de práctica, sin separar la BD en otra instancia.</td></tr>
+                <tr><td>Imagen</td><td><code>centos-stream-10</code> (<code>centos-cloud</code>)</td><td>Requisito explícito del ejercicio; confirmado en el servidor real por el kernel <code>6.12.0-233.el10.x86_64</code>.</td></tr>
+                <tr><td>Disco de arranque</td><td>50 GB</td><td>Margen para SO, PostgreSQL, <code>node_modules</code> e imágenes subidas, sin acercarse al límite en un entorno de práctica.</td></tr>
+                <tr><td>Zona</td><td><code>southamerica-south1-c</code></td><td>Región más cercana disponible al equipo, minimizando latencia durante desarrollo y pruebas.</td></tr>
+            </table>
+            <div class="pendiente">
+                <div class="pendiente-titulo">⚠️ Riesgo identificado</div>
+                <p>Compartir una sola instancia <code>e2-standard-2</code> entre PostgreSQL y Node.js no
+                aísla el consumo de recursos entre ambos: un pico de tráfico o una consulta pesada puede
+                degradar los dos servicios a la vez. Aceptable para el alcance del ejercicio; en
+                producción real se separaría la base de datos (por ejemplo, Cloud SQL).</p>
+                <p>Además, la regla de firewall <code>web-monolito01</code> deja el puerto 3000 abierto a
+                <code>0.0.0.0/0</code>; como Node sólo escucha en <code>127.0.0.1</code> no es alcanzable
+                hoy, pero esa regla debería eliminarse una vez confirmado el reverse proxy, dejando sólo
+                el puerto público (80/443) abierto. Detalle completo en
+                <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>.</p>
+            </div>
+            <div class="pendiente">
+                <div class="pendiente-titulo">📌 Verificación de PostgreSQL — parcial</div>
+                <p><code>\du library_user</code> ya se verificó, pero contra una base de datos <strong>local
+                de prueba</strong> (no contra el servidor real de GCP): el rol se creó explícitamente sin
+                <code>SUPERUSER</code>/<code>CREATEDB</code>/<code>CREATEROLE</code>. Falta repetir esa
+                misma verificación en <code>maquina-integracion</code> y tomar la captura real (ver
+                <a href="docs/SECURITY_REVIEW.md">SECURITY_REVIEW.md</a>, control #9). También falta cargar,
+                en el servidor real, la secuencia completa ya probada localmente:
+                <code>library_schema.sql</code> → <code>library_triggers.sql</code> →
+                <code>library_views.sql</code> → <code>library_data.sql</code> (hoy sólo se cargó
+                <code>library_schema.sql</code> directo, según <code>docs/GCP_COMMANDS.md</code>), y
+                capturas de <code>psql</code> mostrando funciones/triggers/vistas y conteos por tabla.</p>
+            </div>
+        </section>
+
+        <!-- 7. MÓDULOS NODE -->
+        <section id="sec7-modulos">
+            <h2>6. Estructura de módulos de Node.js</h2>
+            <p>Estructura real del proyecto (<code>apps/web-monolito01/</code>):</p>
+            <pre>web-monolito01/
+  package.json
+  .env                     # no publicado
+  src/
+    app.js                 # BASE_PATH, middleware, arranque
+    config/db.js           # pool pg
+    routes/                # index, auth, libros, usuarios, catalogoRoutes
+    controllers/           # auth, libro, usuario, catalogo (fábrica)
+    models/                # libroModel, usuarioModel, catalogoModel
+    middlewares/           # auth (sesión/roles/basePath), upload (multer)
+    views/                 # EJS: auth/, libros/, usuarios/, autores/,
+                            # generos/, formatos/, conceptos/, partials/
+  public/
+    css/, uploads/
+  data/
+    library_schema.sql     # tablas + funciones PL/pgSQL
+    library_data.sql       # datos de prueba (vía funciones fn_crear_*)
+  test/                    # iniciosesion.test.js, usuarios.test.js</pre>
+            <p>Dependencias justificadas: <code>express</code>, <code>ejs</code>, <code>pg</code>,
+            <code>express-session</code> + <code>connect-pg-simple</code> (sesión persistida en PostgreSQL),
+            <code>bcrypt</code> (hash de contraseñas), <code>multer</code> (subida de imágenes),
+            <code>method-override</code> (PUT/DELETE desde formularios HTML), <code>dotenv</code>.</p>
+        </section>
+
+        <!-- 8. FUNCIONALIDADES -->
+        <section id="sec8-funcionalidades">
+            <h2>7. Funcionalidades implementadas</h2>
+            <div class="fundamentos-grid">
+                <div class="card-small">
+                    <span class="badge badge-ok">Autenticación</span>
+                    <p>Registro, login, logout, sesión persistida en PostgreSQL vía <code>connect-pg-simple</code>. Contraseñas con hash <code>bcrypt</code>.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Autorización por rol</span>
+                    <p><code>requerirSesion</code> y <code>requerirAdmin</code> protegen rutas; un usuario no-admin recibe 403 controlado, no un stack trace.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">CRUD completo</span>
+                    <p>Libros, autores, géneros, formatos y conceptos (catálogo genérico reutilizado) y usuarios, con formulario, validación server-side y mensaje de resultado.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Relaciones N:M</span>
+                    <p>Un libro con varios autores y géneros a la vez; conceptos con definición propia por libro.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Imágenes</span>
+                    <p>Carga vía <code>multipart/form-data</code> con <code>multer</code>, validación de extensión/MIME/tamaño (5&nbsp;MB), nombre generado por el sistema (no el original del usuario), marcado de portada.</p>
+                </div>
+                <div class="card-small">
+                    <span class="badge badge-ok">Conceptos por libro</span>
+                    <p>Definiciones específicas por libro (ej. IaaS/PaaS/SaaS/FaaS para un libro de Cloud Computing), reutilizando el catálogo de conceptos.</p>
+                </div>
+            </div>
+            <div class="card-small" style="border-top-color:var(--ok-color);margin:16px 0;">
+                <span class="badge badge-ok">Corregido</span>
+                <p style="margin-bottom:0;"><strong>Búsqueda por ISBN y título (RF-05):</strong> implementada
+                — <code>GET /library/libros?q=...</code> filtra por ISBN exacto o título parcial
+                (<code>ILIKE</code>, parametrizado). Formulario de búsqueda agregado en
+                <code>libros/catalogo.ejs</code>. Verificado en la <a href="#sec10-pruebas">sección 9</a>
+                (TC-21).</p>
+            </div>
+            <div class="card-small" style="border-top-color:var(--ok-color);margin:16px 0;">
+                <span class="badge badge-ok">Corregido (Tarea 2e)</span>
+                <p style="margin-bottom:0;"><strong>Mensaje flash (<code>mensajeError</code>) ya se
+                muestra en todas las vistas de listado</strong>: además del detalle de libro (TC-12b),
+                ahora también en <code>usuarios/listar.ejs</code> y las 4 vistas de catálogos
+                genéricos. Verificado en <code>docs/TEST_PLAN.md</code> (TC-28) y documentado como la
+                mejora pequeña y verificable de la Tarea 2e en <code>docs/AI_PROMPT_HISTORY.md</code>.</p>
+            </div>
+            <div class="pendiente">
+                <div class="pendiente-titulo">⚠️ Brechas que siguen abiertas</div>
+                <ul style="margin-bottom:0;">
+                    <li><strong>Catálogo de "categorías"</strong> mencionado en el enunciado: el modelo actual sólo tiene <code>formatos</code>, <code>generos</code>, <code>autores</code> y <code>conceptos</code> como catálogos independientes; confirmar si "categoría" debía ser una tabla adicional o si se cubre con <code>generos</code>/<code>formatos</code>.</li>
+                    <li><strong>Texto alternativo de imagen</strong>: <code>imagenes_libro</code> no tiene columna para <code>alt</code>; sólo se guarda <code>url_imagen</code>, <code>orden</code> y <code>es_portada</code>.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 9. SEGURIDAD -->
+        <section id="sec9-seguridad">
+            <h2>8. Seguridad y roles</h2>
+            <p>Controles verificados directamente en el código:</p>
+            <table>
+                <tr><th>Control</th><th>Dónde está implementado</th></tr>
+                <tr><td>Hash de contraseñas</td><td><code>bcrypt</code> (10 rondas) en <code>authController.js</code>; nunca se guarda texto plano.</td></tr>
+                <tr><td>Secretos en variables de entorno</td><td><code>.env</code> con <code>PGPASSWORD</code>, <code>SESSION_SECRET</code>, <code>BASE_PATH</code>; no versionado.</td></tr>
+                <tr><td>SQL parametrizado</td><td>Todo acceso a datos pasa por funciones PL/pgSQL invocadas con parámetros vía <code>pg</code>; no hay concatenación de SQL con datos del usuario.</td></tr>
+                <tr><td>Autorización por rol</td><td>Middleware <code>requerirSesion</code> / <code>requerirAdmin</code> en cada ruta administrativa (libros, usuarios, catálogos).</td></tr>
+                <tr><td>Sesiones</td><td><code>express-session</code> + <code>connect-pg-simple</code>; <code>cookie.path</code> ajustado a <code>BASE_PATH</code>; logout destruye la sesión.</td></tr>
+                <tr><td>Validación de archivos subidos</td><td><code>multer</code> filtra por extensión y MIME (jpg/jpeg/png/webp/gif), límite de 5&nbsp;MB, nombre de archivo generado por el sistema.</td></tr>
+                <tr><td>Mensajes de error controlados</td><td>Vista <code>error.ejs</code> genérica; en producción (<code>NODE_ENV=production</code>) no se expone <code>err.message</code> al usuario final.</td></tr>
+                <tr><td>Un solo Administrador</td><td>Regla aplicada en <code>authController.registrar</code> (el primer usuario es admin, el resto cliente) <strong>y</strong> reforzada con índice único parcial en PostgreSQL (<code>uq_usuarios_admin_unico</code>).</td></tr>
+                <tr><td>Node no expuesto directamente</td><td>Escucha en <code>127.0.0.1:3000</code>; sólo Apache/NGINX es público.</td></tr>
+            </table>
+            <p>Revisión completa (amenaza → control → evidencia): <a href="docs/SECURITY_REVIEW.md">docs/SECURITY_REVIEW.md</a>.</p>
+
+            <h3>Auditoría de autorización por rol (verificación línea por línea, 2026-08-31)</h3>
+            <p>Se revisó cada archivo de <code>routes/</code> para confirmar que ninguna función
+            administrativa quedara accesible sin <code>requerirAdmin</code>:</p>
+            <ul>
+                <li><code>routes/usuarios.js</code>: <code>router.use(requerirSesion, requerirAdmin)</code> protege <strong>todo</strong> el router de una sola vez.</li>
+                <li><code>routes/libros.js</code>: sesión requerida para todo; <code>requerirAdmin</code> explícito en cada ruta de escritura (crear, editar, eliminar, imágenes, conceptos). Sólo listar y ver detalle quedan abiertos a cualquier usuario con sesión — correcto según RF-04.</li>
+                <li><code>routes/catalogoRoutes.js</code> (fábrica reusada por 4 catálogos): listar requiere sólo sesión; crear/editar/eliminar requieren <code>requerirAdmin</code> en cada uno.</li>
+                <li><code>requerirAdmin</code> decide únicamente con <code>req.session.usuario.rol</code>, un valor que sólo el propio servidor puede fijar en el login — no confía en ningún dato enviado por el cliente.</li>
+            </ul>
+            <p class="ok">Conclusión: no se encontró ninguna ruta administrativa sin protección al 31/08/2026.</p>
+
+            <h3>Riesgos residuales identificados (no cubiertos explícitamente todavía)</h3>
+            <table>
+                <tr><th>Riesgo</th><th>Estado</th></tr>
+                <tr><td>CSRF en formularios <code>POST</code>/<code>PUT</code>/<code>DELETE</code></td><td class="gap">Sin token CSRF; cookie de sesión sin <code>sameSite</code> explícito (depende del default del navegador)</td></tr>
+                <tr><td>Fuerza bruta sobre login</td><td class="gap">Sin límite de intentos (no hay <code>express-rate-limit</code>)</td></tr>
+                <tr><td>Cabeceras de seguridad HTTP (CSP, X-Frame-Options, etc.)</td><td class="gap">No está instalado <code>helmet</code></td></tr>
+                <tr><td>Política de contraseñas</td><td class="gap">Sólo longitud mínima (6 caracteres); sin requisito de complejidad</td></tr>
+                <tr><td>Privilegios de <code>library_user</code> en PostgreSQL</td><td class="gap">Verificado en local (rol creado sin <code>SUPERUSER</code>); falta repetirlo contra el servidor real de GCP</td></tr>
+            </table>
+
+            <h3>Control agregado el 2026-08-31</h3>
+            <p class="ok"><strong>#16 — Trazabilidad de cambios de rol de Administrador:</strong> trigger
+            <code>trg_usuarios_auditoria_rol</code> registra en <code>usuarios_auditoria_rol</code> cada
+            cambio de <code>rol</code> (anterior, nuevo, fecha), sin depender de que la aplicación lo
+            registre manualmente. Verificado con datos reales en <code>docs/TEST_PLAN.md</code> (TC-24).</p>
+        </section>
+
+        <!-- 10. PRUEBAS -->
+        <section id="sec10-pruebas">
+            <h2>9. Plan y resultados de pruebas</h2>
+            <p>Matriz completa: <a href="docs/TEST_PLAN.md">docs/TEST_PLAN.md</a>. Los 21 casos se
+            ejecutaron de verdad contra el código real: los 3 primeros contra el servidor desplegado
+            (ver <a href="#sec12-evidencias">galería de evidencias</a>), y del TC-04 en adelante contra
+            una instancia local de PostgreSQL 15 levantada específicamente para esta prueba (rol
+            <code>library_user</code> sin privilegios de superusuario, esquema y seed originales sin
+            modificar) más la app real corriendo con <code>npm start</code>, usando <code>curl</code>
+            (incluye manejo de cookies de sesión) y <code>psql</code> directo para las pruebas de
+            integridad. Ningún resultado de esta tabla está inventado.</p>
+
+            <h3>Autenticación y sesión</h3>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-05</td><td>RF-01 registro</td><td><code>POST /library/auth/registro</code> con datos válidos</td><td>Cuenta creada, rol <code>cliente</code> (ya existe admin)</td><td><code>302</code>; fila creada en <code>usuarios</code> con <code>rol='cliente'</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-06</td><td>RF-02 login</td><td>Correo/contraseña válidos</td><td>Sesión iniciada, redirección al catálogo</td><td><code>302 → /library/libros</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-07</td><td>RF-02 login (negativo)</td><td>Contraseña incorrecta</td><td>Error genérico, sin distinguir campo</td><td><code>401</code>, "Credenciales invalidas." (mismo mensaje que correo inexistente)</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-08</td><td>RF-03 logout</td><td>Sesión activa, <code>POST /library/auth/logout</code></td><td>Sesión destruida, redirección a login</td><td><code>302 → /library/auth/login</code></td><td class="ok">Pasó</td></tr>
+            </table>
+
+            <h3>Catálogo, CRUD y relaciones</h3>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-04</td><td>RF-04 catálogo autenticado</td><td>Sesión admin, <code>GET /library/libros</code></td><td>Catálogo accesible</td><td><code>200</code>, <code>&lt;h1&gt;Catalogo de libros&lt;/h1&gt;</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-09a-d</td><td>RF-06/07 CRUD (crear/editar/eliminar)</td><td>Admin: crea autor, crea libro, edita autor (<code>?_method=PUT</code>), elimina autor (<code>?_method=DELETE</code>)</td><td>Cada operación persiste el cambio</td><td>Las 4 operaciones reflejadas correctamente en PostgreSQL (verificado por <code>SELECT</code> tras cada paso)</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-10</td><td>RF-11 relación libro-autor/género</td><td>Asociar 2 autores y 2 géneros al mismo libro</td><td>N:M sin duplicados</td><td><code>fn_listar_autores_por_libro</code>/<code>generos</code> devuelven 3 filas cada una, sin duplicados</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-11</td><td>RF-12 concepto por libro</td><td>Mismo concepto definido en 2 libros con texto distinto</td><td>Cada libro conserva su propia definición</td><td>Confirmado: definiciones distintas devueltas por libro</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-12a</td><td>RF-13/14 imagen válida</td><td>PNG real, <code>es_portada=on</code></td><td>Aceptada, nombre generado por el sistema, portada única</td><td>Fila creada con <code>url_imagen=/uploads/&lt;generado&gt;.png</code>, <code>es_portada=true</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-12b</td><td>RF-13 archivo inválido</td><td><code>.exe</code> con contenido de texto</td><td>Rechazado, mensaje controlado y visible</td><td><strong>Re-ejecutado tras el fix:</strong> <code>302</code> a <code>/library/libros/12</code> (antes <code>500</code>); mensaje "Solo se permiten imagenes..." visible en la página. También probado el límite de 5&nbsp;MB con mensaje propio.</td><td class="ok">Pasó (corregido)</td></tr>
+                <tr><td>TC-21</td><td>RF-05 búsqueda ISBN/título</td><td><code>GET /library/libros?q=Prueba</code></td><td>Sólo coincidencias visibles</td><td><strong>Re-ejecutado tras implementar la búsqueda:</strong> 1 tarjeta con <code>?q=Prueba</code> y con <code>?q=1111111111111</code> (antes mostraba las 8); mensaje de "sin resultados" cuando no hay coincidencias; sin <code>q</code> se ven los 8 libros</td><td class="ok">Pasó (implementado)</td></tr>
+            </table>
+
+            <h3>Autorización por rol</h3>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-13</td><td>RF-17 visitante</td><td>Sin sesión, <code>GET /library/libros</code></td><td>Redirección a login</td><td><code>302 → /library/auth/login</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-14a/b</td><td>RF-17 cliente en ruta admin (lectura y escritura)</td><td>Sesión de <code>juan_perez</code> (cliente), <code>GET /library/usuarios</code> y <code>POST /library/libros</code></td><td><code>403</code> controlado</td><td><code>403</code>, <code>&lt;h1&gt;Acceso denegado&lt;/h1&gt;</code> en ambos casos</td><td class="ok">Pasó</td></tr>
+            </table>
+
+            <h3>Integridad de PostgreSQL — pruebas negativas (vía <code>psql</code>)</h3>
+            <table>
+                <tr><th>ID</th><th>Amenaza / regla</th><th>Resultado esperado</th><th>Error real de PostgreSQL</th><th>Estado</th></tr>
+                <tr><td>TC-15</td><td>Segundo Administrador</td><td>Rechazado</td><td><code>duplicate key value violates unique constraint "uq_usuarios_admin_unico"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-16</td><td>ISBN duplicado</td><td>Rechazado</td><td><code>duplicate key value violates unique constraint "libros_isbn_key"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-17a/b</td><td>Stock negativo / precio inválido</td><td>Rechazado</td><td><code>violates check constraint "libros_stock_check"</code> / <code>"libros_precio_check"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-18</td><td>FK inexistente</td><td>Rechazado</td><td><code>violates foreign key constraint "libros_id_formato_fkey"</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-19</td><td>Eliminación que viola relación</td><td>Rechazado</td><td><code>violates foreign key constraint "libro_autor_id_autor_fkey" ... still referenced</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-20</td><td>Inyección SQL (consulta preparada, mismo mecanismo <code>$1</code> que usa <code>pg</code>)</td><td>Tratado como dato literal</td><td>Sin error de sintaxis; la tabla <code>conceptos</code> no se vio afectada (pasó de 5 a 6 filas); el texto <code>malicioso'); DROP TABLE conceptos; --</code> quedó guardado literal como <code>nombre_concepto</code></td><td class="ok">Pasó</td></tr>
+            </table>
+
+            <h3>Triggers y vistas (agregados el 2026-08-31)</h3>
+            <table>
+                <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-22</td><td>Trigger <code>trg_una_portada_por_libro</code></td><td>Al marcar una nueva portada, la anterior se desmarca sola</td><td>Imagen <code>id=1</code> pasó a <code>es_portada=false</code> automáticamente al insertar <code>id=8</code> con <code>true</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-23</td><td>Trigger <code>trg_libros_fecha_actualizacion</code></td><td><code>fecha_actualizacion</code> cambia, <code>fecha_creacion</code> no</td><td>Confirmado con timestamps reales antes/después de un <code>UPDATE</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-24</td><td>Trigger <code>trg_usuarios_auditoria_rol</code></td><td>Cambios de rol quedan en bitácora</td><td>2 filas insertadas en <code>usuarios_auditoria_rol</code> con rol anterior/nuevo y fecha</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-25</td><td>Vista <code>vista_administradores</code></td><td>Sólo lista al admin vigente</td><td>Devolvió únicamente al usuario recién ascendido</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-26</td><td>Vista <code>vista_libros_stock_bajo</code></td><td>Lista libros con stock ≤ 5</td><td>Devolvió "El aleph" con <code>stock=3</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-27</td><td>Vista <code>vista_catalogo_libros</code> (ahora usada por la app)</td><td>Catálogo y búsqueda RF-05 siguen igual tras mover el JOIN a la vista</td><td><code>200</code> en ambos casos; mismos resultados que antes del cambio</td><td class="ok">Pasó</td></tr>
+            </table>
+
+            <h3>Mejora de la Tarea 2e (uso controlado de IA)</h3>
+            <table>
+                <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-28</td><td><code>mensajeError</code> visible en <code>usuarios/listar.ejs</code> y catálogos genéricos</td><td>El mensaje queda visible al listar, y no se repite en una carga posterior</td><td>Auto-eliminación de admin y eliminación de formato en uso mostraron su mensaje respectivo; una segunda carga ya no lo mostró</td><td class="ok">Pasó</td></tr>
+            </table>
+
+            <h3>Bug encontrado por verificación manual de la estudiante</h3>
+            <table>
+                <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
+                <tr><td>TC-29</td><td>Columna ID vacía en <code>GET /library/autores</code> (ver <code>evidencias/autores.png</code>)</td><td>La columna ID muestra el id real; "Editar"/"Eliminar" apuntan a ese id</td><td>Corregido: antes vacía con links a <code>/autores/undefined/editar</code> (plural irregular "autores"→"autor" rompía <code>id_${vista.slice(0,-1)}</code>); después, ID reales y links <code>/library/autores/5/editar</code> correctos</td><td class="ok">Pasó (corregido)</td></tr>
+            </table>
+
+            <h3>Despliegue bajo reverse proxy</h3>
+            <table>
+                <tr><th>ID</th><th>Requisito</th><th>Resultado observado</th><th>Estado</th><th>Evidencia</th></tr>
+                <tr><td>TC-01</td><td>RNF-06 acceso remoto</td><td><code>302 → /library/auth/login</code>; estáticos y navegación con prefijo correcto</td><td class="ok">Pasó</td><td><a href="#sec12-evidencias">Ver evidencia 1</a></td></tr>
+                <tr><td>TC-02</td><td>RNF-06 estáticos/rutas</td><td><code>200</code> dentro del prefijo, <code>404</code> fuera</td><td class="ok">Pasó</td><td>Registrado en la sesión de trabajo</td></tr>
+                <tr><td>TC-03</td><td>RNF-06 local sin prefijo</td><td><code>BASE_PATH=''</code> se comporta igual que antes del cambio</td><td class="ok">Pasó</td><td>Registrado en la sesión de trabajo</td></tr>
+            </table>
+
+            <div class="card-small" style="border-top-color:var(--ok-color);">
+                <span class="badge badge-ok">Hallazgos corregidos y re-probados</span>
+                <p><strong>TC-12b:</strong> <code>middlewares/upload.js</code> ahora exporta
+                <code>subirImagenControlado</code>, que envuelve <code>upload.single('imagen')</code>,
+                captura el error de <code>multer</code> (tipo inválido o límite de tamaño) y redirige con
+                <code>req.session.mensajeError</code> en vez de dejarlo caer al manejador global. De paso
+                se encontró que <code>libros/detalle.ejs</code> nunca mostraba ese mensaje (el flash sólo
+                se leía en el login); se corrigió en <code>LibroController.detalle</code> y en la vista.</p>
+                <p><strong>TC-21:</strong> se implementó la búsqueda en <code>LibroModel.listarConDetalle</code>
+                (<code>WHERE $1::text IS NULL OR l.isbn = $1 OR l.titulo ILIKE '%' || $1 || '%'</code>,
+                parametrizado), <code>LibroController.catalogo</code> (lee <code>req.query.q</code>) y
+                un formulario nuevo en <code>libros/catalogo.ejs</code>.</p>
+                <p style="margin-bottom:0;">Al corregir TC-12b se detectó el mismo patrón de
+                <code>mensajeError</code> sin mostrarse en <code>usuarios/listar.ejs</code> y en las
+                vistas de catálogos genéricos — <strong>no se corrigió por estar fuera del alcance
+                pedido</strong>, queda anotado en <code>docs/TEST_PLAN.md</code> para una siguiente
+                iteración.</p>
+            </div>
+            <p><strong>Resumen: 29/29 casos ejecutados, 29/29 pasan</strong> (21 originales, con TC-12b
+            y TC-21 corregidos y re-probados, TC-22 a TC-27 al agregar los triggers y vistas, TC-28
+            al corregir el mensaje flash sin mostrar — mejora de la Tarea 2e —, y TC-29 al corregir
+            el bug real de columna ID vacía en Autores, encontrado por la estudiante probando la app).</p>
+        </section>
+
+        <!-- 11. DESPLIEGUE -->
+        <section id="sec11-despliegue">
+            <h2>10. Despliegue con Apache/NGINX</h2>
+            <p>Verificado end-to-end: acceso local (<code>127.0.0.1:3000/library</code>), acceso por reverse
+            proxy (<code>http://IP_DEL_SERVIDOR/library</code>) y renderizado correcto de rutas estáticas,
+            formularios, sesiones y redirecciones bajo el prefijo <code>/library</code>.</p>
+            <h3>Cambios de código para operar bajo prefijo</h3>
+            <pre>// app.js
+const BASE_PATH = process.env.BASE_PATH ?? '/library';
+
+app.use((req, res, next) => {           // disponible en toda vista
+  res.locals.basePath = BASE_PATH;
+  next();
+});
+
+app.use(BASE_PATH, express.static(publicDir));
+app.use(session({ ..., cookie: { ..., path: BASE_PATH || '/' } }));
+app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
+            <p>Se usó <code>??</code> (nullish coalescing) en vez de <code>||</code> a propósito: con
+            <code>||</code>, un <code>BASE_PATH=''</code> explícito en <code>.env</code> volvería a caer en
+            <code>/library</code> (string vacío es falsy), impidiendo probar en local sin prefijo. Con
+            <code>??</code> sólo se usa el valor por defecto cuando la variable no está definida en absoluto.</p>
+            <p>Todos los <code>res.redirect('/algo')</code> de controladores/middlewares se cambiaron a
+            <code>res.redirect(`${res.locals.basePath}/algo`)</code>, y todo <code>href</code>/<code>action</code>/<code>src</code>
+            absoluto en las vistas EJS pasó a <code>&lt;%= basePath %&gt;/algo</code> (incluye CSS, imágenes
+            subidas, formularios y navegación).</p>
+            <h3>Problemas reales encontrados durante el despliegue</h3>
+            <table>
+                <tr><th>Problema</th><th>Causa raíz</th><th>Solución aplicada</th></tr>
+                <tr><td>404 al entrar por <code>/library/...</code></td><td>La app estaba montada en <code>"/"</code>; NGINX reenviaba el prefijo tal cual.</td><td>Montar rutas/estáticos bajo <code>BASE_PATH</code> (arriba).</td></tr>
+                <tr><td><code>git pull</code> fallaba con "untracked files would be overwritten"</td><td><code>node_modules/</code> generado localmente en el servidor chocaba con archivos que el commit remoto también tocaba.</td><td><code>rm -rf node_modules</code> (regenerable) antes del <code>pull</code>, luego <code>npm install</code>.</td></tr>
+                <tr><td><code>EACCES</code> al reconstruir <code>bcrypt</code></td><td>Parte del árbol de <code>node_modules</code> había quedado con dueño distinto al usuario que corre la app (instalación previa como otro usuario).</td><td><code>chown -R</code> del proyecto al usuario correcto y reinstalación limpia.</td></tr>
+                <tr><td><code>bcrypt</code>: "invalid ELF header"</td><td>Binario nativo (<code>.node</code>) incompatible con la arquitectura/SO del servidor, agravado por el <code>rm -rf</code> parcial anterior.</td><td><code>npm rebuild bcrypt --build-from-source</code> tras instalar herramientas de compilación (<code>dnf groupinstall "Development Tools"</code> + <code>python3</code>, servidor EL10).</td></tr>
+            </table>
+            <p>Comandos exactos de estos tres problemas, en el orden en que ocurrieron:
+            <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>, sección 7.2.</p>
+
+            <h3>Configuración real del reverse proxy: NGINX</h3>
+            <p>El reverse proxy usado es <strong>NGINX</strong> (no Apache). Configuración real:</p>
+            <pre>server {
+    listen 80 default_server;
+    server_name _;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre>
+            <p><code>location /</code> reenvía <strong>todo</strong> hacia <code>127.0.0.1:3000</code>
+            sin reescribir la ruta (sin barra final en <code>proxy_pass</code>, así que NGINX
+            conserva la URI completa, incluyendo <code>/library</code>). Es justo lo que necesita esta
+            app: como <code>BASE_PATH=/library</code> ya maneja el prefijo dentro del código Node
+            (ver arriba), NGINX no necesita saber nada sobre <code>/library</code> — sólo reenvía.
+            Detalle completo en <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>, sección 7.1.</p>
+        </section>
+
+        <!-- 12. EVIDENCIAS -->
+        <section id="sec12-evidencias">
+            <h2>11. Galería de evidencias</h2>
+            <div class="evidencia-bloque">
+                <img src="evidencias/01-acceso-remoto-library-login.png" alt="Acceso remoto a /library/auth/login" class="evidencia-img">
+                <p class="evidencia-caption">Acceso externo a <code>http://136.115.124.224/library/auth/login</code>:
+                sin sesión activa, el middleware <code>requerirSesion</code> redirige correctamente a
+                <code>/library/auth/login</code> (dentro del prefijo) y el CSS/estáticos cargan bien bajo el reverse proxy.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/02-catalogo-libros-admin-local.png" alt="Catálogo de libros como administrador, prueba local" class="evidencia-img">
+                <p class="evidencia-caption"><code>localhost:3000/library/libros</code> con sesión de
+                administrador (<code>paolal</code>): el menú muestra Catálogo/Autores/Géneros/Formatos/Conceptos
+                y, por ser admin, también "Usuarios" — confirma navegación por rol funcionando bajo el prefijo
+                <code>/library</code> en pruebas locales. El catálogo aparece vacío porque esta corrida usó
+                una base de datos sin el seed cargado.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/catalogo.png" alt="Catálogo de libros como administrador" class="evidencia-img">
+                <p class="evidencia-caption">Catálogo de libros (RF-04) con sesión de administrador
+                (<code>admin_paola</code>): 7 libros con portada, autor, formato, géneros, precio y
+                stock, y botón "+ Nuevo libro" visible sólo para el rol admin.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/usuarios.png" alt="Listado de usuarios registrados" class="evidencia-img">
+                <p class="evidencia-caption">Gestión de usuarios (ruta exclusiva de Administrador):
+                los 3 usuarios de prueba con su rol, fecha de registro y acciones de editar/eliminar.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/usuariocreadodesderegistro.png" alt="Usuario nuevo creado desde el formulario de registro" class="evidencia-img">
+                <p class="evidencia-caption">RF-01 registro funcionando end-to-end: usuario nuevo
+                (<code>anapao</code>) creado desde el formulario público de registro, con rol
+                <code>cliente</code> asignado automáticamente (ya existía un Administrador).</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/autores.png" alt="Listado de autores" class="evidencia-img">
+                <p class="evidencia-caption">Listado de autores. <strong>Esta captura es la que reveló
+                el bug real TC-29</strong> (columna ID vacía, links de editar/eliminar rotos por un
+                plural irregular en el cálculo automático del nombre de columna) — ya corregido y
+                re-verificado, ver <a href="#sec10-pruebas">sección 9</a> y
+                <a href="docs/AI_CHANGELOG.md">docs/AI_CHANGELOG.md</a>.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/libroguardado.png" alt="Detalle de libro recién creado con autor y género asociados" class="evidencia-img">
+                <p class="evidencia-caption">RF-06/RF-11: libro nuevo ("Don Quijote de la Mancha")
+                creado desde el formulario de administrador, con autor (Miguel de Cervantes) y género
+                (Novela histórica) asociados correctamente en la vista de detalle.</p>
+            </div>
+            <div class="evidencia-bloque">
+                <img src="evidencias/vistaclientecatalogo.png" alt="Catálogo visto por un usuario cliente" class="evidencia-img">
+                <p class="evidencia-caption">RF-04/RF-17: el mismo catálogo (incluyendo el libro recién
+                creado por el admin) visto por <code>juan_perez</code> con rol <code>cliente</code> —
+                confirma que el catálogo es visible para cualquier usuario autenticado, sin el menú
+                "Usuarios" ni el botón "+ Nuevo libro" (exclusivos de admin).</p>
+            </div>
+            <div class="pendiente">
+                <div class="pendiente-titulo">📌 Siguen faltando</div>
+                <p>Capturas de <em>pantalla</em> (imagen) de las pruebas negativas de integridad vía
+                <code>psql</code> — hoy están verificadas con el error real de PostgreSQL capturado
+                como texto en <a href="docs/TEST_PLAN.md">docs/TEST_PLAN.md</a> (TC-15 a TC-20), no
+                como screenshot; captura del intento de acceso admin desde un usuario cliente (403) y
+                del intento de crear un segundo Administrador rechazado.</p>
+            </div>
+        </section>
+
+        <!-- 13. DECISIONES DE INGENIERÍA -->
+        <section id="sec13-decisiones">
+            <h2>12. Decisiones de ingeniería y problemas resueltos</h2>
+            <p>Registro completo (12 decisiones con el esquema necesidad → alternativas → decisión →
+            justificación → riesgo → evidencia): <a href="docs/ENGINEERING_DECISIONS.md">docs/ENGINEERING_DECISIONS.md</a>.</p>
+            <table>
+                <tr><th>#</th><th>Decisión</th><th>Trade-off principal</th></tr>
+                <tr><td>D-01</td><td>Monolito server-side (no microservicios)</td><td>Menor complejidad operativa vs. sin aislamiento de fallos entre módulos</td></tr>
+                <tr><td>D-02</td><td>Acceso directo a PostgreSQL vía funciones PL/pgSQL (sin ORM ni API)</td><td>Reglas de integridad centralizadas en BD vs. lógica repartida entre dos lenguajes</td></tr>
+                <tr><td>D-03</td><td>Renderizado server-side con EJS</td><td>Cumple restricción sin JSON/XML vs. sin interactividad tipo SPA</td></tr>
+                <tr><td>D-04</td><td>Sin APIs REST/GraphQL/SOAP</td><td>Menor superficie de ataque vs. reestructuración necesaria si se agrega un cliente distinto al navegador</td></tr>
+                <tr><td>D-05</td><td>PostgreSQL en el mismo servidor que la app</td><td>Simplicidad y costo vs. sin aislamiento de recursos ni alta disponibilidad</td></tr>
+                <tr><td>D-06</td><td>Organización modular tipo MVC server-side</td><td>Responsabilidad única por carpeta vs. más indirección para cambios pequeños</td></tr>
+                <tr><td>D-07</td><td>Fábrica genérica para catálogos (formatos/géneros/autores/conceptos)</td><td>Cero duplicación vs. un bug afecta a los 4 catálogos a la vez</td></tr>
+                <tr><td>D-08</td><td><code>bcrypt</code> + sesión persistida en PostgreSQL</td><td>Sobrevive reinicios sin infraestructura extra vs. comparte recursos con datos de negocio; y es la causa raíz real del incidente "invalid ELF header" en el despliegue</td></tr>
+                <tr><td>D-09</td><td>Autorización por rol centralizada en middleware</td><td>Visible y auditable por archivo vs. depende de no olvidar <code>requerirAdmin</code> en una ruta nueva (auditado y verificado sin huecos, ver sección 8)</td></tr>
+                <tr><td>D-10</td><td>Un solo Administrador reforzado en app + índice único parcial en BD</td><td>Defensa en profundidad vs. depende de que el índice nunca se elimine en una migración futura</td></tr>
+                <tr><td>D-11</td><td>Imágenes en filesystem local (<code>uploads/</code>), no en bucket</td><td>Simplicidad vs. sin réplicas/CDN; se pierden si la instancia se recrea sin migrar el directorio</td></tr>
+                <tr><td>D-12</td><td><code>BASE_PATH</code> configurable para el reverse proxy <code>/library</code></td><td>Ver desarrollo completo abajo (problemas reales resueltos en el despliegue)</td></tr>
+                <tr><td>D-13</td><td>Regla de "una sola portada" movida de la función al trigger de la tabla</td><td>La regla se cumple sin importar qué código escriba la tabla vs. depender de que todos recuerden llamar a la función correcta</td></tr>
+                <tr><td>D-14</td><td>Catálogo con JOIN centralizado en <code>vista_catalogo_libros</code></td><td>Una sola definición reutilizable vs. una vista con agregaciones no es <em>updatable</em> directamente (no era un problema aquí, ya era de solo lectura)</td></tr>
+                <tr><td>D-15</td><td>Bitácora de auditoría para cambios de rol (<code>trg_usuarios_auditoria_rol</code>)</td><td>Trazabilidad de seguridad vs. la tabla de auditoría crece sin política de retención</td></tr>
+            </table>
+            <p>De las 12, <strong>D-12 se puso a prueba end-to-end</strong> durante este ejercicio, así
+            que se documenta con el mayor nivel de detalle:</p>
+
+            <h3>D-12 en detalle: prefijo de despliegue configurable</h3>
+            <p><strong>Necesidad:</strong> la app estaba montada en <code>"/"</code> pero debía publicarse
+            bajo <code>/library</code> detrás de un reverse proxy, sin romper el desarrollo local.<br>
+            <strong>Alternativas consideradas:</strong> (a) que NGINX reescriba/quite el prefijo antes de
+            reenviar a Node, dejando la app sin cambios; (b) que la propia app conozca su prefijo vía
+            variable de entorno y lo use para montar rutas, estáticos y generar URLs.<br>
+            <strong>Decisión tomada:</strong> opción (b), constante <code>BASE_PATH</code> con fallback.<br>
+            <strong>Justificación técnica:</strong> con (a) cualquier <code>res.redirect()</code> con ruta
+            absoluta seguiría generando URLs sin prefijo tan pronto el navegador las usara fuera del
+            contexto reescrito por NGINX; (b) mantiene una sola fuente de verdad (<code>res.locals.basePath</code>)
+            usada tanto por vistas como por controladores.<br>
+            <strong>Riesgo/limitación:</strong> cada nuevo <code>res.redirect()</code> o ruta absoluta en una
+            vista futura debe recordarse anteponer <code>basePath</code>; se verificó con <code>grep</code>
+            que no quedó ninguna ruta absoluta sin prefijo en controladores/rutas/middlewares/vistas.<br>
+            <strong>Evidencia de validación:</strong> pruebas locales con <code>BASE_PATH=/library</code> y
+            con <code>BASE_PATH=''</code> (ver <a href="#sec11-despliegue">sección 10</a>), y prueba real
+            contra el servidor en <a href="#sec12-evidencias">la galería de evidencias</a>.</p>
+        </section>
+
+        <!-- 14. USO DE IA -->
+        <section id="sec14-ia">
+            <h2>13. Uso documentado de Inteligencia Artificial</h2>
+            <p>Se usó Claude Code como asistente de ingeniería para dos tareas concretas de este ejercicio,
+            ambas revisadas, probadas y verificadas por la estudiante antes de aceptarse:</p>
+            <table>
+                <tr><th>Cambio solicitado</th><th>Qué se modificó</th><th>Riesgo introducido</th><th>Verificación realizada</th></tr>
+                <tr>
+                    <td>Hacer que la app funcione detrás de NGINX bajo <code>/library</code></td>
+                    <td><code>app.js</code>, <code>routes/index.js</code>, <code>middlewares/auth.js</code>,
+                    los 4 controladores, y 26 vistas EJS (ver lista completa en la sección de despliegue).</td>
+                    <td>Romper el comportamiento local sin prefijo; dejar algún <code>href</code>/<code>redirect</code>
+                    absoluto sin el prefijo, causando 404 intermitentes.</td>
+                    <td><code>grep</code> exhaustivo confirmando cero rutas absolutas sin <code>basePath</code>;
+                    servidor real levantado con <code>BASE_PATH=/library</code> y con <code>BASE_PATH=''</code>,
+                    probando ambos casos con <code>curl</code> antes de dar por cerrado el cambio.</td>
+                </tr>
+                <tr>
+                    <td>Diagnóstico del despliegue en el servidor (git pull, permisos, bcrypt)</td>
+                    <td>Ninguna modificación de código; sólo diagnóstico guiado paso a paso a partir de los
+                    errores reales pegados por la estudiante.</td>
+                    <td>Ejecutar comandos destructivos sin confirmar (se evitó explícitamente <code>chown</code>
+                    y <code>rm -rf node_modules</code> hasta confirmar con <code>git status</code> que no
+                    había trabajo sin commitear en riesgo).</td>
+                    <td>Cada paso se validó con la salida real del servidor antes de sugerir el siguiente.</td>
+                </tr>
+            </table>
+            <h3>Tarea 2e: mejora pequeña y verificable con prompt maestro</h3>
+            <p>
+                <code>docs/PROMPT_MAESTRO_IA.md</code> no existía en ningún material del curso ni del
+                proyecto — el enunciado lo menciona como si ya debiera existir, pero se confirmó (con
+                <code>grep</code> sobre todo el proyecto) que no está en ningún lado, así que se creó
+                como la plantilla reutilizable que pide el ejercicio: <em>contexto, necesidad, alcance
+                permitido, restricciones, criterio de aceptación, pruebas a ejecutar, riesgo
+                esperado</em>.
+            </p>
+            <p>
+                Se usó esa plantilla para pedir una mejora real: mostrar <code>mensajeError</code> en
+                <code>usuarios/listar.ejs</code> y en las 4 vistas de catálogos genéricos, donde el
+                mensaje se guardaba en sesión pero nunca se leía (hallazgo ya anotado como pendiente
+                al corregir TC-12b). El prompt exacto, la respuesta aplicada, los archivos modificados,
+                el riesgo y las 4 pruebas ejecutadas están en
+                <a href="docs/AI_PROMPT_HISTORY.md">docs/AI_PROMPT_HISTORY.md</a> (Entrada 1); el
+                resumen de todos los cambios asistidos por IA de este ejercicio está en
+                <a href="docs/AI_CHANGELOG.md">docs/AI_CHANGELOG.md</a>. Plantilla completa:
+                <a href="docs/PROMPT_MAESTRO_IA.md">docs/PROMPT_MAESTRO_IA.md</a>.
+            </p>
+            <p class="ok">Resultado verificado en <code>docs/TEST_PLAN.md</code> (TC-28): el mensaje
+            ya aparece donde antes se perdía en silencio, y no se repite en una carga posterior.</p>
+        </section>
+
+        <!-- 15. CONCLUSIONES -->
+        <section id="sec15-conclusiones">
+            <h2>14. Conclusiones y mejoras futuras</h2>
+            <p>
+                El ejercicio permitió comprobar, con un caso real, por qué una arquitectura monolítica
+                simplifica el despliegue inicial (un solo proceso, una sola base de código) pero exige
+                disciplina para que decisiones aparentemente pequeñas — como rutas absolutas hardcodeadas
+                en vistas y controladores — no rompan el sistema en cuanto cambia el contexto de despliegue
+                (agregar un reverse proxy con prefijo). Centralizar el prefijo en una sola constante
+                (<code>BASE_PATH</code>) y propagarla vía <code>res.locals</code> evitó tener que decidir
+                caso por caso.
+            </p>
+            <p><strong>Mejoras futuras identificadas durante este trabajo:</strong></p>
+            <ul>
+                <li>Completar la documentación formal pendiente (4FN, diagramas, verificación de privilegios en PostgreSQL).</li>
+                <li>Ampliar el seed a 30 filas por tabla.</li>
+                <li>Definir si "categoría" debe ser un catálogo independiente adicional.</li>
+                <li>Automatizar las pruebas en <code>test/</code> (actualmente vacías/mínimas) para no depender de una ejecución manual como la de la sección 9.</li>
+                <li>Cerrar los riesgos residuales de seguridad documentados (CSRF, rate-limiting, cabeceras HTTP).</li>
+                <li><strong>Idea de UX de la estudiante (pendiente para una iteración futura, no
+                implementada en este ejercicio):</strong> agregar un atajo para crear un autor nuevo
+                sin salir del formulario de "Nuevo libro" (por ejemplo, un modal o un enlace "+
+                Agregar autor" junto al selector de autores), en vez de tener que navegar primero a
+                <code>/autores/nuevo</code> y volver.</li>
+            </ul>
+        </section>
+
+        <!-- 16. DESCARGAS -->
+        <section id="sec16-descargas">
+            <h2>15. Descargas</h2>
+            <ul>
+                <li><a href="docs/">docs/</a> — REQUIREMENTS.md/.xlsx, ENGINEERING_DECISIONS.md, SECURITY_REVIEW.md, TEST_PLAN.md, GCP_COMMANDS.md, NORMALIZATION_4FN.md/.xlsx, AI_PROMPT_HISTORY.md, AI_CHANGELOG.md, PROMPT_MAESTRO_IA.md. ✅ Completo.</li>
+                <li><a href="sql/">sql/</a> — <a href="sql/library_schema.sql">library_schema.sql</a>, <a href="sql/library_triggers.sql">library_triggers.sql</a>, <a href="sql/library_views.sql">library_views.sql</a>, <a href="sql/library_data.sql">library_data.sql</a> (los mismos 4 scripts reales del repo, en orden de carga). ✅ Listos, aunque sin el renombrado <code>00...06</code> ni el seed de 30 filas por tabla.</li>
+            </ul>
+            <div class="pendiente">
+                <div class="pendiente-titulo">📌 Pendiente de generar</div>
+                <ul style="margin-bottom:0;">
+                    <li><a href="descargas/ejercicio02.tar.gz">descargas/ejercicio02.tar.gz</a> — proyecto completo sin <code>.env</code>, <code>node_modules</code> ni secretos, más <code>.env.example</code>.</li>
+                    <li><code>docs/DB_DESIGN_ER_4FN.png</code> y <code>docs/ARCHITECTURE_MONOLITHIC.png</code> como imágenes estáticas (hoy sólo embebidos con Mermaid en el reporte).</li>
+                </ul>
+            </div>
+        </section>
+
+        <p class="footer-meta">
+            URL de este ejercicio: <code>https://ubiquitous.udem.edu/~613772/ejercicio02/</code>  ·
+        </p>
+
+        <a href="../index.html" class="back-link">← Regresar al menú principal</a>
+    </div>
+
+</body>
+</html>
+
