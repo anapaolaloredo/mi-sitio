@@ -1,0 +1,50 @@
+=== ObtenerConceptosPendientes (via zeep) ===
+[{
+    'isbn': '9780451524935',
+    'tituloLibro': '1984',
+    'idConcepto': 4,
+    'nombreConcepto': 'Alegoria politica',
+    'definicion': 'La novela funciona como critica al totalitarismo del siglo XX (estalinismo, fascismo) a traves de la ficcion de Oceania.',
+    'categorias': 'Ciencia ficcion, Distopia'
+}, {
+    'isbn': '9780451524935',
+    'tituloLibro': '1984',
+    'idConcepto': 2,
+    'nombreConcepto': 'Distopia',
+    'definicion': 'Oceania es un estado totalitario que vigila y controla el pensamiento de sus ciudadanos mediante el Gran Hermano y la Policia del Pensamiento.',
+    'categorias': 'Ciencia ficcion, Distopia'
+}, {
+    'isbn': '9780307474728',
+    'tituloLibro': 'Cien anios de soledad',
+    'idConcepto': 1,
+    'nombreConcepto': 'Realismo magico (recurso literario)',
+    'definicion': 'En esta novela lo sobrenatural (lluvias de flores, ascensiones al cielo) se narra con el mismo tono que los hechos cotidianos de la familia Buendia.',
+    'categorias': 'Realismo magico'
+}, {
+    'isbn': '9780618640157',
+    'tituloLibro': 'El senor de los anillos',
+    'idConcepto': 5,
+    'nombreConcepto': 'Mundo secundario (worldbuilding)',
+    'definicion': 'La Tierra Media es un mundo ficticio completo con su propia geografia, idiomas, pueblos e historia, construido por Tolkien a lo largo de decadas.',
+    'categorias': 'Fantasia'
+}, {
+    'isbn': '9780141439471',
+    'tituloLibro': 'Frankenstein',
+    'idConcepto': 3,
+    'nombreConcepto': 'Narrador no fiable',
+    'definicion': 'La historia se presenta a traves de cartas y el propio relato de Victor Frankenstein, cuya version de los hechos el lector debe poner en duda.',
+    'categorias': 'Ciencia ficcion, Fantasia'
+}, {
+    'isbn': '9780060850524',
+    'tituloLibro': 'Un mundo feliz',
+    'idConcepto': 2,
+    'nombreConcepto': 'Distopia',
+    'definicion': 'El Estado Mundial de Huxley controla a la poblacion mediante placer, condicionamiento genetico y la droga soma, en vez de represion directa.',
+    'categorias': 'Ciencia ficcion, Distopia'
+}]
+
+=== RegistrarClasificacion (via zeep) ===
+{
+    'idClasificacion': 8,
+    'mensaje': 'Clasificacion registrada correctamente.'
+}

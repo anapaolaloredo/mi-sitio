@@ -1,0 +1,50 @@
+
+======================================================================
+Credenciales correctas
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier"
+               xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+  <soap:Header>
+    <wsse:Security>
+      <wsse:UsernameToken>
+        <wsse:Username>stats-client</wsse:Username>
+        <wsse:Password Type="PasswordText">ClaveDePrueba123</wsse:Password>
+      </wsse:UsernameToken>
+    </wsse:Security>
+  </soap:Header>
+  <soap:Body>
+    <tns:ObtenerEstadisticasPorModeloRequest/>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 200) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><tns:ObtenerEstadisticasPorModeloResponse><tns:estadistica><tns:modeloCloud>IaaS</tns:modeloCloud><tns:total>2</tns:total></tns:estadistica><tns:estadistica><tns:modeloCloud>PaaS</tns:modeloCloud><tns:total>1</tns:total></tns:estadistica><tns:estadistica><tns:modeloCloud>SaaS</tns:modeloCloud><tns:total>1</tns:total></tns:estadistica><tns:estadistica><tns:modeloCloud>FaaS</tns:modeloCloud><tns:total>1</tns:total></tns:estadistica></tns:ObtenerEstadisticasPorModeloResponse></soap:Body></soap:Envelope>
+Esperado: 200 | Obtenido: 200
+
+======================================================================
+Credenciales incorrectas
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier"
+               xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+  <soap:Header>
+    <wsse:Security>
+      <wsse:UsernameToken>
+        <wsse:Username>stats-client</wsse:Username>
+        <wsse:Password Type="PasswordText">password-incorrecta</wsse:Password>
+      </wsse:UsernameToken>
+    </wsse:Security>
+  </soap:Header>
+  <soap:Body>
+    <tns:ObtenerEstadisticasPorModeloRequest/>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 401) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>Autenticacion fallida.</faultstring><detail><tns:codigo>AUTENTICACION_FALLIDA</tns:codigo></detail></soap:Fault></soap:Body></soap:Envelope>
+Esperado: 401 (SOAP Fault de autenticacion) | Obtenido: 401

@@ -1,0 +1,5 @@
+ id_cliente |   tipo_cliente   | identificador | peticiones_atendidas |      primera_peticion      |      ultima_peticion       
+------------+------------------+---------------+----------------------+----------------------------+----------------------------
+          1 | electron-desktop | equipo-ana-01 |                    2 | 2026-09-07 18:52:35.532875 | 2026-09-07 18:52:35.593974
+(1 fila)
+

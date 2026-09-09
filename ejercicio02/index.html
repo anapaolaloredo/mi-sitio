@@ -569,6 +569,12 @@ npm start</pre>
                 <li><code>requerirAdmin</code> decide únicamente con <code>req.session.usuario.rol</code>, un valor que sólo el propio servidor puede fijar en el login — no confía en ningún dato enviado por el cliente.</li>
             </ul>
             <p>Conclusión: no se encontró ninguna ruta administrativa sin protección al 31/08/2026.</p>
+            <div class="evidencia-bloque">
+                <img src="evidencias/usuarios.png" alt="Gestión de usuarios, ruta exclusiva de administrador" class="evidencia-img" style="max-width:500px;">
+                <p class="evidencia-caption"><code>/library/usuarios</code> renderizando correctamente con
+                sesión de administrador — la ruta protegida por <code>router.use(requerirSesion,
+                requerirAdmin)</code> auditada arriba.</p>
+            </div>
 
             <h3>Riesgos residuales identificados (no cubiertos explícitamente todavía)</h3>
             <table>
@@ -602,7 +608,7 @@ npm start</pre>
             <h3>Autenticación y sesión</h3>
             <table>
                 <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
-                <tr><td>TC-05</td><td>RF-01 registro</td><td><code>POST /library/auth/registro</code> con datos válidos</td><td>Cuenta creada, rol <code>cliente</code> (ya existe admin)</td><td><code>302</code>; fila creada en <code>usuarios</code> con <code>rol='cliente'</code></td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-05</td><td>RF-01 registro</td><td><code>POST /library/auth/registro</code> con datos válidos</td><td>Cuenta creada, rol <code>cliente</code> (ya existe admin)</td><td><code>302</code>; fila creada en <code>usuarios</code> con <code>rol='cliente'</code> (ver <a href="evidencias/usuariocreadodesderegistro.png">evidencias/usuariocreadodesderegistro.png</a>)</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-06</td><td>RF-02 login</td><td>Correo/contraseña válidos</td><td>Sesión iniciada, redirección al catálogo</td><td><code>302 → /library/libros</code></td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-07</td><td>RF-02 login (negativo)</td><td>Contraseña incorrecta</td><td>Error genérico, sin distinguir campo</td><td><code>401</code>, "Credenciales invalidas." (mismo mensaje que correo inexistente)</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-08</td><td>RF-03 logout</td><td>Sesión activa, <code>POST /library/auth/logout</code></td><td>Sesión destruida, redirección a login</td><td><code>302 → /library/auth/login</code></td><td class="ok">Pasó</td></tr>
@@ -611,8 +617,8 @@ npm start</pre>
             <h3>Catálogo, CRUD y relaciones</h3>
             <table>
                 <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
-                <tr><td>TC-04</td><td>RF-04 catálogo autenticado</td><td>Sesión admin, <code>GET /library/libros</code></td><td>Catálogo accesible</td><td><code>200</code>, <code>&lt;h1&gt;Catalogo de libros&lt;/h1&gt;</code></td><td class="ok">Pasó</td></tr>
-                <tr><td>TC-09a-d</td><td>RF-06/07 CRUD (crear/editar/eliminar)</td><td>Admin: crea autor, crea libro, edita autor (<code>?_method=PUT</code>), elimina autor (<code>?_method=DELETE</code>)</td><td>Cada operación persiste el cambio</td><td>Las 4 operaciones reflejadas correctamente en PostgreSQL (verificado por <code>SELECT</code> tras cada paso)</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-04</td><td>RF-04 catálogo autenticado</td><td>Sesión admin, <code>GET /library/libros</code></td><td>Catálogo accesible</td><td><code>200</code>, <code>&lt;h1&gt;Catalogo de libros&lt;/h1&gt;</code> (ver <a href="evidencias/catalogo.png">evidencias/catalogo.png</a>)</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-09a-d</td><td>RF-06/07 CRUD (crear/editar/eliminar)</td><td>Admin: crea autor, crea libro, edita autor (<code>?_method=PUT</code>), elimina autor (<code>?_method=DELETE</code>)</td><td>Cada operación persiste el cambio</td><td>Las 4 operaciones reflejadas correctamente en PostgreSQL (verificado por <code>SELECT</code> tras cada paso; libro nuevo con autor/género asociados en <a href="evidencias/libroguardado.png">evidencias/libroguardado.png</a>)</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-10</td><td>RF-11 relación libro-autor/género</td><td>Asociar 2 autores y 2 géneros al mismo libro</td><td>N:M sin duplicados</td><td><code>fn_listar_autores_por_libro</code>/<code>generos</code> devuelven 3 filas cada una, sin duplicados</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-11</td><td>RF-12 concepto por libro</td><td>Mismo concepto definido en 2 libros con texto distinto</td><td>Cada libro conserva su propia definición</td><td>Confirmado: definiciones distintas devueltas por libro</td><td class="ok">Pasó</td></tr>
                 <tr><td>TC-12a</td><td>RF-13/14 imagen válida</td><td>PNG real, <code>es_portada=on</code></td><td>Aceptada, nombre generado por el sistema, portada única</td><td>Fila creada con <code>url_imagen=/uploads/&lt;generado&gt;.png</code>, <code>es_portada=true</code></td><td class="ok">Pasó</td></tr>
@@ -624,7 +630,7 @@ npm start</pre>
             <table>
                 <tr><th>ID</th><th>Requisito</th><th>Entrada</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
                 <tr><td>TC-13</td><td>RF-17 visitante</td><td>Sin sesión, <code>GET /library/libros</code></td><td>Redirección a login</td><td><code>302 → /library/auth/login</code></td><td class="ok">Pasó</td></tr>
-                <tr><td>TC-14a/b</td><td>RF-17 cliente en ruta admin (lectura y escritura)</td><td>Sesión de <code>juan_perez</code> (cliente), <code>GET /library/usuarios</code> y <code>POST /library/libros</code></td><td><code>403</code> controlado</td><td><code>403</code>, <code>&lt;h1&gt;Acceso denegado&lt;/h1&gt;</code> en ambos casos</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-14a/b</td><td>RF-17 cliente en ruta admin (lectura y escritura)</td><td>Sesión de <code>juan_perez</code> (cliente), <code>GET /library/usuarios</code> y <code>POST /library/libros</code></td><td><code>403</code> controlado</td><td><code>403</code>, <code>&lt;h1&gt;Acceso denegado&lt;/h1&gt;</code> en ambos casos; consistente con <a href="evidencias/vistaclientecatalogo.png">evidencias/vistaclientecatalogo.png</a>, donde el mismo usuario cliente ve el catálogo sin el menú "Usuarios" ni el botón "+ Nuevo libro"</td><td class="ok">Pasó</td></tr>
             </table>
 
             <h3>Integridad de PostgreSQL — pruebas negativas (vía <code>psql</code>)</h3>
@@ -658,7 +664,7 @@ npm start</pre>
             <h3>Bug encontrado por verificación manual de la estudiante</h3>
             <table>
                 <tr><th>ID</th><th>Objeto</th><th>Resultado esperado</th><th>Resultado observado</th><th>Estado</th></tr>
-                <tr><td>TC-29</td><td>Columna ID vacía en <code>GET /library/autores</code> (ver <code>evidencias/autores.png</code>)</td><td>La columna ID muestra el id real; "Editar"/"Eliminar" apuntan a ese id</td><td>Antes: vacía, con links a <code>/autores/undefined/editar</code> (plural irregular "autores"→"autor" rompía <code>id_${vista.slice(0,-1)}</code>). Después: ID reales y links <code>/library/autores/5/editar</code> correctos</td><td class="ok">Pasó</td></tr>
+                <tr><td>TC-29</td><td>Columna ID vacía en <code>GET /library/autores</code> (ver <a href="evidencias/autores.png">evidencias/autores.png</a>)</td><td>La columna ID muestra el id real; "Editar"/"Eliminar" apuntan a ese id</td><td>Antes: vacía, con links a <code>/autores/undefined/editar</code> (plural irregular "autores"→"autor" rompía <code>id_${vista.slice(0,-1)}</code>). Después: ID reales y links <code>/library/autores/5/editar</code> correctos</td><td class="ok">Pasó</td></tr>
             </table>
 
             <h3>Despliegue bajo reverse proxy</h3>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:RegistrarClasificacionRequest>
+      <tns:nombre>Ana</tns:nombre>
+      <tns:apellido>Prueba</tns:apellido>
+      <tns:correo>ana.prueba@udem.edu</tns:correo>
+      <tns:isbn>9780618640157</tns:isbn>
+      <tns:idConcepto>5</tns:idConcepto>
+      <tns:modeloCloud>PaaS</tns:modeloCloud>
+      <tns:origenCliente>metrica-tarea5</tns:origenCliente>
+    </tns:RegistrarClasificacionRequest>
+  </soap:Body>
+</soap:Envelope>

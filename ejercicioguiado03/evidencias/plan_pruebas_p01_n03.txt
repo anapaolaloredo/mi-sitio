@@ -1,0 +1,138 @@
+
+======================================================================
+P01 - Obtener conceptos pendientes
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:ObtenerConceptosPendientesRequest>
+      <tns:correoClasificador>ana.prueba@udem.edu</tns:correoClasificador>
+    </tns:ObtenerConceptosPendientesRequest>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 200) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><tns:ObtenerConceptosPendientesResponse><tns:conceptoPendiente><tns:isbn>9780451524935</tns:isbn><tns:tituloLibro>1984</tns:tituloLibro><tns:idConcepto>4</tns:idConcepto><tns:nombreConcepto>Alegoria politica</tns:nombreConcepto><tns:definicion>La novela funciona como critica al totalitarismo del siglo XX (estalinismo, fascismo) a traves de la ficcion de Oceania.</tns:definicion><tns:categorias>Ciencia ficcion, Distopia</tns:categorias></tns:conceptoPendiente><tns:conceptoPendiente><tns:isbn>9788420633343</tns:isbn><tns:tituloLibro>El aleph</tns:tituloLibro><tns:idConcepto>1</tns:idConcepto><tns:nombreConcepto>Realismo magico (recurso literario)</tns:nombreConcepto><tns:definicion>Borges mezcla objetos imposibles (el Aleph, que contiene todos los puntos del universo) con la vida cotidiana de Buenos Aires.</tns:definicion><tns:categorias>Fantasia, Realismo magico</tns:categorias></tns:conceptoPendiente><tns:conceptoPendiente><tns:isbn>9780141439471</tns:isbn><tns:tituloLibro>Frankenstein</tns:tituloLibro><tns:idConcepto>3</tns:idConcepto><tns:nombreConcepto>Narrador no fiable</tns:nombreConcepto><tns:definicion>La historia se presenta a traves de cartas y el propio relato de Victor Frankenstein, cuya version de los hechos el lector debe poner en duda.</tns:definicion><tns:categorias>Ciencia ficcion, Fantasia</tns:categorias></tns:conceptoPendiente><tns:conceptoPendiente><tns:isbn>9780060850524</tns:isbn><tns:tituloLibro>Un mundo feliz</tns:tituloLibro><tns:idConcepto>2</tns:idConcepto><tns:nombreConcepto>Distopia</tns:nombreConcepto><tns:definicion>El Estado Mundial de Huxley controla a la poblacion mediante placer, condicionamiento genetico y la droga soma, en vez de represion directa.</tns:definicion><tns:categorias>Ciencia ficcion, Distopia</tns:categorias></tns:conceptoPendiente></tns:ObtenerConceptosPendientesResponse></soap:Body></soap:Envelope>
+Resultado esperado: Lista valida | Obtenido: HTTP 200 | Estado: PASA
+
+======================================================================
+P02 - Registrar clasificacion (IaaS)
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:RegistrarClasificacionRequest>
+      <tns:nombre>Ana</tns:nombre>
+      <tns:apellido>Prueba</tns:apellido>
+      <tns:correo>ana.prueba@udem.edu</tns:correo>
+      <tns:isbn>9780451524935</tns:isbn>
+      <tns:idConcepto>4</tns:idConcepto>
+      <tns:modeloCloud>IaaS</tns:modeloCloud>
+      <tns:origenCliente>pruebas-manuales</tns:origenCliente>
+    </tns:RegistrarClasificacionRequest>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 200) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><tns:RegistrarClasificacionResponse><tns:idClasificacion>6</tns:idClasificacion><tns:mensaje>Clasificacion registrada correctamente.</tns:mensaje></tns:RegistrarClasificacionResponse></soap:Body></soap:Envelope>
+Resultado esperado: Registro exitoso | Obtenido: HTTP 200 | Estado: PASA
+
+======================================================================
+N01 - Repetir clasificacion (duplicado)
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:RegistrarClasificacionRequest>
+      <tns:nombre>Ana</tns:nombre>
+      <tns:apellido>Prueba</tns:apellido>
+      <tns:correo>ana.prueba@udem.edu</tns:correo>
+      <tns:isbn>9780451524935</tns:isbn>
+      <tns:idConcepto>4</tns:idConcepto>
+      <tns:modeloCloud>IaaS</tns:modeloCloud>
+    </tns:RegistrarClasificacionRequest>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 409) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>El clasificador 'ana.prueba@udem.edu' ya registro una clasificacion para este concepto en este libro.</faultstring><detail><tns:codigo>CLASIFICACION_DUPLICADA</tns:codigo></detail></soap:Fault></soap:Body></soap:Envelope>
+Resultado esperado: SOAP Fault 409 | Obtenido: HTTP 409 | Estado: PASA
+
+======================================================================
+N02 - Concepto inexistente
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:RegistrarClasificacionRequest>
+      <tns:nombre>Ana</tns:nombre>
+      <tns:apellido>Prueba</tns:apellido>
+      <tns:correo>ana.prueba@udem.edu</tns:correo>
+      <tns:isbn>9780451524935</tns:isbn>
+      <tns:idConcepto>999999</tns:idConcepto>
+      <tns:modeloCloud>PaaS</tns:modeloCloud>
+    </tns:RegistrarClasificacionRequest>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 404) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>No existe el concepto con id '999999'.</faultstring><detail><tns:codigo>NO_ENCONTRADO</tns:codigo></detail></soap:Fault></soap:Body></soap:Envelope>
+Resultado esperado: SOAP Fault | Obtenido: HTTP 404 | Estado: PASA
+
+======================================================================
+N03 - Modelo Cloud invalido
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:RegistrarClasificacionRequest>
+      <tns:nombre>Ana</tns:nombre>
+      <tns:apellido>Prueba</tns:apellido>
+      <tns:correo>ana.prueba@udem.edu</tns:correo>
+      <tns:isbn>9780451524935</tns:isbn>
+      <tns:idConcepto>4</tns:idConcepto>
+      <tns:modeloCloud>NoEsUnModelo</tns:modeloCloud>
+    </tns:RegistrarClasificacionRequest>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 400) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>modeloCloud 'NoEsUnModelo' invalido. Valores permitidos: IaaS, PaaS, SaaS, FaaS.</faultstring><detail><tns:codigo>VALIDACION</tns:codigo></detail></soap:Fault></soap:Body></soap:Envelope>
+Resultado esperado: SOAP Fault | Obtenido: HTTP 400 | Estado: PASA
+
+======================================================================
+EXTRA - XML invalido (no es un Envelope)
+======================================================================
+--- Solicitud ---
+<esto>no es un sobre soap</esto>
+--- Respuesta (HTTP 400) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><soap:Fault><faultcode>soap:Client</faultcode><faultstring>La raiz del documento debe ser soap:Envelope.</faultstring><detail><tns:codigo>XML_INVALIDO</tns:codigo></detail></soap:Fault></soap:Body></soap:Envelope>
+Resultado esperado: SOAP Fault de cliente | Obtenido: HTTP 400 | Estado: PASA
+
+======================================================================
+EXTRA - Obtener progreso de usuario
+======================================================================
+--- Solicitud ---
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:tns="urn:udem:iac:library-classifier">
+  <soap:Body>
+    <tns:ObtenerProgresoUsuarioRequest>
+      <tns:correo>ana.prueba@udem.edu</tns:correo>
+    </tns:ObtenerProgresoUsuarioRequest>
+  </soap:Body>
+</soap:Envelope>
+--- Respuesta (HTTP 200) ---
+<?xml version='1.0' encoding='utf-8'?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:tns="urn:udem:iac:library-classifier"><soap:Body><tns:ObtenerProgresoUsuarioResponse><tns:totalConceptos>7</tns:totalConceptos><tns:totalClasificados>4</tns:totalClasificados><tns:totalPendientes>3</tns:totalPendientes></tns:ObtenerProgresoUsuarioResponse></soap:Body></soap:Envelope>

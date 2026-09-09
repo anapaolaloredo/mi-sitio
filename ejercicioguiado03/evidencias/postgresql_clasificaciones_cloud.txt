@@ -1,0 +1,16 @@
+ id_clasificacion | id_clasificador | id_libro | id_concepto | modelo_cloud |  origen_cliente  |    fecha_clasificacion     
+------------------+-----------------+----------+-------------+--------------+------------------+----------------------------
+                1 |               1 |        1 |           1 | IaaS         | pruebas-manuales | 2026-09-07 18:52:00.73052
+                3 |               1 |        4 |           2 | SaaS         | electron-desktop | 2026-09-07 18:52:35.550743
+                4 |               4 |        2 |           1 | FaaS         | zeep-python      | 2026-09-07 18:53:24.169351
+                5 |               1 |        6 |           5 | PaaS         | metrica-tarea5   | 2026-09-07 18:53:37.991094
+                6 |               1 |        4 |           4 | IaaS         | pruebas-manuales | 2026-09-07 18:57:20.634909
+                8 |               4 |        6 |           5 | FaaS         | zeep-python      | 2026-09-07 18:57:21.023897
+(6 filas)
+
+ id_clasificador | nombre  | apellido |        correo         |       fecha_registro       
+-----------------+---------+----------+-----------------------+----------------------------
+               1 | Ana     | Prueba   | ana.prueba@udem.edu   | 2026-09-07 18:52:00.73052
+               4 | Interop | Zeep     | interop.zeep@udem.edu | 2026-09-07 18:53:24.169351
+(2 filas)
+
