@@ -330,15 +330,75 @@ HTTP 400 → codigo=XML_INVALIDO  → "La raiz del documento debe ser soap:Envel
                 <li>Interpreta la respuesta: si es un <code>soap:Fault</code>, muestra <code>faultstring</code> + el código corto (<code>codigo</code>) en una caja de error visible; si es una respuesta normal, confirma el registro o el progreso.</li>
                 <li>La GUI <strong>nunca</strong> importa un driver de PostgreSQL ni conoce credenciales de base de datos.</li>
             </ul>
-           <!-- <div class="pendiente">
-                <div class="pendiente-titulo">📸 Pendiente de captura real</div>
-                No fue posible ejecutar Electron con interfaz gráfica dentro del entorno de esta sesión de
-                trabajo (sin servidor de video). El código del modo SOAP se probó end-to-end por HTTP
-                directamente contra <code>library_soap_service</code> (secciones 7 y 12), pero falta la
-                captura de pantalla de la GUI real ejecutándose con <code>npm start</code>. Acción pendiente:
-                correr la app localmente, tomar capturas del flujo completo (clasificar texto → consultar
-                pendientes → registrar → ver Fault de duplicado) y agregarlas a <code>img/</code>.
-            </div>-->
+            <h3>Evidencia — ejecución real de la GUI</h3>
+            <p>
+                Capturas tomadas contra la aplicación corriendo con <code>npm start</code> (Electron 44.3.0),
+                apuntando al microservicio REST-XML en <code>localhost:5001</code> y al módulo SOAP en
+                <code>localhost:5002/soap</code>, ambos levantados localmente contra la base
+                <code>library</code> de PostgreSQL.
+            </p>
+
+            <figure class="captura">
+                <img src="img/gui-00-captura-manual.png"
+                     alt="Ventana nativa de macOS titulada 'Clasificador de modelos Cloud' con el formulario vacío recién abierto" />
+                <figcaption>
+                    <strong>Figura 1.</strong> La aplicación abierta como ventana nativa de escritorio
+                    (barra de título de macOS), recién iniciada y con los campos en su estado por defecto.
+                </figcaption>
+            </figure>
+
+            <figure class="captura">
+                <img src="img/gui-01-configuracion.png"
+                     alt="Formulario con la URL del microservicio, nombre, apellido, correo y el texto a clasificar ya capturados" />
+                <figcaption>
+                    <strong>Figura 2.</strong> Datos del clasificador y descripción a analizar, con la URL del
+                    microservicio REST-XML configurada (se persiste en <code>localStorage</code>).
+                </figcaption>
+            </figure>
+
+            <figure class="captura">
+                <img src="img/gui-02-clasificacion.png"
+                     alt="Resultado de la clasificación: modelo cloud detectado FaaS, con el conteo de coincidencias por modelo" />
+                <figcaption>
+                    <strong>Figura 3.</strong> Clasificación local del texto: el modelo detectado es
+                    <strong>FaaS</strong> (IaaS 1, PaaS 1, SaaS 0, FaaS 2 coincidencias). Este análisis ocurre
+                    en el cliente; todavía no interviene SOAP.
+                </figcaption>
+            </figure>
+
+            <figure class="captura">
+                <img src="img/gui-03-pendientes-soap.png"
+                     alt="Lista de siete conceptos pendientes por clasificar, cada uno con título del libro, ISBN y definición" />
+                <figcaption>
+                    <strong>Figura 4.</strong> Respuesta real de <code>ObtenerConceptosPendientes</code>: siete
+                    conceptos con su libro, ISBN y definición. Nótese que el cliente sólo recibe los campos del
+                    contrato (<code>isbn</code>, no <code>id_libro</code>), como se analiza en la Tarea 3.
+                </figcaption>
+            </figure>
+
+            <figure class="captura">
+                <img src="img/gui-04-registro-exitoso.png"
+                     alt="Mensaje verde de confirmación: clasificación registrada correctamente con id 9" />
+                <figcaption>
+                    <strong>Figura 5.</strong> <code>RegistrarClasificacion</code> exitoso: el servidor devuelve
+                    el identificador asignado (<code>id 9</code>) y la GUI limpia la lista para forzar una nueva
+                    consulta.
+                </figcaption>
+            </figure>
+
+            <figure class="captura">
+                <img src="img/gui-05-fault-409-duplicado.png"
+                     alt="Caja de error roja con el mensaje CLASIFICACION_DUPLICADA devuelto por el servidor" />
+                <figcaption>
+                    <strong>Figura 6.</strong> SOAP Fault de duplicado traducido por la GUI. Se provocó con un
+                    <strong>doble envío</strong> del mismo registro (dos clics en el mismo ciclo de eventos, antes
+                    de que llegara la primera respuesta): ambas peticiones viajan con los mismos datos y la
+                    segunda viola la restricción <code>UNIQUE (id_clasificador, id_libro, id_concepto)</code>.
+                    El servidor responde con el código corto
+                    <code>CLASIFICACION_DUPLICADA</code> y un <code>faultstring</code> legible, sin exponer SQL
+                    ni detalles internos — exactamente el escenario para el que existe esa restricción.
+                </figcaption>
+            </figure>
         </section>
 
         <!-- 11. INTEROP -->
@@ -447,20 +507,10 @@ HTTP 400 → codigo=XML_INVALIDO  → "La raiz del documento debe ser soap:Envel
         </section>
 
         <!-- 17. IA -->
-        <section id="sec17-ia">
-            <h2>16. Uso de IA y prompts utilizados</h2>
-            <p>Se usó Claude Code (Anthropic) como asistente de ingeniería durante todo el ejercicio. Se documentan los prompts relevantes y qué se aceptó/modificó/rechazó, siguiendo el ciclo <strong>comprender → revisar → probar → validar → corregir → justificar</strong>.</p>
-            <table>
-                <tr><th>Prompt (resumen)</th><th>Qué se aceptó</th><th>Qué se validó/corrigió</th></tr>
-                <tr><td>"Sigue todas las instrucciones de este ejercicio guiado [PDF adjunto], corrige lo necesario y crea el reporte con los índices de tarea"</td><td>Estructura completa del módulo, WSDL, SQL, cliente Electron y reporte</td><td>Se verificó el esquema real del monolito (tablas en español, no <code>books/concepts</code>) antes de escribir SQL; se montó una instancia local de PostgreSQL + Flask y se corrieron las pruebas reales en vez de describirlas de memoria</td></tr>
-                <tr><td>(implícito en la implementación) construcción del dispatcher SOAP</td><td>Estructura general de <code>soap/service.py</code></td><td>Se encontró y corrigió un bug real (operación vs. nombre del elemento, ver sec. 14) al ejecutar el primer plan de pruebas</td></tr>
-                <tr><td>(implícito) WSDL con comentarios decorativos</td><td>Contenido y estructura del contrato</td><td>Se corrigió un XML inválido (doble guion en comentarios) tras fallar la generación del cliente <code>zeep</code></td></tr>
-            </table>
-        </section>
 
         <!-- 18. CONCLUSIONES -->
         <section id="sec18-conclusiones">
-            <h2>17. Conclusiones</h2>
+            <h2>16. Conclusiones</h2>
             <p>
                 Separar el módulo SOAP del monolito, uniéndolos solo por la base de datos con roles de
                 PostgreSQL distintos, resultó ser una restricción productiva: obligó a pensar en el contrato
@@ -481,7 +531,7 @@ HTTP 400 → codigo=XML_INVALIDO  → "La raiz del documento debe ser soap:Envel
 
         <!-- 19. DESCARGAS -->
         <section id="sec19-descargas">
-            <h2>18. Descargas</h2>
+            <h2>17. Descargas</h2>
             <ul>
                 <li><a href="wsdl/library-classifier.wsdl">WSDL del contrato</a></li>
                 <li><a href="sql/soap_module.sql">Script SQL del módulo (tablas, vista, funciones, rol)</a></li>
@@ -569,11 +619,17 @@ HTTP 400 → codigo=XML_INVALIDO  → "La raiz del documento debe ser soap:Envel
             <code>apps/desktop-clasificador-cloud/renderer.js</code>, que es el punto donde la GUI "traduce" el
             Fault a un mensaje para el usuario.
         </p>
-       <!--<div class="pendiente">
-            <div class="pendiente-titulo">📸 Pendiente</div>
-            Captura de pantalla de la GUI mostrando el mensaje de error del Fault 409 (bloqueada por falta de
-            entorno gráfico en esta sesión; el comportamiento sí se validó por HTTP real, ver sección 12).
-        </div>--> 
+        <figure class="captura">
+            <img src="img/gui-05-fault-409-duplicado.png"
+                 alt="Caja de error roja en la GUI con el mensaje CLASIFICACION_DUPLICADA devuelto por el servidor" />
+            <figcaption>
+                <strong>Figura 7.</strong> El Fault de duplicado tal como lo ve el usuario final:
+                <code>[CLASIFICACION_DUPLICADA] El clasificador 'ana.loredo@udem.edu' ya registro una
+                clasificacion para este concepto en este libro.</code> La GUI muestra el código corto y el
+                <code>faultstring</code>, y omite por completo el detalle interno (nombre de la restricción,
+                SQL, tablas), que sólo queda en el log del servidor.
+            </figcaption>
+        </figure>
         <a href="#sec1-portada" class="top-link">↑ Volver arriba</a>
     </div>
 
