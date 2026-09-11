@@ -3,8 +3,12 @@
     --udem-color: #ffcc00;
     --bg-color: #f4f7f6;
     --text-color: #2c3e50;
-    --accent-color: #2980b9;
-    --ok-color: #27ae60;
+    /* Azul y verde oscurecidos para cumplir WCAG AA (>= 4.5:1) como texto
+       y como fondo de <th>: los tonos anteriores (#2980b9 / #27ae60) daban
+       4.3:1 y 2.8:1 respectivamente. El tono claro queda para decoracion. */
+    --accent-color: #1a6699;
+    --accent-deco: #2980b9;
+    --ok-color: #1c7c4a;
     --warn-color: #b8860b;
     --warn-bg: #fff8e1;
     --warn-border: #e0a800;
@@ -181,7 +185,7 @@ tr:nth-child(even) { background: #f8f9fa; }
 .footer-meta {
     text-align: center;
     font-size: 13px;
-    color: #888;
+    color: #5a6b7a;
     margin-top: 10px;
 }
 
@@ -211,3 +215,28 @@ figure.captura figcaption {
 }
 
 figure.captura figcaption strong { color: var(--accent-color); }
+
+.diagram-box { overflow-x: auto; }
+
+.top-link {
+    display: inline-block;
+    margin-top: var(--e5);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--azul-texto);
+}
+
+.top-link:hover { text-decoration: underline; }
+
+
+/* <code> dentro de un <th>: sin esta regla hereda el fondo claro del code
+   global y el texto blanco del th, quedando ilegible (1.1:1). */
+th code {
+    color: inherit;
+    background: rgba(0, 0, 0, 0.18);          /* oscurece: sube el contraste
+                                                 del texto blanco, en vez de
+                                                 bajarlo como haría un velo
+                                                 blanco */
+    border-color: rgba(255, 255, 255, 0.4);
+}

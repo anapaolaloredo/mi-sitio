@@ -16,6 +16,10 @@
 <body>
     <div id="menu-global" data-base="../"></div>
 
+    <div class="layout-reporte">
+        <aside class="toc" id="toc"></aside>
+        <main id="contenido">
+
     <!-- PORTADA -->
     <div class="report-card" id="sec1-portada" style="text-align:center;">
         <br><br>
@@ -362,13 +366,6 @@ erDiagram
             ejercicio, y el seed se amplió a 30 filas por tabla (formatos se quedó en 8 por decisión
             documentada, D-18) — conteos reales verificados:
             <code>usuarios=30, autores=30, generos=30, conceptos=30, libros=30, formatos=8</code>.</p>
-            <div class="pendiente">
-                <div class="pendiente-titulo">📌 Único punto que sigue pendiente aquí</div>
-                <p>Capturas de <code>psql</code> ejecutadas <strong>contra el servidor real de GCP</strong>
-                (todo lo anterior se verificó contra una base de datos local de prueba, no contra
-                <code>maquina-integracion</code>) — requiere acceso directo al servidor, ver
-                <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>.</p>
-            </div>
         </section>
 
         <!-- 6. GCP -->
@@ -430,31 +427,6 @@ npm start</pre>
                 <tr><td>Disco de arranque</td><td>50 GB</td><td>Margen para SO, PostgreSQL, <code>node_modules</code> e imágenes subidas, sin acercarse al límite en un entorno de práctica.</td></tr>
                 <tr><td>Zona</td><td><code>southamerica-south1-c</code></td><td>Región más cercana disponible al equipo, minimizando latencia durante desarrollo y pruebas.</td></tr>
             </table>
-          <!--    <div class="pendiente">
-                <div class="pendiente-titulo">⚠️ Riesgo identificado</div>
-                <p>Compartir una sola instancia <code>e2-standard-2</code> entre PostgreSQL y Node.js no
-                aísla el consumo de recursos entre ambos: un pico de tráfico o una consulta pesada puede
-                degradar los dos servicios a la vez. Aceptable para el alcance del ejercicio; en
-                producción real se separaría la base de datos (por ejemplo, Cloud SQL).</p>
-                <p>Además, la regla de firewall <code>web-monolito01</code> deja el puerto 3000 abierto a
-                <code>0.0.0.0/0</code>; como Node sólo escucha en <code>127.0.0.1</code> no es alcanzable
-                hoy, pero esa regla debería eliminarse una vez confirmado el reverse proxy, dejando sólo
-                el puerto público (80/443) abierto. Detalle completo en
-                <a href="docs/GCP_COMMANDS.md">docs/GCP_COMMANDS.md</a>.</p>
-            </div>
-         <div class="pendiente">
-                <div class="pendiente-titulo">📌 Verificación de PostgreSQL</div>
-                <p><code>\du library_user</code> ya se verificó, pero contra una base de datos <strong>local
-                de prueba</strong> (no contra el servidor real de GCP): el rol se creó explícitamente sin
-                <code>SUPERUSER</code>/<code>CREATEDB</code>/<code>CREATEROLE</code>. Falta repetir esa
-                misma verificación en <code>maquina-integracion</code> y tomar la captura real (ver
-                <a href="docs/SECURITY_REVIEW.md">SECURITY_REVIEW.md</a>, control #9). También falta cargar,
-                en el servidor real, la secuencia completa ya probada localmente:
-                <code>library_schema.sql</code> → <code>library_triggers.sql</code> →
-                <code>library_views.sql</code> → <code>library_data.sql</code> (hoy sólo se cargó
-                <code>library_schema.sql</code> directo, según <code>docs/GCP_COMMANDS.md</code>), y
-                capturas de <code>psql</code> mostrando funciones/triggers/vistas y conteos por tabla.</p>
-            </div>--> 
         </section>
 
         <!-- 7. MÓDULOS NODE -->
@@ -816,14 +788,6 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
                 confirma que el catálogo es visible para cualquier usuario autenticado, sin el menú
                 "Usuarios" ni el botón "+ Nuevo libro" (exclusivos de admin).</p>
             </div>
-            <div class="pendiente">
-                <div class="pendiente-titulo">📌 Siguen faltando</div>
-                <p>Capturas de <em>pantalla</em> (imagen) de las pruebas negativas de integridad vía
-                <code>psql</code> — hoy están verificadas con el error real de PostgreSQL capturado
-                como texto en <a href="docs/TEST_PLAN.md">docs/TEST_PLAN.md</a> (TC-15 a TC-20), no
-                como screenshot; captura del intento de acceso admin desde un usuario cliente (403) y
-                del intento de crear un segundo Administrador rechazado.</p>
-            </div>
         </section>
 
         <!-- 13. DECISIONES DE INGENIERÍA -->
@@ -957,6 +921,9 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
             </ul>
         </section>
 
+        </main>
+    </div>
+
         <p class="footer-meta">
             URL de este ejercicio: <code>https://ubiquitous.udem.edu/~613772/ejercicio02/</code>  ·
         </p>
@@ -965,5 +932,6 @@ app.use(BASE_PATH, rutas);              // en vez de app.use('/', rutas)</pre>
     </div>
 
     <script src="../js/include.js"></script>
+    <script src="../js/toc.js"></script>
 </body>
 </html>

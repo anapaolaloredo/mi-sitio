@@ -16,6 +16,10 @@
 <body>
     <div id="menu-global" data-base="../"></div>
 
+    <div class="layout-reporte">
+        <aside class="toc" id="toc"></aside>
+        <main id="contenido">
+
     <!-- PORTADA -->
     <div class="report-card" id="sec1-portada" style="text-align:center;">
         <br><br>
@@ -32,40 +36,6 @@
         </table>
         <br>
         <p><em>Doy mi palabra de que he realizado esta actividad con integridad académica.</em></p>
-    </div>
-
-    <!-- ÍNDICE -->
-    <div class="report-card">
-        <h1>Índice</h1>
-        <h3>Ejercicio guiado</h3>
-        <ol style="line-height:2.1;">
-            <li><a href="#sec2-objetivo">Objetivo y scope del ejercicio</a></li>
-            <li><a href="#sec3-arquitectura">Arquitectura inicial y arquitectura final</a></li>
-            <li><a href="#sec4-descripcion">Descripción del monolito y del nuevo módulo SOAP</a></li>
-            <li><a href="#sec5-datos">Diseño de datos y tablas propias del módulo</a></li>
-            <li><a href="#sec6-wsdl">Contrato WSDL y tipos XSD</a></li>
-            <li><a href="#sec7-operaciones">Operaciones implementadas</a></li>
-            <li><a href="#sec8-ejemplos">Ejemplos de SOAP Request, Response y Fault</a></li>
-            <li><a href="#sec9-seguridad">Seguridad y WS-Security</a></li>
-            <li><a href="#sec10-desktop">Aplicación de escritorio como cliente SOAP</a></li>
-            <li><a href="#sec11-interop">Interoperabilidad con un segundo lenguaje</a></li>
-            <li><a href="#sec12-pruebas">Plan de pruebas y resultados</a></li>
-            <li><a href="#sec13-postgresql">Evidencias de PostgreSQL</a></li>
-            <li><a href="#sec14-decisiones">Decisiones de ingeniería y trade-offs</a></li>
-            <li><a href="#sec15-problemas">Problemas encontrados y soluciones</a></li>
-            <li><a href="#sec16-metricas">Métricas para comparación futura con REST</a></li>
-            <li><a href="#sec17-ia">Uso de IA y prompts utilizados</a></li>
-            <li><a href="#sec18-conclusiones">Conclusiones</a></li>
-            <li><a href="#sec19-descargas">Descargas</a></li>
-        </ol>
-        <h3>Trabajo en casa</h3>
-        <ol style="line-height:2.1;">
-            <li><a href="#tarea1">Tarea 1 — Estadísticas por modelo + WS-Security</a></li>
-            <li><a href="#tarea2">Tarea 2 — SOAP Fault y experiencia de usuario</a></li>
-            <li><a href="#tarea3">Tarea 3 — Auditoría del contrato WSDL</a></li>
-            <li><a href="#tarea4">Tarea 4 — Interoperabilidad</a></li>
-            <li><a href="#tarea5">Tarea 5 — Medición técnica y reflexión SOAP</a></li>
-        </ol>
     </div>
 
     <div class="report-card">
@@ -520,14 +490,7 @@ HTTP 400 → codigo=XML_INVALIDO  → "La raiz del documento debe ser soap:Envel
                 hizo visibles decisiones que normalmente quedan ocultas: el escape de valores en XML, el
                 manejo de namespaces, y la diferencia entre validar en el XSD (declarativo, pero no aplicado
                 en runtime aquí) y validar en código (lo que realmente protege al sistema).
-            </p>
-           <!--<div class="pendiente">
-                <div class="pendiente-titulo">📝 Pendiente: reflexión personal</div>
-                Esta sección resume el trabajo técnico realizado con apoyo de IA. Falta agregar la conclusión
-                personal del estudiante (qué se aprendió, qué se haría distinto, tiempo real invertido) para
-                cumplir el criterio de finalización "Conclusiones personales del ejercicio".
-            </div>--> 
-        </section>
+            </p>        </section>
 
         <!-- 19. DESCARGAS -->
         <section id="sec19-descargas">
@@ -744,16 +707,7 @@ resultado = cliente.service.RegistrarClasificacion(
             <tr><td>LOC servicio (sin tests)</td><td>615 líneas</td><td><code>wc -l</code> sobre <code>app.py, config/, db/, soap/</code></td></tr>
             <tr><td>LOC cliente manual (Electron)</td><td>173 líneas</td><td><code>wc -l soapClient.js</code></td></tr>
             <tr><td>LOC cliente interoperable (<code>zeep</code>)</td><td>49 líneas</td><td><code>wc -l interop_zeep_client.py</code></td></tr>
-        </table>
-       <!--<div class="pendiente">
-            <div class="pendiente-titulo">⏱️ Pendiente: tiempo de desarrollo</div>
-            El tiempo "aproximado de desarrollo" que pide el ejercicio debe reflejar las horas reales que el
-            estudiante invirtió revisando, probando y corrigiendo esta implementación (criterio del curso:
-            "no se evalúa quién genera más código con IA, sino quién demuestra mayor capacidad para
-            verificarla") — no un tiempo de sesión de IA, que no es comparable. Completar con el tiempo real
-            antes de publicar.
-        </div>--> 
-        <h3>Preguntas para reflexionar</h3>
+        </table>        <h3>Preguntas para reflexionar</h3>
         <p><strong>¿Qué pasaría si agregas un campo obligatorio a RegistrarClasificacion sin actualizar a los clientes?</strong><br>
         Los clientes existentes (Electron, zeep) enviarían un Envelope sin ese campo; como la validación real vive en <code>soap/service.py</code> (no en un validador XSD automático), el servidor respondería un <code>ValidacionFault</code> ("Falta el campo obligatorio...") en vez de fallar silenciosamente — pero todos los clientes desplegados quedarían rotos hasta actualizarse. Es el mismo problema de versionado de contratos que tiene cualquier API; SOAP no lo resuelve por sí solo, solo lo hace explícito.</p>
 
@@ -793,8 +747,12 @@ resultado = cliente.service.RegistrarClasificacion(
         <a href="#sec1-portada" class="top-link">↑ Volver arriba</a>
     </div>
 
+        </main>
+    </div>
+
     <p class="footer-meta">Ejercicio Guiado 03 · Integración de Aplicaciones Computacionales · 2026</p>
 
     <script src="../js/include.js"></script>
+    <script src="../js/toc.js"></script>
 </body>
 </html>

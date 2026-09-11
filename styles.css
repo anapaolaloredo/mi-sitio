@@ -1,89 +1,287 @@
-/* ===== Variables de diseño global ===== */
+/* =====================================================================
+   SISTEMA DE DISEÑO — Portafolio de Integración de Aplicaciones
+   =====================================================================
+   Principios aplicados:
+   - Jerarquía: una escala tipográfica y de espaciado fijas (no valores
+     sueltos), para que el ojo distinga nivel de importancia sin leer.
+   - Contraste: todos los pares texto/fondo cumplen WCAG AA (>= 4.5:1);
+     el amarillo institucional se usa SOLO como acento decorativo,
+     nunca como color de texto (sobre blanco da 1.4:1).
+   - Consistencia: color, radio, sombra y espacio salen de variables.
+   - Accesibilidad: foco visible siempre, objetivos táctiles >= 44px,
+     landmarks semánticos y respeto a prefers-reduced-motion.
+   ===================================================================== */
+
 :root {
-    --udem-color: #ffcc00;
-    --bg-color: #f4f7f6;
-    --text-color: #2c3e50;
-    --accent-color: #2980b9;
-    --accent-soft: #eaf4fb;
-    --ok-color: #27ae60;
+    /* --- Marca --- */
+    --udem: #ffcc00;              /* acento decorativo (barras, bordes) */
+    --udem-oscuro: #a17c00;       /* versión legible del amarillo: 4.6:1 */
+
+    /* --- Azul de acento --- */
+    --azul: #2980b9;              /* decorativo: bordes, fondos */
+    --azul-texto: #1a6699;        /* 6.2:1 sobre blanco -> texto y enlaces */
+    --azul-oscuro: #14527a;       /* hover */
+    --azul-suave: #eaf4fb;
+    --azul-borde: #c9e2f3;
+
+    /* --- Neutros --- */
+    --tinta: #22303c;             /* 12.6:1 sobre blanco */
+    --tinta-media: #5a6b7a;       /* 5.5:1 -> texto secundario */
+    --tinta-tenue: #8496a5;       /* solo texto grande o iconos */
+    --linea: #e3e9ed;
+    --linea-fuerte: #cdd7de;
+    --superficie: #ffffff;
+    --fondo: #f5f7f9;
+    --fondo-alt: #eef2f5;
+
+    /* --- Semánticos --- */
+    --ok: #1c7c4a;                /* 5.1:1 */
+    --ok-suave: #e8f6ee;
+    --alerta: #8a6100;            /* 5.3:1 */
+    --alerta-suave: #fff8e6;
+    --error: #b3261e;             /* 6.0:1 */
+    --error-suave: #fdecea;
+
+    /* --- Espaciado (ritmo de 4px) --- */
+    --e1: 0.25rem;
+    --e2: 0.5rem;
+    --e3: 0.75rem;
+    --e4: 1rem;
+    --e5: 1.5rem;
+    --e6: 2rem;
+    --e7: 3rem;
+    --e8: 4rem;
+
+    /* --- Radios --- */
+    --r-sm: 6px;
+    --r-md: 10px;
+    --r-lg: 16px;
+
+    /* --- Sombras en capas (más realistas que una sola difusa) --- */
+    --sombra-1: 0 1px 2px rgba(34, 48, 60, 0.06), 0 1px 3px rgba(34, 48, 60, 0.08);
+    --sombra-2: 0 2px 4px rgba(34, 48, 60, 0.05), 0 4px 12px rgba(34, 48, 60, 0.08);
+    --sombra-3: 0 4px 8px rgba(34, 48, 60, 0.06), 0 12px 28px rgba(34, 48, 60, 0.12);
+
+    /* --- Tipografía --- */
+    --fuente: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --fuente-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+
+    --ancho-lectura: 74ch;        /* medida cómoda de lectura */
+    --ancho-sitio: 1180px;
 }
 
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; }
 
-/* ===== Estilo general del sitio ===== */
+html {
+    /* El sitio solo tiene paleta clara. Declararlo evita que navegadores o
+       previsualizadores en modo oscuro inviertan colores por su cuenta y
+       arruinen diagramas y tablas. */
+    color-scheme: light;
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;     /* para que el nav sticky no tape el título */
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    line-height: 1.6;
-    background-color: var(--bg-color);
-    color: var(--text-color);
     margin: 0;
+    font-family: var(--fuente);
+    font-size: 1rem;
+    line-height: 1.65;
+    color: var(--tinta);
+    background-color: var(--fondo);
+    -webkit-font-smoothing: antialiased;
 }
 
-/* ===== Header ===== */
-header {
-    background: white;
-    padding: 30px 25px;
-    text-align: center;
-    border-bottom: 4px solid var(--udem-color);
+/* ===== Accesibilidad: foco visible y salto al contenido ===== */
+:focus-visible {
+    outline: 3px solid var(--azul-texto);
+    outline-offset: 2px;
+    border-radius: 3px;
 }
 
-header h1 {
+.skip-link {
+    position: absolute;
+    left: var(--e4);
+    top: var(--e4);
+    z-index: 100;
+    transform: translateY(-200%);
+    background: var(--tinta);
+    color: #fff;
+    padding: var(--e3) var(--e5);
+    border-radius: var(--r-sm);
+    text-decoration: none;
+    font-weight: 600;
+    box-shadow: var(--sombra-3);
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* =====================================================================
+   CABECERA DEL SITIO
+   ===================================================================== */
+.sitio-header {
+    background: var(--superficie);
+    border-bottom: 1px solid var(--linea);
+}
+
+.sitio-header .contenedor {
+    max-width: var(--ancho-sitio);
+    margin: 0 auto;
+    padding: var(--e5) var(--e5) var(--e4);
+    display: flex;
+    align-items: center;
+    gap: var(--e4);
+    flex-wrap: wrap;
+}
+
+.sitio-marca {
+    display: flex;
+    align-items: center;
+    gap: var(--e3);
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+}
+
+.sitio-marca .emblema {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    font-size: 1.35rem;
+    background: var(--azul-suave);
+    border: 1px solid var(--azul-borde);
+    border-radius: var(--r-md);
+}
+
+.sitio-marca h1 {
     margin: 0;
     border: none;
     padding: 0;
-    font-size: 1.6rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
 }
 
-header p {
-    margin: 6px 0 0;
-    color: #66788d;
+.sitio-marca p {
+    margin: 2px 0 0;
+    font-size: 0.85rem;
+    color: var(--tinta-media);
 }
 
-/* ===== Navegación ===== */
-nav {
-    background: var(--text-color);
+/* =====================================================================
+   NAVEGACIÓN
+   ===================================================================== */
+.sitio-nav {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 40;
+    background: var(--tinta);
+    border-bottom: 3px solid var(--udem);
 }
 
-nav ul {
+.sitio-nav .contenedor {
+    max-width: var(--ancho-sitio);
+    margin: 0 auto;
+    padding: 0 var(--e5);
+    display: flex;
+    align-items: center;
+    gap: var(--e2);
+}
+
+.sitio-nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
-    max-width: 1100px;
-    margin: 0 auto;
+    flex-wrap: wrap;
+    gap: var(--e1);
 }
 
-nav li {
-    margin: 0;
-}
-
-nav a {
-    display: block;
-    padding: 15px 25px;
-    color: white;
+.sitio-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 48px;            /* objetivo táctil cómodo */
+    padding: 0 var(--e4);
+    color: #dfe7ec;
     text-decoration: none;
-    transition: 0.2s;
-    border-bottom: 3px solid transparent;
     font-weight: 500;
+    font-size: 0.95rem;
+    border-radius: var(--r-sm) var(--r-sm) 0 0;
+    border-bottom: 3px solid transparent;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
-nav a:hover {
-    background: rgba(255,255,255,0.08);
+.sitio-nav a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
-nav a.activa {
-    border-bottom-color: var(--udem-color);
-    background: rgba(255,255,255,0.08);
+.sitio-nav a[aria-current] {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.12);
+    border-bottom-color: var(--udem);
+    font-weight: 600;
 }
 
-/* ===== Contenido principal ===== */
+.sitio-nav :focus-visible {
+    outline-color: var(--udem);
+    outline-offset: -3px;
+}
+
+/* Botón de menú (solo móvil) */
+.nav-toggle {
+    display: none;
+    align-items: center;
+    gap: var(--e2);
+    min-height: 48px;
+    padding: 0 var(--e3);
+    background: none;
+    border: none;
+    color: #dfe7ec;
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border-radius: var(--r-sm);
+}
+
+.nav-toggle:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+@media (max-width: 640px) {
+    .sitio-nav .contenedor { flex-wrap: wrap; padding: 0 var(--e4); }
+    .nav-toggle { display: flex; width: 100%; justify-content: flex-start; }
+    .sitio-nav ul {
+        flex-basis: 100%;
+        flex-direction: column;
+        gap: 0;
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.2s ease;
+    }
+    .sitio-nav ul.abierto { max-height: 320px; }
+    .sitio-nav li { border-top: 1px solid rgba(255,255,255,0.12); }
+    .sitio-nav a { border-radius: 0; border-bottom: none; border-left: 3px solid transparent; }
+    .sitio-nav a[aria-current] { border-left-color: var(--udem); }
+}
+
+/* =====================================================================
+   CONTENIDO
+   ===================================================================== */
 main {
-    max-width: 1100px;
+    max-width: var(--ancho-sitio);
     margin: 0 auto;
-    padding: 35px 25px 60px;
+    padding: var(--e6) var(--e5) var(--e8);
 }
 
 .seccion { display: none; }
@@ -94,166 +292,414 @@ main {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* ===== Tarjetas tipo reporte (paginas internas) ===== */
+/* ===== Tarjeta tipo reporte ===== */
 .report-card {
-    max-width: 900px;
-    margin: 30px auto;
-    background: white;
-    padding: 50px;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    max-width: 920px;
+    margin: var(--e6) auto;
+    background: var(--superficie);
+    padding: clamp(var(--e5), 4vw, var(--e7));
+    border-radius: var(--r-lg);
+    border: 1px solid var(--linea);
+    box-shadow: var(--sombra-2);
 }
 
-/* ===== Títulos ===== */
+/* =====================================================================
+   TIPOGRAFÍA
+   ===================================================================== */
+h1, h2, h3, h4 {
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+}
+
 h1 {
-    color: var(--text-color);
-    border-left: 5px solid var(--udem-color);
-    padding-left: 15px;
+    font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.1rem);
+    color: var(--tinta);
+    border-left: 5px solid var(--udem);
+    padding-left: var(--e4);
+    margin: 0 0 var(--e5);
 }
 
 h2 {
-    color: var(--accent-color);
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-top: 40px;
+    font-size: clamp(1.25rem, 1.05rem + 0.8vw, 1.5rem);
+    color: var(--azul-texto);
+    border-bottom: 1px solid var(--linea);
+    padding-bottom: var(--e3);
+    margin: var(--e7) 0 var(--e4);
 }
 
-/* ===== Bienvenida / info del curso ===== */
+h3 {
+    font-size: 1.1rem;
+    color: var(--tinta);
+    margin: var(--e6) 0 var(--e2);
+}
+
+h4 {
+    font-size: 1rem;
+    color: var(--tinta);
+    margin: var(--e5) 0 var(--e1);
+}
+
+p, li { max-width: var(--ancho-lectura); }
+
+a {
+    color: var(--azul-texto);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+}
+
+a:hover { color: var(--azul-oscuro); }
+
+code {
+    font-family: var(--fuente-mono);
+    font-size: 0.9em;
+    background: var(--fondo-alt);
+    border: 1px solid var(--linea);
+    border-radius: 4px;
+    padding: 0.1em 0.35em;
+}
+
+pre code { border: none; background: none; padding: 0; }
+
+strong { color: var(--tinta); font-weight: 650; }
+
+/* =====================================================================
+   BIENVENIDA / INFO DEL CURSO
+   ===================================================================== */
 .bienvenida {
-    background: white;
-    border-radius: 12px;
-    padding: 30px 35px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    margin-bottom: 10px;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-lg);
+    padding: var(--e6);
+    box-shadow: var(--sombra-1);
+    margin-bottom: var(--e2);
 }
 
 .info-curso {
     display: flex;
-    gap: 30px;
+    gap: var(--e6);
     flex-wrap: wrap;
-    margin-top: 18px;
-    padding-top: 18px;
-    border-top: 1px solid #eee;
+    margin-top: var(--e5);
+    padding-top: var(--e5);
+    border-top: 1px solid var(--linea);
 }
 
-.info-curso p { margin: 0; }
+.info-curso p { margin: 0; font-size: 0.95rem; }
 
-/* ===== Listas (compatibilidad con paginas internas) ===== */
-.lista-enlaces {
-    padding-left: 20px;
-}
-
-.lista-enlaces li {
-    margin-bottom: 10px;
-}
-
-/* ===== Grid de tarjetas: Ejercicios guiados / Tareas ===== */
+/* =====================================================================
+   GRID DE TARJETAS
+   ===================================================================== */
 .grupo-titulo {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 8px;
-    margin: 34px 0 4px;
+    gap: var(--e2);
+    margin: var(--e7) 0 var(--e1);
 }
 
-.grupo-titulo h2 {
-    margin: 0;
-    border: none;
-    padding: 0;
-}
+.grupo-titulo h2 { margin: 0; border: none; padding: 0; }
 
 .grupo-descripcion {
-    color: #66788d;
-    margin: 0 0 18px;
+    color: var(--tinta-media);
+    margin: 0 0 var(--e5);
     font-size: 0.95rem;
 }
 
 .tarjetas-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 18px;
+    gap: var(--e4);
 }
 
 .tarjeta-item {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    background: white;
-    border-radius: 10px;
-    padding: 22px;
+    gap: var(--e2);
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-top: 4px solid var(--azul);
+    border-radius: var(--r-md);
+    padding: var(--e5);
     text-decoration: none;
     color: inherit;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-    border-top: 4px solid var(--accent-color);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: var(--sombra-1);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 .tarjeta-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-3);
+    border-top-color: var(--azul-texto);
 }
 
-.tarjeta-item .tarjeta-icono {
-    font-size: 1.6rem;
-    line-height: 1;
-}
+.tarjeta-item .tarjeta-icono { font-size: 1.6rem; line-height: 1; }
 
 .tarjeta-item h3 {
-    margin: 4px 0 0;
+    margin: var(--e1) 0 0;
     font-size: 1.05rem;
-    color: var(--text-color);
+    color: var(--tinta);
 }
 
 .tarjeta-item p {
     margin: 0;
-    font-size: 0.88rem;
-    color: #66788d;
+    font-size: 0.9rem;
+    color: var(--tinta-media);
     flex: 1;
 }
 
 .tarjeta-item .tarjeta-ir {
-    margin-top: 6px;
-    font-size: 0.85rem;
+    margin-top: var(--e1);
+    font-size: 0.88rem;
     font-weight: 600;
-    color: var(--accent-color);
+    color: var(--azul-texto);
 }
 
 .tarjeta-item.destacada {
-    border-top-color: var(--udem-color);
-    background: var(--accent-soft);
+    border-top-color: var(--udem);
+    background: var(--azul-suave);
 }
 
-/* ===== Cuadros informativos (paginas internas) ===== */
+/* =====================================================================
+   ELEMENTOS DE PÁGINAS INTERNAS
+   ===================================================================== */
+.lista-enlaces { padding-left: var(--e5); }
+.lista-enlaces li { margin-bottom: var(--e2); }
+
 .fundamentos-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--e4);
 }
 
 .card-small {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    border-top: 3px solid var(--accent-color);
+    background: var(--fondo-alt);
+    padding: var(--e4);
+    border-radius: var(--r-sm);
+    border-top: 3px solid var(--azul);
 }
 
-/* ===== Terminal ===== */
 .terminal {
-    background-color: #1e1e1e;
-    color: #dcdcdc;
-    padding: 20px;
-    border-radius: 6px;
-    font-family: 'Consolas', monospace;
+    background-color: #1b1f24;
+    color: #e2e6ea;
+    padding: var(--e5);
+    border-radius: var(--r-md);
+    font-family: var(--fuente-mono);
+    font-size: 0.88rem;
+    line-height: 1.6;
+    overflow-x: auto;
 }
 
-.command { color: #569cd6; font-weight: bold; }
-.comment { color: #6a9955; }
+.command { color: #7fb8e8; font-weight: 600; }
+.comment { color: #8fc99a; }
+
+/* ===== Tablas ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--e4) 0;
+    font-size: 0.94rem;
+}
+
+th, td {
+    border: 1px solid var(--linea);
+    padding: var(--e3) var(--e4);
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: var(--azul-texto);
+    color: #fff;
+    font-weight: 600;
+}
+
+tbody tr:nth-child(even) td, tr:nth-child(even) td { background: #fafbfc; }
 
 /* ===== Footer ===== */
-footer {
+footer, .footer-meta {
     text-align: center;
-    padding: 20px;
-    background: white;
-    border-top: 1px solid #ddd;
+    padding: var(--e5);
+    color: var(--tinta-media);
+    font-size: 0.88rem;
 }
+
+footer {
+    background: var(--superficie);
+    border-top: 1px solid var(--linea);
+}
+
+/* =====================================================================
+   IMPRESIÓN (el reporte se entrega también en papel/PDF)
+   ===================================================================== */
+@media print {
+    .sitio-nav, .nav-toggle, .skip-link, .toc, .top-link { display: none !important; }
+    body { background: #fff; }
+    .report-card {
+        box-shadow: none;
+        border: none;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        page-break-after: always;
+    }
+    a { color: inherit; text-decoration: none; }
+}
+
+/* =====================================================================
+   LAYOUT DE REPORTE CON ÍNDICE LATERAL  (todas las páginas de reporte)
+   =====================================================================
+   Dos columnas en escritorio: el índice acompaña la lectura durante todo
+   el scroll (ocupa el alto de la ventana y desplaza su propia lista si no
+   cabe) y el contenido conserva una medida de lectura cómoda. Por debajo
+   de 1020px colapsa a una columna y el índice se vuelve un bloque
+   plegable arriba del contenido.
+   ===================================================================== */
+.layout-reporte {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+    gap: var(--e6);
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: var(--e6) var(--e5) var(--e8);
+    /* Sin 'align-items: start': el <aside> debe ESTIRARSE a lo alto de la
+       fila. Un elemento sticky solo puede pegarse dentro de la caja de su
+       padre, asi que si el aside midiera solo lo que su contenido, el
+       indice se iria hacia arriba al pasar de ese punto. */
+    align-items: stretch;
+}
+
+.layout-reporte > .toc { height: 100%; }
+
+/* Neutraliza el ancho/padding que este mismo archivo da a <main> a nivel
+   de sitio: dentro del layout quien manda es la columna del grid. */
+.layout-reporte > #contenido {
+    min-width: 0;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Las tarjetas ya no se centran solas: las posiciona la columna */
+.layout-reporte .report-card {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: none;
+}
+
+/* ===== Índice lateral: pegado y de alto completo ===== */
+.toc-fijo {
+    position: sticky;
+    top: 64px;                                /* justo debajo del nav */
+    max-height: calc(100vh - 80px);           /* acompaña toda la pantalla */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.toc-plegable {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    background: var(--superficie);
+    border: 1px solid var(--linea);
+    border-radius: var(--r-md);
+    box-shadow: var(--sombra-1);
+    overflow: hidden;
+}
+
+.toc-plegable > summary {
+    cursor: pointer;
+    list-style: none;
+    flex: none;
+    padding: var(--e3) var(--e4);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--tinta);
+    border-left: 4px solid var(--udem);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+}
+
+.toc-plegable > summary::-webkit-details-marker { display: none; }
+
+.toc-plegable > summary::after {
+    content: '▾';
+    color: var(--tinta-media);
+    font-size: 0.9rem;
+    transition: transform 0.15s ease;
+}
+
+.toc-plegable[open] > summary::after { transform: rotate(180deg); }
+.toc-plegable > summary:hover { background: var(--fondo-alt); }
+
+/* La lista toma el alto restante y hace su propio scroll */
+.toc nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;             /* no arrastra la página */
+    padding: var(--e2) 0 var(--e3);
+    border-top: 1px solid var(--linea);
+    scrollbar-width: thin;
+}
+
+.toc-grupo {
+    margin: var(--e3) var(--e4) var(--e1);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--tinta-media);
+    max-width: none;
+}
+
+.toc ul { list-style: none; margin: 0 0 var(--e2); padding: 0; }
+.toc li { margin: 0; max-width: none; }
+
+.toc a {
+    display: block;
+    padding: var(--e2) var(--e4) var(--e2) var(--e5);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    color: var(--tinta-media);
+    text-decoration: none;
+    border-left: 3px solid transparent;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.toc a:hover { background: var(--fondo-alt); color: var(--tinta); }
+
+/* El estado activo se comunica por color + peso + barra lateral, además
+   del aria-current que anuncian los lectores de pantalla. */
+.toc a[aria-current] {
+    color: var(--azul-texto);
+    background: var(--azul-suave);
+    border-left-color: var(--azul-texto);
+    font-weight: 650;
+}
+
+@media (max-width: 1020px) {
+    .layout-reporte {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--e4);
+        padding: var(--e5) var(--e4) var(--e7);
+    }
+    .toc-fijo { position: static; max-height: none; }
+    .toc nav { max-height: 55vh; }
+}
+
+.diagram-box { overflow-x: auto; }
+
+.top-link {
+    display: inline-block;
+    margin-top: var(--e5);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--azul-texto);
+}
+
+.top-link:hover { text-decoration: underline; }

@@ -5,6 +5,13 @@
 // data-base indica cuantos niveles hay que subir para llegar a index.html
 // (las paginas de tareas/ejercicios estan un nivel bajo de html/, por eso "../";
 // en el propio index.html data-base se deja vacio "").
+//
+// Accesibilidad implementada aqui:
+//   - enlace "saltar al contenido" (primer tabulable de la pagina)
+//   - landmarks reales: <header>, <nav aria-label>, y el <main> de cada pagina
+//   - aria-current marca la ubicacion actual (lo anuncian los lectores de pantalla,
+//     no solo el color, que por si solo no es informacion accesible)
+//   - menu colapsable en movil con aria-expanded/aria-controls
 (function () {
     function iniciar() {
         var contenedor = document.getElementById('menu-global');
@@ -13,27 +20,62 @@
         var base = contenedor.dataset.base || '';
         var esInicio = document.querySelectorAll('.seccion').length > 0;
 
-        var navHtml;
-        if (esInicio) {
-            // En index.html el menu cambia de "pestana" dentro de la misma pagina.
-            navHtml =
-                '<li><a href="#" class="nav-link" data-seccion="inicio">Inicio</a></li>' +
-                '<li><a href="#" class="nav-link" data-seccion="reportes">Ejercicios Guiados</a></li>' +
-                '<li><a href="#" class="nav-link" data-seccion="tareas">Tareas En Casa</a></li>';
-        } else {
-            // En cualquier otra pagina, el menu regresa al index y abre la seccion correcta.
-            navHtml =
-                '<li><a href="' + base + 'index.html">Inicio</a></li>' +
-                '<li><a href="' + base + 'index.html#reportes">Ejercicios Guiados</a></li>' +
-                '<li><a href="' + base + 'index.html#tareas">Tareas En Casa</a></li>';
+        var enlaces = esInicio
+            ? [
+                { id: 'inicio', texto: 'Inicio', href: '#' },
+                { id: 'reportes', texto: 'Ejercicios guiados', href: '#' },
+                { id: 'tareas', texto: 'Tareas en casa', href: '#' }
+              ]
+            : [
+                { texto: 'Inicio', href: base + 'index.html' },
+                { texto: 'Ejercicios guiados', href: base + 'index.html#reportes' },
+                { texto: 'Tareas en casa', href: base + 'index.html#tareas' }
+              ];
+
+        var lis = enlaces.map(function (e) {
+            var attrs = e.id ? ' class="nav-link" data-seccion="' + e.id + '"' : '';
+            return '<li><a href="' + e.href + '"' + attrs + '>' + e.texto + '</a></li>';
+        }).join('');
+
+        // Destino del "saltar al contenido": el <main> de la pagina si existe,
+        // y si no, el primer bloque de contenido real.
+        var destino = document.querySelector('main[id]');
+        var idDestino = destino ? destino.id : 'contenido-principal';
+        if (!destino) {
+            var primero = document.querySelector('main, .report-card');
+            if (primero && !primero.id) primero.id = idDestino;
+            else if (primero) idDestino = primero.id;
         }
 
         contenedor.innerHTML =
-            '<header>' +
-                '<h1>🖥️ Integración Aplicaciones Computacionales</h1>' +
-                '<p>Portafolio Académico - Ana Paola Loredo Moreno</p>' +
+            '<a class="skip-link" href="#' + idDestino + '">Saltar al contenido</a>' +
+            '<header class="sitio-header">' +
+                '<div class="contenedor">' +
+                    '<a class="sitio-marca" href="' + base + 'index.html">' +
+                        '<span class="emblema" aria-hidden="true">🖥️</span>' +
+                        '<span>' +
+                            '<h1>Integración de Aplicaciones Computacionales</h1>' +
+                            '<p>Portafolio académico · Ana Paola Loredo Moreno</p>' +
+                        '</span>' +
+                    '</a>' +
+                '</div>' +
             '</header>' +
-            '<nav><ul>' + navHtml + '</ul></nav>';
+            '<nav class="sitio-nav" aria-label="Navegación principal">' +
+                '<div class="contenedor">' +
+                    '<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-lista">' +
+                        '<span aria-hidden="true">☰</span> Menú' +
+                    '</button>' +
+                    '<ul id="nav-lista">' + lis + '</ul>' +
+                '</div>' +
+            '</nav>';
+
+        // --- Menu movil ---
+        var boton = contenedor.querySelector('.nav-toggle');
+        var lista = contenedor.querySelector('#nav-lista');
+        boton.addEventListener('click', function () {
+            var abierto = lista.classList.toggle('abierto');
+            boton.setAttribute('aria-expanded', String(abierto));
+        });
 
         if (!esInicio) return;
 
@@ -41,9 +83,15 @@
             document.querySelectorAll('.seccion').forEach(function (sec) {
                 sec.classList.toggle('activa', sec.id === nombre);
             });
-            document.querySelectorAll('.nav-link').forEach(function (link) {
-                link.classList.toggle('activa', link.dataset.seccion === nombre);
+            contenedor.querySelectorAll('.nav-link').forEach(function (link) {
+                if (link.dataset.seccion === nombre) {
+                    link.setAttribute('aria-current', 'true');
+                } else {
+                    link.removeAttribute('aria-current');
+                }
             });
+            lista.classList.remove('abierto');
+            boton.setAttribute('aria-expanded', 'false');
         }
         window.mostrarSeccion = mostrarSeccion;
 

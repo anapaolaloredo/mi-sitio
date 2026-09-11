@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarea 2 - Integración</title>
-    <link rel="stylesheet" href="../css/styles.css">
-    <link rel="stylesheet" href="../css/reportes.css">
+    <link rel="stylesheet" href="../styles.css">
     <style>
         :root {
             --udem-color: #ffcc00;
@@ -102,6 +101,10 @@
 </head>
 <body>
     <div id="menu-global" data-base="../"></div>
+
+    <div class="layout-reporte">
+        <aside class="toc" id="toc"></aside>
+        <main id="contenido">
 
     <!-- PORTADA -->
     <div class="report-card" style="text-align:center; page-break-after: always;">
@@ -233,11 +236,14 @@ La utilización de contenedores, orquestación, servicios distribuidos, escalabi
             </div>
         </section>
 
-        
-    <a href="../../index.html" class="back-link">← Regresar al menú de tareas</a>
+        <a href="../index.html" class="back-link">← Regresar al menú de tareas</a>
+    </div><!-- cierra la tercera .report-card, que quedaba sin cerrar -->
 
+        </main>
+    </div>
 
     <script src="../js/include.js"></script>
+    <script src="../js/toc.js"></script>
 
 </body>
 </html>
